@@ -1,0 +1,19 @@
+index.php?r=proveedores%2Fview&id=6
+
+index.php?r=proveedor%2Fview&id=6
+
+
+<?= Html::a('<span class="glyphicon glyphicon-export"></span> Excel', ['excel', 'id' => $model->id_ficha_tiempo], ['class' => 'btn btn-primary ']); ?>
+COLOMBIA2017
+
+
+777 -R
+.php
+PHP Warning:  file_put_contents(/var/www/html/maquiladigital/runtime/debug/5c7acab669d7d.data): failed to open stream: Permission denied in /var/www/html/maquiladigital/vendor/yiisoft/yii2-debug/src/LogTarget.php on line 67
+
+cd ..
+Diosesfiel0914
+
+sudo /etc/init.d/apache2 restart
+
+777 /var/www/html/maquiladigital/vendor/yiisoft/yii2-debug/src/logTarget
