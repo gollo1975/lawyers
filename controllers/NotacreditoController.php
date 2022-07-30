@@ -45,7 +45,7 @@ class NotacreditoController extends Controller
     public function actionIndex()
     {
         if (Yii::$app->user->identity){
-            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',38])->all()){
+            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',16])->all()){
                 $searchModel = new NotacreditoSearch();
                 $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

@@ -61,7 +61,7 @@ class Abogados extends \yii\db\ActiveRecord
             [['tarjeta_profesional'], 'string', 'max' => 10],
             [['usuario'], 'string', 'max' => 20],
             [['documento'], 'unique'],
-            [['id_tipo_documento'], 'exist', 'skipOnError' => true, 'targetClass' => Tipodocumento::className(), 'targetAttribute' => ['id_tipo_documento' => 'id_tipo_documento']],
+            [['id_tipo_documento'], 'exist', 'skipOnError' => true, 'targetClass' => TipoDocumento::className(), 'targetAttribute' => ['id_tipo_documento' => 'id_tipo_documento']],
             [['iddepartamento'], 'exist', 'skipOnError' => true, 'targetClass' => Departamento::className(), 'targetAttribute' => ['iddepartamento' => 'iddepartamento']],
             [['idmunicipio'], 'exist', 'skipOnError' => true, 'targetClass' => Municipio::className(), 'targetAttribute' => ['idmunicipio' => 'idmunicipio']],
         ];
@@ -94,7 +94,7 @@ class Abogados extends \yii\db\ActiveRecord
      */
     public function getTipoDocumento()
     {
-        return $this->hasOne(Tipodocumento::className(), ['id_tipo_documento' => 'id_tipo_documento']);
+        return $this->hasOne(TipoDocumento::className(), ['id_tipo_documento' => 'id_tipo_documento']);
     }
     
      public function getDepartamento()
