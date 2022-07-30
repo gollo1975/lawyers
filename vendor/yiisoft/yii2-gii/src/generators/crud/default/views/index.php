@@ -6,13 +6,14 @@ use yii\helpers\StringHelper;
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\crud\Generator */
 
-$urlParams = $generator->generateUrlParams();
-$nameAttribute = $generator->getNameAttribute();
+$modelClass = StringHelper::basename($generator->modelClass);
 
 echo "<?php\n";
 ?>
 
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 <?= $generator->enablePjax ? 'use yii\widgets\Pjax;' : '' ?>
 
@@ -26,14 +27,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index">
 
     <h1><?= "<?= " ?>Html::encode($this->title) ?></h1>
-<?= $generator->enablePjax ? "    <?php Pjax::begin(); ?>\n" : '' ?>
-<?php if(!empty($generator->searchModelClass)): ?>
-<?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('_search', ['model' => $searchModel]); ?>
-<?php endif; ?>
 
     <p>
         <?= "<?= " ?>Html::a(<?= $generator->generateString('Create ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>, ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+
+<?= $generator->enablePjax ? "    <?php Pjax::begin(); ?>\n" : '' ?>
+<?php if(!empty($generator->searchModelClass)): ?>
+<?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php endif; ?>
 
 <?php if ($generator->indexWidgetType === 'grid'): ?>
     <?= "<?= " ?>GridView::widget([
@@ -62,8 +64,12 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     }
 }
 ?>
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, <?= $modelClass ?> $model, $key, $index, $column) {
+                    return Url::toRoute([$action, <?= $generator->generateUrlParams() ?>]);
+                 }
+            ],
         ],
     ]); ?>
 <?php else: ?>
@@ -71,9 +77,11 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         'dataProvider' => $dataProvider,
         'itemOptions' => ['class' => 'item'],
         'itemView' => function ($model, $key, $index, $widget) {
-            return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
+            return Html::a(Html::encode($model-><?= $generator->getNameAttribute() ?>), ['view', <?= $generator->generateUrlParams() ?>]);
         },
     ]) ?>
 <?php endif; ?>
+
 <?= $generator->enablePjax ? "    <?php Pjax::end(); ?>\n" : '' ?>
+
 </div>

@@ -16,11 +16,11 @@ use yii\helpers\StringHelper;
 /**
  * This generator will generate a controller and one or a few action view files.
  *
- * @property array $actionIDs An array of action IDs entered by the user. This property is read-only.
- * @property string $controllerFile The controller class file path. This property is read-only.
- * @property string $controllerID The controller ID. This property is read-only.
- * @property string $controllerNamespace The namespace of the controller class. This property is read-only.
- * @property string $controllerSubPath The controller sub path. This property is read-only.
+ * @property-read array $actionIDs An array of action IDs entered by the user.
+ * @property-read string $controllerFile The controller class file path.
+ * @property-read string $controllerID The controller ID.
+ * @property-read string $controllerNamespace The namespace of the controller class.
+ * @property-read string $controllerSubPath The controller sub path.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -201,7 +201,7 @@ class Generator extends \yii\gii\Generator
      */
     public function getControllerFile()
     {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->controllerClass)) . '.php';
+        return Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerClass, '\\'))) . '.php';
     }
 
     /**

@@ -7,6 +7,7 @@
 
 namespace yii\helpers;
 
+use Yii;
 use yii\console\Markdown as ConsoleMarkdown;
 use yii\base\Model;
 
@@ -330,7 +331,7 @@ class BaseConsole
      */
     public static function stripAnsiFormat($string)
     {
-        return preg_replace('/\033\[[\d;?]*\w/', '', $string);
+        return preg_replace(self::ansiCodesPattern(), '', (string)$string);
     }
 
     /**
@@ -341,6 +342,78 @@ class BaseConsole
     public static function ansiStrlen($string)
     {
         return mb_strlen(static::stripAnsiFormat($string));
+    }
+
+    /**
+     * Returns the width of the string without ANSI color codes.
+     * @param string $string the string to measure
+     * @return int the width of the string not counting ANSI format characters
+     * @since 2.0.36
+     */
+    public static function ansiStrwidth($string)
+    {
+        return mb_strwidth(static::stripAnsiFormat($string), Yii::$app->charset);
+    }
+
+    /**
+     * Returns the portion with ANSI color codes of string specified by the start and length parameters.
+     * If string has color codes, then will be return "TEXT_COLOR + TEXT_STRING + DEFAULT_COLOR",
+     * else will be simple "TEXT_STRING".
+     * @param string $string
+     * @param int $start
+     * @param int $length
+     * @return string
+     */
+    public static function ansiColorizedSubstr($string, $start, $length)
+    {
+        if ($start < 0 || $length <= 0) {
+            return '';
+        }
+
+        $textItems = preg_split(self::ansiCodesPattern(), (string)$string);
+
+        preg_match_all(self::ansiCodesPattern(), (string)$string, $colors);
+        $colors = count($colors) ? $colors[0] : [];
+        array_unshift($colors, '');
+
+        $result = '';
+        $curPos = 0;
+        $inRange = false;
+
+        foreach ($textItems as $k => $textItem) {
+            $color = $colors[$k];
+
+            if ($curPos <= $start && $start < $curPos + Console::ansiStrwidth($textItem)) {
+                $text = mb_substr($textItem, $start - $curPos, null, Yii::$app->charset);
+                $inRange = true;
+            } else {
+                $text = $textItem;
+            }
+
+            if ($inRange) {
+                $result .= $color . $text;
+                $diff = $length - Console::ansiStrwidth($result);
+                if ($diff <= 0) {
+                    if ($diff < 0) {
+                        $result = mb_substr($result, 0, $diff, Yii::$app->charset);
+                    }
+                    $defaultColor = static::renderColoredString('%n');
+                    if ($color && $color != $defaultColor) {
+                        $result .= $defaultColor;
+                    }
+                    break;
+                }
+            }
+
+            $curPos += mb_strlen($textItem, Yii::$app->charset);
+        }
+
+        return $result;
+    }
+
+    private static function ansiCodesPattern()
+    {
+        return /** @lang PhpRegExp */ '/\033\[[\d;?]*\w/';
     }
 
     /**
@@ -615,8 +688,17 @@ class BaseConsole
     public static function getScreenSize($refresh = false)
     {
         static $size;
-        if ($size !== null && !$refresh) {
+        static $execDisabled;
+
+        if ($size !== null && ($execDisabled || !$refresh)) {
             return $size;
+        }
+
+        if ($execDisabled === null) {
+            $execDisabled = !function_exists('ini_get') || preg_match('/(\bexec\b)/i', ini_get('disable_functions'));
+            if ($execDisabled) {
+                return $size = false;
+            }
         }
 
         if (static::isRunningOnWindows()) {
@@ -684,7 +766,7 @@ class BaseConsole
             return $text;
         }
         $pad = str_repeat(' ', $indent);
-        $lines = explode("\n", wordwrap($text, $size[0] - $indent, "\n", true));
+        $lines = explode("\n", wordwrap($text, $size[0] - $indent, "\n"));
         $first = true;
         foreach ($lines as $i => $line) {
             if ($first) {
@@ -734,7 +816,7 @@ class BaseConsole
      * Asks the user for input. Ends when the user types a carriage return (PHP_EOL). Optionally, It also provides a
      * prompt.
      *
-     * @param string $prompt the prompt to display before waiting for input (optional)
+     * @param string|null $prompt the prompt to display before waiting for input (optional)
      * @return string the user's input
      */
     public static function input($prompt = null)
@@ -749,7 +831,7 @@ class BaseConsole
     /**
      * Prints text to STDOUT appended with a carriage return (PHP_EOL).
      *
-     * @param string $string the text to print
+     * @param string|null $string the text to print
      * @return int|bool number of bytes printed or false on error.
      */
     public static function output($string = null)
@@ -760,7 +842,7 @@ class BaseConsole
     /**
      * Prints text to STDERR appended with a carriage return (PHP_EOL).
      *
-     * @param string $string the text to print
+     * @param string|null $string the text to print
      * @return int|bool number of bytes printed or false on error.
      */
     public static function error($string = null)
@@ -897,7 +979,7 @@ class BaseConsole
     /**
      * Starts display of a progress bar on screen.
      *
-     * This bar will be updated by [[updateProgress()]] and my be ended by [[endProgress()]].
+     * This bar will be updated by [[updateProgress()]] and may be ended by [[endProgress()]].
      *
      * The following example shows a simple usage of a progress bar:
      *
@@ -911,6 +993,7 @@ class BaseConsole
      * ```
      *
      * Git clone like progress (showing only status information):
+     *
      * ```php
      * Console::startProgress(0, 1000, 'Counting objects: ', false);
      * for ($n = 1; $n <= 1000; $n++) {
@@ -924,7 +1007,7 @@ class BaseConsole
      * @param int $total the total value of items that are to be done.
      * @param string $prefix an optional string to display before the progress bar.
      * Default to empty string which results in no prefix to be displayed.
-     * @param int|bool $width optional width of the progressbar. This can be an integer representing
+     * @param int|float|bool|null $width optional width of the progressbar. This can be an integer representing
      * the number of characters to display for the progress bar or a float between 0 and 1 representing the
      * percentage of screen with the progress bar may take. It can also be set to false to disable the
      * bar and only show progress information like percent, number of items and ETA.
@@ -950,7 +1033,7 @@ class BaseConsole
      *
      * @param int $done the number of items that are completed.
      * @param int $total the total value of items that are to be done.
-     * @param string $prefix an optional string to display before the progress bar.
+     * @param string|null $prefix an optional string to display before the progress bar.
      * Defaults to null meaning the prefix specified by [[startProgress()]] will be used.
      * If prefix is specified it will update the prefix that will be used by later calls.
      * @see startProgress
