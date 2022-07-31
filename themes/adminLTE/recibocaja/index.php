@@ -12,7 +12,7 @@ use app\models\Recibocaja;
 /* @var $searchModel app\models\ReciboCajaSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Recibo de cajas';
+$this->title = 'Recibo de caja';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="recibocaja-index">
