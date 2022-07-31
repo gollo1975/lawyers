@@ -32,7 +32,7 @@ $view = 'demandados';
             'method' => 'post',
         ],
     ]) ?>
-    <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 19, 'codigo' => $table->documento,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
+    <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 3, 'codigo' => $table->documento,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
 </p>
 
 <div class="panel panel-success">

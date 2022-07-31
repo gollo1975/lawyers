@@ -33,7 +33,7 @@ $view = 'demandas';
     <p>
         <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']) ?>
 	<?= Html::a('<span class="glyphicon glyphicon-pencil"></span> Editar', ['update', 'id' => $model->nro_demanda], ['class' => 'btn btn-success btn-sm']) ?>
-        <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 20, 'codigo' => $model->nro_demanda,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 5, 'codigo' => $model->nro_demanda,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
         <?= Html::a('<span class="glyphicon glyphicon-send"></span> Radicado',
                     ['/demandas/generaradicado','id' => $model->nro_demanda],
                     [

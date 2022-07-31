@@ -54,7 +54,7 @@ $view = 'notacredito';
                 echo Html::a('<span class="glyphicon glyphicon-check"></span> Generar', ['notacredito', 'id' => $model->idnotacredito], ['class' => 'btn btn-default btn-sm']);                
                 if ($model->numero > 0){
                     echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir', ['imprimir', 'id' => $model->idnotacredito], ['class' => 'btn btn-default btn-sm']);            
-                    echo Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 22, 'codigo' => $model->idnotacredito,'view' => $view], ['class' => 'btn btn-default btn-sm']);                                                         
+                    echo Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 7, 'codigo' => $model->idnotacredito,'view' => $view], ['class' => 'btn btn-default btn-sm']);                                                         
                 }
             }
         ?>

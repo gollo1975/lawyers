@@ -33,7 +33,7 @@ $view = 'juzgados';
     <p>
         <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']) ?>
 	<?= Html::a('<span class="glyphicon glyphicon-pencil"></span> Editar', ['update', 'id' => $model->codigo_juzgado], ['class' => 'btn btn-success btn-sm']) ?>
-        <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 17, 'codigo' => $model->codigo_juzgado,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 4, 'codigo' => $model->codigo_juzgado,'view' => $view], ['class' => 'btn btn-default btn-sm']) ?>
     </p>
     <div class="panel panel-success">
         <div class="panel-heading">

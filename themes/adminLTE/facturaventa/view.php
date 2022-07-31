@@ -30,7 +30,7 @@ $view = 'facturaventa';
             echo Html::a('<span class="glyphicon glyphicon-check"></span> Generar', ['generarnro', 'id' => $model->idfactura], ['class' => 'btn btn-default btn-sm']);
             if (($model->nro_factura > 0)){
                 echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir', ['imprimir', 'id' => $model->idfactura], ['class' => 'btn btn-default btn-sm']);            
-                echo Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 21, 'codigo' => $model->idfactura,'view' => $view], ['class' => 'btn btn-default btn-sm']);                                                         
+                echo Html::a('<span class="glyphicon glyphicon-folder-open"></span> Archivos', ['archivodir/index','numero' => 6, 'codigo' => $model->idfactura,'view' => $view], ['class' => 'btn btn-default btn-sm']);                                                         
             }
         }
         ?>
