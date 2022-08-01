@@ -87,7 +87,7 @@ class ArchivodirController extends \yii\web\Controller
                         $table->codigo = $codigo;
                         $table->iddocumentodir = $documentodir->iddocumentodir;
                         $table->iddirectorio = 1;
-                        $table->save(false);
+                        $table->insert();
                        $this->redirect([$view."/view",'id' => $codigo]);
                     } else {
                         Yii::$app->getSession()->setFlash('warning', 'Ya existe el nombre y la extesion del archivo que desea subir');    
