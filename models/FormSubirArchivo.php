@@ -19,7 +19,7 @@ class FormSubirArchivo extends Model
     {
         return [
              ['numero', 'default'],
-            ['codigo', 'default'],
+            ['codigo', 'string'],
             ['view', 'default'],
             ['file', 'file',
             'skipOnEmpty' => false,
