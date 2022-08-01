@@ -10,10 +10,8 @@ use yii\helpers\Url;
 use yii\widgets\LinkPager;
 use yii\bootstrap\Modal;
 
-
 $this->title = 'Gestor documental';
 $this->params['breadcrumbs'][] = $this->title;
-
 
 ?>
 
