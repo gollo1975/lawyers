@@ -5,10 +5,11 @@ namespace app\controllers;
 use Yii;
 use app\models\Municipio;
 use app\models\MunicipioSearch;
+use app\models\UsuarioDetalle;
+use app\models\Departamento;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use app\models\UsuarioDetalle;
 
 /**
  * MunicipioController implements the CRUD actions for Municipio model.
@@ -34,7 +35,7 @@ class MunicipioController extends Controller
      * Lists all Municipio models.
      * @return mixed
      */
-    public function actionIndex()
+   public function actionIndex()
     {
         if (Yii::$app->user->identity){
             if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',2])->all()){
@@ -75,19 +76,8 @@ class MunicipioController extends Controller
     {
         $model = new Municipio();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $codigo = $model->codigomunicipio;
-            $iddepartamento = $model->iddepartamento;
-            $valor = $iddepartamento.''.$codigo;
-            $valorencontrado = Municipio::find()->where(['idmunicipio' => $valor])->one();
-            if ($valorencontrado == $valor){
-                $model->idmuncipio = $valor;
-                $model->save();
-                return $this->redirect(['view', 'id' => $model->idmunicipio]);
-            }else{
-                Yii::$app->getSession()->setFlash('danger', 'Ya se xiste el municipio a ingresar');
-            }
-            
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
@@ -122,7 +112,7 @@ class MunicipioController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+   public function actionDelete($id)
     {
         try {
             $this->findModel($id)->delete();
@@ -130,9 +120,9 @@ class MunicipioController extends Controller
             $this->redirect(["municipio/index"]);
         } catch (IntegrityException $e) {
             $this->redirect(["municipio/index"]);
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el municipio, tiene registros asociados en otros procesos');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
         } catch (\Exception $e) {            
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el municipio, tiene registros asociados en otros procesos');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
             $this->redirect(["municipio/index"]);
         }
     }

@@ -12,6 +12,7 @@ use Yii;
  * @property int $activo
  *
  * @property Cliente[] $clientes
+ * @property Matriculaempresa[] $matriculaempresas
  * @property Municipio[] $municipios
  */
 class Departamento extends \yii\db\ActiveRecord
@@ -23,6 +24,16 @@ class Departamento extends \yii\db\ActiveRecord
     {
         return 'departamento';
     }
+    
+    public function beforeSave($insert) {
+	if(!parent::beforeSave($insert)){
+            return false;
+        }
+	# ToDo: Cambiar a cliente cargada de configuración.    
+	$this->departamento = strtoupper($this->departamento);
+	
+        return true;
+    }
 
     /**
      * {@inheritdoc}
@@ -30,7 +41,7 @@ class Departamento extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['iddepartamento', 'departamento'], 'required', 'message' => 'Campo requerido'],
+            [['iddepartamento', 'departamento'], 'required'],
             [['activo'], 'integer'],
             [['iddepartamento'], 'string', 'max' => 15],
             [['departamento'], 'string', 'max' => 100],
@@ -44,7 +55,7 @@ class Departamento extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'iddepartamento' => 'Id (Dane)',
+            'iddepartamento' => 'Codigo',
             'departamento' => 'Departamento',
             'activo' => 'Activo',
         ];
@@ -61,18 +72,25 @@ class Departamento extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getMatriculaempresas()
+    {
+        return $this->hasMany(Matriculaempresa::className(), ['iddepartamento' => 'iddepartamento']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getMunicipios()
     {
         return $this->hasMany(Municipio::className(), ['iddepartamento' => 'iddepartamento']);
     }
     
-    public function getEstado()
-    {
-        if ($this->activo == 1){
-            $activo = "SI";
+    public function getEstadoRegistro() {
+        if($this->activo == 0){
+            $estadoregistro = 'NO';
         }else{
-            $activo = "NO";
+            $estadoregistro = 'SI';
         }
-        return $activo;
+        return $estadoregistro;
     }
 }

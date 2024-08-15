@@ -47,7 +47,7 @@ class DepartamentoController extends Controller
                 ]);
             }else{
                 return $this->redirect(['site/sinpermiso']);
-            } 
+            }
         }else{
             return $this->redirect(['site/login']);
         }
@@ -76,7 +76,7 @@ class DepartamentoController extends Controller
         $model = new Departamento();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->iddepartamento]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
@@ -119,9 +119,9 @@ class DepartamentoController extends Controller
             $this->redirect(["departamento/index"]);
         } catch (IntegrityException $e) {
             $this->redirect(["departamento/index"]);
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el departamento, tiene registros asociados en otros procesos');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
         } catch (\Exception $e) {            
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el departamento, tiene registros asociados en otros procesos');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
             $this->redirect(["departamento/index"]);
         }
     }

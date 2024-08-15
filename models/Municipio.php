@@ -14,8 +14,8 @@ use Yii;
  * @property int $activo
  *
  * @property Cliente[] $clientes
+ * @property Matriculaempresa[] $matriculaempresas
  * @property Departamento $departamento
- * @property Recibocaja[] $recibocajas
  */
 class Municipio extends \yii\db\ActiveRecord
 {
@@ -26,6 +26,15 @@ class Municipio extends \yii\db\ActiveRecord
     {
         return 'municipio';
     }
+    public function beforeSave($insert) {
+	if(!parent::beforeSave($insert)){
+            return false;
+        }
+	# ToDo: Cambiar a cliente cargada de configuración.    
+	$this->municipio = strtoupper($this->municipio);
+	
+        return true;
+    }
 
     /**
      * {@inheritdoc}
@@ -33,11 +42,11 @@ class Municipio extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['idmunicipio', 'codigomunicipio', 'municipio','iddepartamento'], 'required', 'message' => 'Campo requerido'],
+            [['idmunicipio', 'codigomunicipio', 'municipio'], 'required'],
             [['activo'], 'integer'],
             [['idmunicipio', 'codigomunicipio', 'iddepartamento'], 'string', 'max' => 15],
             [['municipio'], 'string', 'max' => 100],
-            [['idmunicipio'], 'unique'],          
+            [['idmunicipio'], 'unique'],
             [['iddepartamento'], 'exist', 'skipOnError' => true, 'targetClass' => Departamento::className(), 'targetAttribute' => ['iddepartamento' => 'iddepartamento']],
         ];
     }
@@ -48,8 +57,8 @@ class Municipio extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idmunicipio' => 'Id',
-            'codigomunicipio' => 'Codigo Municipio (Dane)',
+            'idmunicipio' => 'Codigo',
+            'codigomunicipio' => 'Dane',
             'municipio' => 'Municipio',
             'iddepartamento' => 'Departamento',
             'activo' => 'Activo',
@@ -67,36 +76,25 @@ class Municipio extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDepartamento()
+    public function getMatriculaempresas()
     {
-        return $this->hasOne(Departamento::className(), ['iddepartamento' => 'iddepartamento']);
+        return $this->hasMany(Matriculaempresa::className(), ['idmunicipio' => 'idmunicipio']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRecibocajas()
+    public function getDepartamento()
     {
-        return $this->hasMany(Recibocaja::className(), ['idmunicipio' => 'idmunicipio']);
+        return $this->hasOne(Departamento::className(), ['iddepartamento' => 'iddepartamento']);
     }
     
-    public function getCajaCompensacion()
-    {
-        return $this->hasMany(CajaCompensacion::className(), ['idmunicipio' => 'idmunicipio']);
-    }
-
-    public function getMunicipioCompleto()
-    {
-        return "{$this->municipio} - {$this->departamento->departamento}";
-    }
-    
-    public function getEstado()
-    {
-        if ($this->activo == 1){
-            $activo = "SI";
+    public function getEstadoRegistro() {
+        if($this->activo == 0){
+            $estadoregistro = 'NO';
         }else{
-            $activo = "NO";
+            $estadoregistro = 'SI';
         }
-        return $activo;
+        return $estadoregistro;
     }
 }

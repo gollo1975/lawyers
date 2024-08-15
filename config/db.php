@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=erpdiamante',
+    'dsn' => 'mysql:host=localhost;dbname=bdsjcotizacion',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',
