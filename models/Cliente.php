@@ -97,98 +97,10 @@ class Cliente extends \yii\db\ActiveRecord
         return $this->hasOne(Municipio::className(), ['idmunicipio' => 'idmunicipio']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFacturaventas()
-    {
-        return $this->hasMany(Facturaventa::className(), ['idcliente' => 'idcliente']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getOrdenproduccions()
-    {
-        return $this->hasMany(Ordenproduccion::className(), ['idcliente' => 'idcliente']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProductos()
-    {
-        return $this->hasMany(Producto::className(), ['idcliente' => 'idcliente']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRecibocajas()
-    {
-        return $this->hasMany(Recibocaja::className(), ['idcliente' => 'idcliente']);
-    }
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFichatiempodetalle()
-    {
-        return $this->hasMany(Fichatiempodetalle::className(), ['idcliente' => 'idcliente']);
-    }
-
     public function getNombreClientes()
     {
         return "{$this->nombrecorto} - {$this->cedulanit}";
     }
     
-    public function getAutoretener()
-    {
-        if($this->autoretenedor == 1){
-            $autoretenedor = "SI";
-        }else{
-            $autoretenedor = "NO";
-        }
-        return $autoretenedor;
-    }
     
-    public function getRetenerfuente()
-    {
-        if($this->retencionfuente == 1){
-            $retenerfuente = "SI";
-        }else{
-            $retenerfuente = "NO";
-        }
-        return $retenerfuente;
-    }
-    
-    public function getReteneriva()
-    {
-        if($this->retencioniva == 1){
-            $retenerfiva = "SI";
-        }else{
-            $retenerfiva = "NO";
-        }
-        return $retenerfiva;
-    }
-    
-    public function getRegimen()
-    {
-        if($this->tiporegimen == 1){
-            $tiporegimen = "CÓMUN";
-        }
-        if($this->tiporegimen == 2){
-            $tiporegimen = "SIMPLIFICADO";
-        }        
-        return $tiporegimen;
-    }
-     public function getFormaPago()
-    {
-        if($this->formapago == 1){
-            $formapago = "CONTADO";
-        }else{
-            $formapago = "CREDITO";
-        }        
-        return $formapago;
-    }
 }

@@ -18,7 +18,7 @@ class TipoDocumentoSearch extends TipoDocumento
     public function rules()
     {
         return [
-            [['id_tipo_documento','vista_cliente','vista_abogados', 'vista_demandados'], 'integer'],
+            [['id_tipo_documento'], 'integer'],
             [['tipo', 'descripcion'], 'safe'],
             [['codigo_interfaz'], 'string'],
         ];
@@ -62,6 +62,7 @@ class TipoDocumentoSearch extends TipoDocumento
         $query->andFilterWhere([
             'id_tipo_documento' => $this->id_tipo_documento,
             'descripcion' => $this->descripcion,
+            'codigo_interfaz' => $this->codigo_interfaz,
         ]);
 
         $query->andFilterWhere(['like', 'tipo', $this->tipo])

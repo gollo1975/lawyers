@@ -25,20 +25,11 @@ class FormCliente extends Model
     public $telefonocliente;
     public $celularcliente;
     public $emailcliente;
-    public $contacto;
-    public $celularcontacto;
-    public $formapago;
-    public $plazopago;
     public $iddepartamento;
     public $idmunicipio;
     public $nitmatricula;
-    public $tiporegimen;
-    public $autoretenedor;
-    public $retencioniva;
-    public $retencionfuente;
     public $observacion;
     public $fechaingreso;
-    public $fecha_nacimiento;
     public $usuario;
 
     public function rules()
@@ -46,7 +37,6 @@ class FormCliente extends Model
         return [
 			
             ['id_tipo_documento', 'required', 'message' => 'Campo requerido'],
-            [['fecha_nacimiento'], 'safe'],
             ['cedulanit', 'required', 'message' => 'Campo requerido'],
             ['cedulanit', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
             ['cedulanit', 'cedulanit_existe'],            
@@ -59,22 +49,11 @@ class FormCliente extends Model
             ['telefonocliente', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
             ['celularcliente', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
             ['emailcliente', 'email'],
-            ['emailcliente', 'required', 'message' => 'Campo requerido'],
+            [['emailcliente', 'direccioncliente','celularcliente'], 'required', 'message' => 'Campo requerido'],
             ['emailcliente', 'email_existe'],
-            ['contacto', 'match', 'pattern' => '/^[a-záéíóúñ\s]+$/i', 'message' => 'Sólo se aceptan letras'],
-            ['celularcontacto', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
-            ['formapago', 'required', 'message' => 'Campo requerido'],
-            ['formapago', 'default'],
-            ['plazopago', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
             ['iddepartamento', 'required', 'message' => 'Campo requerido'],
             ['idmunicipio', 'required', 'message' => 'Campo requerido'],
             [['idmunicipio'], 'exist', 'skipOnError' => true, 'targetClass' => Municipio::className(), 'targetAttribute' => ['idmunicipio' => 'idmunicipio'],'message' => 'Campo requerido'],                      
-            ['tiporegimen', 'required', 'message' => 'Campo requerido'],
-            ['autoretenedor', 'required'],
-            ['retencioniva', 'required', 'message' => 'Campo requerido'],
-            ['retencioniva', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
-            ['retencionfuente', 'required', 'message' => 'Campo requerido'],
-            ['retencionfuente', 'match', 'pattern' => '/^[0-9\s]+$/i', 'message' => 'Sólo se aceptan números'],
             ['observacion', 'default'],
             ['usuario', 'string'],
         ];
@@ -92,20 +71,12 @@ class FormCliente extends Model
             'telefonocliente' => 'Teléfono:',
             'celularcliente' => 'celular:',
             'emailcliente' => 'Email:',
-            'contacto' => 'Contacto:',
-            'celularcontacto' => 'Celular contacto:',
-            'formapago' => 'Forma de Pago:',
-            'plazopago' => 'Plazo:',
             'iddepartamento' => 'Departamento:',
             'idmunicipio' => 'Municipio:',            
-            'tiporegimen' => 'Tipo Régimen:',
-            'autoretenedor' => 'Autoretenedor:',
-            'retencioniva' => 'Retención Iva:',
-            'retencionfuente' => 'Retención Fte:',
             'dv' => '',
             'observacion' => 'Observaciones:',
             'usuario' => 'Usuario:',
-            'fecha_nacimiento' => 'Fecha nacimiento:'
+           
 
         ];
     }

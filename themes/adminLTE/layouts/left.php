@@ -55,12 +55,6 @@
                                                 
                                                 ['label' => 'Departamento', 'icon' => 'plus-square-o', 'url' => ['/departamento/index']],  
                                                 ['label' => 'Municipio', 'icon' => 'plus-square-o', 'url' => ['/municipio/index']],
-                                                ['label' => 'Bancos', 'icon' => 'plus-square-o', 'url' => ['/banco/index']],
-                                                ['label' => 'Distrito', 'icon' => 'plus-square-o', 'url' => ['/distrito/index']],
-                                                ['label' => 'Circuito', 'icon' => 'plus-square-o', 'url' => ['/circuito/index']],
-                                                ['label' => 'Procesos / Clases', 'icon' => 'plus-square-o', 'url' => ['clases-demandas/index']],
-                                                ['label' => 'Especialidades', 'icon' => 'plus-square-o', 'url' => ['especialidades/index']],
-                                                                                            
                                                 ['label' => 'Tipo Documento', 'icon' => 'plus-square-o', 'url' => ['/tipo-documento/index']],
                                             ],
                                         ],
@@ -70,18 +64,8 @@
                                             'url' => '#',
                                             'items' => [
                                             ['label' => 'Cliente', 'icon' => 'plus-square-o', 'url' => ['/clientes/index']],
-                                            [
-                                                'label' => 'Demandas',
-                                                'icon' => 'cube',
-                                                'url' => '#',
-                                                'items' => [
-                                                    ['label' => 'Juez', 'icon' => 'plus-square-o', 'url' => ['juez/index']],
-                                                    ['label' => 'Abogados', 'icon' => 'plus-square-o', 'url' => ['abogados/index']],
-                                                    ['label' => 'Demandados', 'icon' => 'plus-square-o', 'url' => ['demandados/index']],
-                                                    ['label' => 'Juzgados', 'icon' => 'plus-square-o', 'url' => ['/juzgados/index']],   
-                                                    ['label' => 'Procesos', 'icon' => 'plus-square-o', 'url' => ['/demandas/index']],
-                                            ]],
-                                              ['label' => 'Agenda virtual', 'icon' => 'plus-square-o', 'url' => ['/agenda-digital/index']],    
+                                            ['label' => 'Insumos', 'icon' => 'plus-square-o', 'url' => ['/insumos/index']], 
+                                            ['label' => 'Referencias', 'icon' => 'plus-square-o', 'url' => ['/referencia-producto/index']], 
                                         ]        
                                         ],
                                         [

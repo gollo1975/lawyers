@@ -34,18 +34,19 @@ class ClientesController extends Controller {
 
     public function actionIndex() {
         if (Yii::$app->user->identity){
-            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',8])->all()){
+            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',4])->all()){
                 $form = new FormFiltroCliente;
                 $cedulanit = null;
-                $nombrecorto = null;
+                $nombre_completo = null;
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {
                         $cedulanit = Html::encode($form->cedulanit);
-                        $nombrecorto = Html::encode($form->nombrecorto);
+                        $nombre_completo = Html::encode($form->nombre_completo);
                         $table = Cliente::find()
                                 ->andFilterWhere(['like', 'cedulanit', $cedulanit])
-                                ->andFilterWhere(['like', 'nombrecorto', $nombrecorto])
+                                ->andFilterWhere(['like', 'nombrecorto', $nombre_completo])
                                 ->orderBy('idcliente desc');
+                        $tableexcel = $table->all();
                         $count = clone $table;
                         $to = $count->count();
                         $pages = new Pagination([
@@ -59,9 +60,14 @@ class ClientesController extends Controller {
                     } else {
                         $form->getErrors();
                     }
+                    if(isset($_POST['excel'])){
+                        //$table = $table->all();
+                        $this->actionExcelDepartamento($tableexcel);
+                    }
                 } else {
                     $table = Cliente::find()
                             ->orderBy('idcliente desc');
+                    $tableexcel = $table->all();
                     $count = clone $table;
                     $pages = new Pagination([
                         'pageSize' => 10,
@@ -71,6 +77,10 @@ class ClientesController extends Controller {
                             ->offset($pages->offset)
                             ->limit($pages->limit)
                             ->all();
+                     if(isset($_POST['excel'])){
+                        //$table = $table->all();
+                        $this->actionExcelDepartamento($tableexcel);
+                     }    
                 }
                 $to = $count->count();
                 return $this->render('index', [
@@ -86,11 +96,9 @@ class ClientesController extends Controller {
         }    
     }
 
-    public function actionNuevo() {
+    public function actionCreate() {
         $matriculaempresa = Matriculaempresa::findOne(1);
         $model = new FormCliente();
-        $msg = null;
-        $tipomsg = null;
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -109,18 +117,9 @@ class ClientesController extends Controller {
                 $table->telefonocliente = $model->telefonocliente;
                 $table->celularcliente = $model->celularcliente;
                 $table->emailcliente = $model->emailcliente;
-                $table->fecha_nacimiento = $model->fecha_nacimiento;
                 $table->iddepartamento = $model->iddepartamento;
                 $table->idmunicipio = $model->idmunicipio;
-                $table->contacto = $model->contacto;
-                $table->celularcontacto = $model->celularcontacto;
-                $table->formapago = $model->formapago;
-                $table->plazopago = $model->plazopago;
                 $table->nitmatricula = $matriculaempresa->nitmatricula;
-                $table->tiporegimen = $model->tiporegimen;
-                $table->autoretenedor = $model->autoretenedor;
-                $table->retencionfuente = $model->retencionfuente;
-                $table->retencioniva = $model->retencioniva;
                 $table->observacion = $model->observacion;
                 $table->dv = $dv;
                 $table->usuario = Yii::$app->user->identity->username;
@@ -129,27 +128,23 @@ class ClientesController extends Controller {
                     $model->nombrecliente = null;
                     $model->apellidocliente = null;
                 }else{
-                    $table->nombrecorto = $model->nombrecliente . " " . $model->apellidocliente;
+                    $table->nombrecorto = strtoupper($model->nombrecliente . " " . $model->apellidocliente);
                     $model->razonsocial = null;
                 }
 
                 if ($table->insert()) {
                     $this->redirect(["clientes/index"]);
-                } else {
-                    $msg = "error";
-                }
+                } 
             } else {
                 $model->getErrors();
             }
         }
-        return $this->render('nuevo', ['model' => $model, 'msg' => $msg, 'tipomsg' => $tipomsg]);
+        return $this->render('_form', ['model' => $model]);
     }
 
-    public function actionEditar($id) {
+    public function actionUpdate($id) {
         $matriculaempresa = Matriculaempresa::findOne(1);
         $model = new FormCliente();
-        $msg = null;
-        $tipomsg = null;
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -170,17 +165,7 @@ class ClientesController extends Controller {
                     $table->emailcliente = $model->emailcliente;
                     $table->iddepartamento = $model->iddepartamento;
                     $table->idmunicipio = $model->idmunicipio;
-                    $table->contacto = $model->contacto;
-                    $table->celularcontacto = $model->celularcontacto;
-                    $table->formapago = $model->formapago;
-                    $table->plazopago = $model->plazopago;
-                    $table->nitmatricula = $matriculaempresa->nitmatricula;
-                    $table->tiporegimen = $model->tiporegimen;
-                    $table->autoretenedor = $model->autoretenedor;
-                    $table->retencionfuente = $model->retencionfuente;
-                    $table->retencioniva = $model->retencioniva;
                     $table->observacion = $model->observacion;
-                    $table->fecha_nacimiento = $model->fecha_nacimiento;
                     $table->dv = $dv;
                     if ($model->id_tipo_documento == 5){
                         $table->nombrecorto = strtoupper($model->razonsocial);
@@ -191,8 +176,8 @@ class ClientesController extends Controller {
                         $model->razonsocial = null;
                     } 
                     if ($table->update()) {
-                        $msg = "El registro ha sido actualizado correctamente";
-                       $this->redirect(["clientes/index"]);
+                        Yii::$app->getSession()->setFlash('success', 'Registro actualizado con exito.');
+                        return $this->redirect(["clientes/index"]);
                     } else {
                         $this->redirect(["clientes/index"]);
                     }
@@ -218,18 +203,10 @@ class ClientesController extends Controller {
                 $model->apellidocliente = $table->apellidocliente;
                 $model->direccioncliente = $table->direccioncliente;
                 $model->celularcliente = $table->celularcliente;
+                $model->telefonocliente = $table->telefonocliente;
                 $model->emailcliente = $table->emailcliente;
                 $model->iddepartamento = $table->iddepartamento;
                 $model->idmunicipio = $table->idmunicipio;
-                $model->contacto = $table->contacto;
-                $model->celularcontacto = $table->celularcontacto;
-                $model->formapago = $table->formapago;
-                $model->plazopago = $table->plazopago;
-                $model->nitmatricula = $table->nitmatricula;
-                $model->tiporegimen = $table->tiporegimen;
-                $model->autoretenedor = $table->autoretenedor;
-                $model->retencionfuente = $table->retencionfuente;
-                $model->retencioniva = $table->retencioniva;
                 $model->dv = $table->dv;
                 $model->observacion = $table->observacion;
             } else {
@@ -238,13 +215,13 @@ class ClientesController extends Controller {
         } else {
             return $this->redirect(["clientes/index"]);
         }
-        return $this->render("editar", ["model" => $model, "msg" => $msg, "tipomsg" => $tipomsg, "municipio" => $municipio]);
+        return $this->render("update", ["model" => $model,  "municipio" => $municipio]);
     }
 
     public function actionView($id) {
         // $model = new List();            
-        $table = Cliente::find()->where(['idcliente' => $id])->one();
-        return $this->render('view', ['table' => $table
+        $model = Cliente::find()->where(['idcliente' => $id])->one();
+        return $this->render('view', ['model' => $model
         ]);
     }
 
@@ -414,7 +391,18 @@ class ClientesController extends Controller {
         ]);
     }
     
-    public function actionExcelconsulta($tableexcel) {                
+    public function actionMunicipios($id) {
+        $rows = Municipio::find()->where(['iddepartamento' => $id])->all();
+
+        echo "<option required>Seleccione...</option>";
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                echo "<option value='$row->idmunicipio' required>$row->municipio</option>";
+            }
+        }
+    }
+    
+    public function actionExcelDepartamento($tableexcel) {                
         $objPHPExcel = new \PHPExcel();
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("EMPRESA")
@@ -441,39 +429,23 @@ class ClientesController extends Controller {
         $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('W')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('X')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('Y')->setAutoSize(true);        
+          
         $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'Id')
-                    ->setCellValue('B1', 'Tipo')
-                    ->setCellValue('C1', 'Fecha')
-                    ->setCellValue('D1', 'Cedula/Nit')
-                    ->setCellValue('E1', 'Dv')
-                    ->setCellValue('F1', 'Razon Social')
-                    ->setCellValue('G1', 'Nombres')
-                    ->setCellValue('H1', 'Apellidos')
-                    ->setCellValue('I1', 'Nombre Completo')
-                    ->setCellValue('J1', 'Departamento')
-                    ->setCellValue('K1', 'Municipio')
-                    ->setCellValue('L1', 'Direccion')
-                    ->setCellValue('M1', 'Telefono')  
-                    ->setCellValue('N1', 'celular')
-                    ->setCellValue('O1', 'Email')
-                    ->setCellValue('P1', 'Forma Pago')
-                    ->setCellValue('Q1', 'Plazo Pago')
-                    ->setCellValue('R1', 'Tipo Regimen')
-                    ->setCellValue('S1', 'Autoretenedor')
-                    ->setCellValue('T1', 'Retencion Iva')
-                    ->setCellValue('U1', 'Retencion Fuente')
-                    ->setCellValue('V1', 'Observacion');                    
+                    ->setCellValue('A1', 'ID')
+                    ->setCellValue('B1', 'TIPO')
+                    ->setCellValue('C1', 'DOCUMENTO')
+                    ->setCellValue('D1', 'DV')
+                    ->setCellValue('E1', 'RAZON SOCIAL')
+                    ->setCellValue('F1', 'NOMBRES')
+                    ->setCellValue('G1', 'APELLIDOS')
+                    ->setCellValue('H1', 'RAZON SOCIAL')
+                    ->setCellValue('I1', 'Departamento')
+                    ->setCellValue('J1', 'Municipio')
+                    ->setCellValue('K1', 'Direccion')
+                    ->setCellValue('L1', 'Telefono')  
+                    ->setCellValue('M1', 'celular')
+                    ->setCellValue('N1', 'Email')
+                    ->setCellValue('O1', 'Observacion');                    
         $i = 2;
         
         foreach ($tableexcel as $val) {
@@ -481,7 +453,6 @@ class ClientesController extends Controller {
             $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('A' . $i, $val->idcliente)
                     ->setCellValue('B' . $i, $val->tipo->tipo)
-                    ->setCellValue('C' . $i, $val->fechaingreso)
                     ->setCellValue('D' . $i, $val->cedulanit)
                     ->setCellValue('E' . $i, $val->dv)
                     ->setCellValue('F' . $i, $val->razonsocial)
@@ -494,12 +465,6 @@ class ClientesController extends Controller {
                     ->setCellValue('M' . $i, $val->telefonocliente)
                     ->setCellValue('N' . $i, $val->celularcliente)
                     ->setCellValue('O' . $i, $val->emailcliente)
-                    ->setCellValue('P' . $i, $val->formaPago)
-                    ->setCellValue('Q' . $i, $val->plazopago)
-                    ->setCellValue('R' . $i, $val->regimen)
-                    ->setCellValue('S' . $i, $val->autoretener)
-                    ->setCellValue('T' . $i, $val->retenerfuente)
-                    ->setCellValue('U' . $i, $val->reteneriva)
                     ->setCellValue('V' . $i, $val->observacion);
             $i++;
         }
@@ -509,7 +474,7 @@ class ClientesController extends Controller {
 
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="cliente.xlsx"');
+        header('Content-Disposition: attachment;filename="clientes.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

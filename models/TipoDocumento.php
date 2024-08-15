@@ -10,10 +10,11 @@ use Yii;
  * @property int $id_tipo_documento
  * @property string $tipo
  * @property string $descripcion
+ * @property string $codigo_interfaz
  *
  * @property Cliente[] $clientes
  */
-class TipoDocumento extends \yii\db\ActiveRecord
+class Tipodocumento extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -23,25 +24,15 @@ class TipoDocumento extends \yii\db\ActiveRecord
         return 'tipodocumento';
     }
 
-    public function beforeSave($insert) {
-        if(!parent::beforeSave($insert)){
-            return false;
-        }	       
-        $this->descripcion = strtoupper($this->descripcion);
-        $this->tipo = strtoupper($this->tipo);
-        return true;
-    }
-    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['tipo', 'descripcion','codigo_interfaz'], 'required', 'message' => 'Campo requerido'],
-            [['tipo','codigo_interfaz'], 'string', 'max' => 10],
+            [['tipo', 'descripcion', 'codigo_interfaz'], 'required'],
+            [['tipo', 'codigo_interfaz'], 'string', 'max' => 10],
             [['descripcion'], 'string', 'max' => 40],
-            [['vista_cliente','vista_abogados','vista_demandados'], 'integer'],
         ];
     }
 
@@ -54,10 +45,7 @@ class TipoDocumento extends \yii\db\ActiveRecord
             'id_tipo_documento' => 'Id',
             'tipo' => 'Tipo',
             'descripcion' => 'Descripcion',
-            'codigo_interfaz' => 'Código Interfaz',
-            'vista_cliente' => 'Vista cliente',
-            'vista_abogados' => 'Vista_abogados',
-            'vista_demandados' => 'Vista demandados',
+            'codigo_interfaz' => 'Codigo interfaz',
         ];
     }
 
@@ -67,10 +55,5 @@ class TipoDocumento extends \yii\db\ActiveRecord
     public function getClientes()
     {
         return $this->hasMany(Cliente::className(), ['id_tipo_documento' => 'id_tipo_documento']);
-    }
-    
-    public function getEmpleado()
-    {
-        return $this->hasMany(Empleado::className(), ['id_tipo_documento' => 'id_tipo_documento']);
     }
 }

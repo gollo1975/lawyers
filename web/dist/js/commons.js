@@ -216,12 +216,12 @@ function mostrar2() {
     idtipo = document.getElementById('id_tipo_documento').value;
     if (idtipo == '1') {
         razonsocial.style.display = "none";
-        nombreproveedor.style.display = "block";
-        apellidoproveedor.style.display = "block";
+        nombrecliente.style.display = "block";
+        apellidocliente.style.display = "block";
     } else if (idtipo == '5') {
         razonsocial.style.display = "block";
-        nombreproveedor.style.display = "none";
-        apellidoproveedor.style.display = "none";
+        nombrecliente.style.display = "none";
+        apellidocliente.style.display = "none";
     }
 };
 
