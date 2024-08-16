@@ -100,11 +100,11 @@ $this->params['breadcrumbs'][] = $model->idcliente;
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr style='font-size:90%;'>
-                                        <th scope="col" style='background-color:#edf2f4;'>Id</th>                        
-                                        <th scope="col" style='background-color:#edf2f4;'>Nombre contacto</th>                        
-                                        <th scope="col" style='background-color:#edf2f4;'>Email</th> 
-                                        <th scope="col" style='background-color:#edf2f4;'>Celular</th> 
-                                        <th scope="col" style='background-color:#edf2f4;'>F.nacimiento</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>ID</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>NOMBRE CONTACTO</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>EMAIL</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>CELULAR</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>F. NACIMIENTO</th> 
                                     </tr>
                                 </thead>
                                 <tbody>

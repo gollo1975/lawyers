@@ -75,17 +75,17 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
         <table class="table table-bordered table-hover">
             <thead>
-           <tr style="font-size: 90%;">    
-                <th scope="col" style='background-color:#edf2f4;'>Tipo</th>
-                <th scope="col" style='background-color:#edf2f4;'>Cedula/Nit</th>
-                <th scope="col" style='background-color:#edf2f4;'>Cliente</th>
-                <th scope="col" style='background-color:#edf2f4;'>Dirección</th>
-                <th scope="col" style='background-color:#edf2f4;'>Teléfono</th>
-                <th scope="col" style='background-color:#edf2f4;'>Celular</th>
-                <th scope="col" style='background-color:#edf2f4;'>Departamento</th>
-                <th scope="col" style='background-color:#edf2f4;'>Municipio</th>
-                <th scope="col" style='background-color:#edf2f4;'></th>  
-                <th scope="col" style='background-color:#edf2f4;'></th> 
+           <tr style="font-size: 85%;">    
+                <th scope="col" style='background-color:#caf0f8;'>TIPO</th>
+                <th scope="col" style='background-color:#caf0f8;'>DOCUMENTO</th>
+                <th scope="col" style='background-color:#caf0f8;'>CLIENTE</th>
+                <th scope="col" style='background-color:#caf0f8;'>DIRECCION</th>
+                <th scope="col" style='background-color:#caf0f8;'>TEFEFONO</th>
+                <th scope="col" style='background-color:#caf0f8;'>CELULAR</th>
+                <th scope="col" style='background-color:#caf0f8;'>DEPARTAMENTO</th>
+                <th scope="col" style='background-color:#caf0f8;'>MUNICIPIO</th>
+                <th scope="col" style='background-color:#caf0f8;'></th>  
+                <th scope="col" style='background-color:#caf0f8;'></th> 
             </tr>
             </thead>
             <tbody>
