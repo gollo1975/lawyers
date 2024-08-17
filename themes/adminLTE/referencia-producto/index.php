@@ -96,7 +96,7 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                     <td>R-<?= $val->codigo ?></td>
                     <td><?= $val->descripcion_referencia ?></td>
                     <td><?= $val->grupo->concepto ?></td>
-                    <td align="right"><?= number_format($val->costo_producto,0) ?></td>
+                    <td align="right"><?= '$'.number_format($val->costo_producto,0) ?></td>
                     <td align="right"><?= $val->codigo_homologado ?></td>
                     <!-- Inicio Nuevo Detalle proceso -->
                     <td style= 'width: 25px;'>				

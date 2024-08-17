@@ -124,6 +124,7 @@ class ReferenciaProductoController extends Controller
     public function actionView($id)
     {
         $lista_precio = \app\models\ReferenciaListaPrecio::find()->where(['=','codigo', $id])->all();
+        $simulador = \app\models\ReferenciaSimulador::find()->where(['=','codigo', $id])->all();
         if (isset($_POST["actualizar_precio_venta"])) {
             if (isset($_POST["listado_precios"])) {
                  $intIndice = 0;
@@ -137,11 +138,41 @@ class ReferenciaProductoController extends Controller
                 return $this->redirect(['view','id' => $id]);
             }
         }    
-                
+              
+        //ACTUALIZA LOS COSTO DE INSUMOS
+         if (isset($_POST["actualizar_lineas_insumos"])) {
+            if (isset($_POST["listado_insumos"])) {
+                 $intIndice = 0;
+                foreach ($_POST["listado_insumos"] as $intCodigo) {
+                    $table = \app\models\ReferenciaSimulador::findOne($intCodigo);
+                    $table->valor_costo = $_POST["valor_costo"][$intIndice];
+                    $table->cantidad  = $_POST["cantidad"][$intIndice];
+                    $table->total_linea = round($table->valor_costo * $table->cantidad);
+                    $table->save();
+                    $intIndice++;
+                }
+                $this->SumarLineasCosto($id);
+                return $this->redirect(['view','id' => $id]);
+            }
+        }    
+        
         return $this->render('view', [
             'model' => $this->findModel($id),
             'lista_precio' => $lista_precio,
+            'simulador' => $simulador,
         ]);
+    }
+    
+    //PROCESO QUE ACTUALIZA EL COSTO
+    protected function SumarLineasCosto($id) {
+        $referencia = ReferenciaProducto::findOne($id);
+        $simular = \app\models\ReferenciaSimulador::find()->where(['=','codigo', $id])->all();
+        $total = 0;
+        foreach ($simular as $valor):
+            $total += $valor->total_linea;
+        endforeach;
+        $referencia->costo_producto = $total;
+        $referencia->save();
     }
     
        /**
@@ -237,6 +268,74 @@ class ReferenciaProductoController extends Controller
         ]);
     }    
     
+    //BUSCA INSUMOS PARA AGREGAR AL SIMULADOR
+    public function actionBuscar_insumos($id){
+        $operacion = \app\models\Insumos::find()->orderBy('nombre_insumo ASC')->all();
+        $form = new \app\models\ModeloBuscar();
+        $nombre_insumo = null;
+        $clasificacion = null;
+        if ($form->load(Yii::$app->request->get())) {
+            if ($form->validate()) {
+                $nombre_insumo = Html::encode($form->nombre_insumo);  
+                $clasificacion = Html::encode($form->clasificacion); 
+                $operacion = \app\models\Insumos::find()
+                        ->andFilterWhere(['like','nombre_insumo',$nombre_insumo])
+                        ->andFilterWhere(['=','id_clasificacion', $clasificacion]);
+                $operacion = $operacion->orderBy('nombre_insumo ASC');                    
+                $count = clone $operacion;
+                $to = $count->count();
+                $pages = new Pagination([
+                    'pageSize' => 15,
+                    'totalCount' => $count->count()
+                ]);
+                $operacion = $operacion
+                        ->offset($pages->offset)
+                        ->limit($pages->limit)
+                        ->all();         
+            } else {
+                $form->getErrors();
+            }                    
+        }else{
+            $operacion = \app\models\Insumos::find()->orderBy('nombre_insumo ASC');
+            $tableexcel = $operacion->all();
+            $count = clone $operacion;
+            $pages = new Pagination([
+                        'pageSize' => 15,
+                        'totalCount' => $count->count(),
+            ]);
+             $operacion = $operacion
+                            ->offset($pages->offset)
+                            ->limit($pages->limit)
+                            ->all();
+        }
+        //PROCESO DE GUARDAR
+         if (isset($_POST["enviar_insumos"])) {
+            if(isset($_POST["codigo_insumo"])){
+                $intIndice = 0;
+                foreach ($_POST["codigo_insumo"] as $intCodigo) {
+                    $registro = \app\models\ReferenciaSimulador::find()->where(['=','id_insumo', $intCodigo])->andWhere(['=','codigo', $id])->one();
+                    if(!$registro){
+                        $item = \app\models\Insumos::findOne($intCodigo);
+                        $table = new \app\models\ReferenciaSimulador();
+                        $table->id_insumo = $intCodigo;
+                        $table->valor_costo = $item->valor_costo;
+                        $table->cantidad = 1;
+                        $table->codigo = $id;
+                        $table->user_name = Yii::$app->user->identity->username;
+                        $table->save(false);
+                    }    
+                }
+                return $this->redirect(['view','id' => $id]);
+            }
+        }
+        return $this->render('importar_insumo', [
+            'operacion' => $operacion,            
+            'pagination' => $pages,
+            'id' => $id,
+            'form' => $form,
+
+        ]);
+    }
    
 
     /**

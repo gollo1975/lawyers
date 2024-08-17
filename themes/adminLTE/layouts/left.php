@@ -82,7 +82,7 @@
                                             'icon' => 'exchange',
                                             'url' => '#',
                                             'items' => [
-                                            //['label' => 'Banco', 'icon' => 'plus-square-o', 'url' => ['/banco/index']],                                            
+                                                ['label' => 'Cotizaciones', 'icon' => 'plus-square-o', 'url' => ['/cotizaciones/index']],                                        
                                             ],
                                         ],
                                     ],

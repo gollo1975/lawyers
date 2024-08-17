@@ -60,11 +60,55 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
     ]);?>
     <div>
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#listaprecio"aria-controls="listaprecio" role="tab" data-toggle="tab">Lista de precios <span class="badge"><?= count($lista_precio) ?></span></a></li>
+             <li role="presentation" class="active"><a href="#simuladorcosto"aria-controls="simuladorcosto" role="tab" data-toggle="tab">Simulador de costo <span class="badge"><?= count($simulador) ?></span></a></li>
+            <li role="presentation"><a href="#listaprecio"aria-controls="listaprecio" role="tab" data-toggle="tab">Lista de precios <span class="badge"><?= count($lista_precio) ?></span></a></li>
             
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="listaprecion">
+            <div role="tabpanel" class="tab-pane active" id="simuladorcosto">
+                <div class="table-responsive">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class="panel panel-primary">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr style="font-size: 85%;">
+                                            <th scope="col" style='background-color:#caf0f8;'>CODIGO INSUMO</th>
+                                            <th scope="col" style='background-color:#caf0f8;'>INSUMO</th>
+                                            <th scope="col" style='background-color:#caf0f8;'>VLR UNITARIO</th>
+                                            <th scope="col" style='background-color:#caf0f8;'>CANTIDAD</th>
+                                             <th scope="col" style='background-color:#caf0f8;'>TOTAL COSTO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($simulador as $lista):?>
+                                            <tr style="font-size: 90%;">
+                                                <td><?= $lista->insumo->codigo_insumo?></td>
+                                                <td><?= $lista->insumo->nombre_insumo?></td>
+                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="valor_costo[]" value="<?= $lista->valor_costo ?>" style="text-align: right" size="9" required="true"> </td> 
+                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="cantidad[]" value="<?= $lista->cantidad ?>" style="text-align: right" size="9" required="true"> </td>     
+                                                <td style="text-align: right" ><?= '$'. number_format($lista->total_linea,0)?></td>
+                                                <input type="hidden" name="listado_insumos[]" value="<?= $lista->id_simulador ?>">
+                                                 
+                                            </tr>
+                                        <?php
+                                        endforeach;?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="panel-footer text-right" > 
+                                <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Agregar insumos', ['referencia-producto/buscar_insumos', 'id' => $model->codigo],[ 'class' => 'btn btn-warning btn-sm']) ?>
+                                <?php if(count($simulador)> 0){?>
+                                     <?= Html::submitButton("<span class='glyphicon glyphicon-floppy-disk'></span> Actualizar", ["class" => "btn btn-primary btn-sm", 'name' => 'actualizar_lineas_insumos']);?>    
+                                <?php }?> 
+                            </div>    
+                        </div>
+                    </div>   
+                </div>
+            </div>
+            <!--TERMINA TABS-->
+            <div role="tabpanel" class="tab-pane" id="listaprecio">
                 <div class="table-responsive">
                     <div class="panel panel-primary">
                         <div class="panel-body">
@@ -115,10 +159,11 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                                 <?php }?> 
                             </div>
                         </div>   
-                        </div>
                     </div>
-                </div>    
-                <!--TERMINA TABS-->
+                </div>
+            </div> 
+            <!--TEMINA TABS DE PRECIOS-->
+        </div>    
     </div>  
       <?php ActiveForm::end(); ?>
 </div>
