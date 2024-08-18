@@ -11,14 +11,17 @@ use yii\base\Model;
 class ModeloBuscar extends Model
 {        
     public $nombre_insumo;
+    public $referencia;
     public $clasificacion;
+    public $q;
+    public $nota;
 
 
     public function rules()
     {
         return [            
             [['clasificacion'], 'integer'],
-            [['nombre_insumo'], 'string'],
+            [['referencia','q','nota'], 'string'],
         ];
     }
 
@@ -26,7 +29,9 @@ class ModeloBuscar extends Model
     {
         return [                        
             'clasificacion' => 'Clasificacion:',   
-            'nombre_insumo' => 'Nombre insumo:',
+            'referencia' => 'Referencia:',
+            'q' => 'Talla:',
+            'nota' => 'Observacion:',
         ];
     }
 }

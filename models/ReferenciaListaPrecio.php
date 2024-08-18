@@ -65,8 +65,13 @@ class ReferenciaListaPrecio extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCodigo0()
+    public function getCodigo()
     {
         return $this->hasOne(ReferenciaProducto::className(), ['codigo' => 'codigo']);
+    }
+    //PROCESO QUE CONCATENA EL ID DE LISTA CON EL VALOR
+    public function getVerLista()
+    {
+        return "Lista: {$this->id_lista} - Venta: {$this->valor_venta}";
     }
 }
