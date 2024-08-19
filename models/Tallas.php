@@ -19,6 +19,15 @@ class Tallas extends \yii\db\ActiveRecord
     {
         return 'tallas';
     }
+     public function beforeSave($insert) {
+	if(!parent::beforeSave($insert)){
+            return false;
+        }
+	# ToDo: Cambiar a cliente cargada de configuración.    
+	$this->nombre_talla = strtoupper($this->nombre_talla);
+	
+        return true;
+    }
 
     /**
      * {@inheritdoc}
@@ -37,8 +46,8 @@ class Tallas extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_talla' => 'Id Talla',
-            'nombre_talla' => 'Nombre Talla',
+            'id_talla' => 'Codigo',
+            'nombre_talla' => 'Nombre de la talla',
         ];
     }
 }

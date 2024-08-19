@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 
-$this->title = 'Detalle Usuario';
+$this->title = 'USUARIOS';
 $this->params['breadcrumbs'][] = ['label' => 'Usuarios', 'url' => ['users']];
 $this->params['breadcrumbs'][] = $model->codusuario;
 ?>
@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
             ],
         ]);
 ?>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <div class="users-view">
 
     <!--<?= Html::encode($this->title) ?>-->
@@ -31,9 +31,9 @@ $form = ActiveForm::begin([
         <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['users'], ['class' => 'btn btn-primary btn-sm']) ?>
 	<?= Html::a('<span class="glyphicon glyphicon-pencil"></span> Editar', ['editar', 'id' => $model->codusuario], ['class' => 'btn btn-success btn-sm']) ?>        
     </p>
-    <div class="panel panel-success">
+    <div class="panel panel-primary">
         <div class="panel-heading">
-            Usuario
+           Informacion
         </div>
         <div class="panel-body">
             <table class="table table-bordered table-striped table-hover">

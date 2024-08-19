@@ -43,10 +43,31 @@ class EmpresaController extends Controller
     public function actionEmpresa($id)
     {
         if (Yii::$app->user->identity){
-            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',23])->all()){
+            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso', 8])->all()){
                 $model = $this->findModel($id);
-                if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                    //return $this->redirect(['view', 'id' => $model->id_parametros]);
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->save();
+                    if($model->id_tipo_regimen == 1){
+                        if($model->razonsocialmatricula == ''){
+                           Yii::$app->getSession()->setFlash('warning', 'Favor digitar el nombre de la empresa.'); 
+                           return $this->redirect(['empresa','id' => $id]);
+                        }else{
+                            $model->nombre_completo = strtoupper($model->razonsocialmatricula);
+                            $model->nombrematricula = '';
+                            $model->apellidomatricula = '';
+                            $model->save();
+                        }    
+                    }else {
+                         if($model->nombrematricula == '' && $model->apellidomatricula == ''){
+                             Yii::$app->getSession()->setFlash('warning', 'Favor digitar el nombre de la persona natural.'); 
+                             return $this->redirect(['empresa', 'id' => $id]);
+                        }else{
+                            $model->nombre_completo = strtoupper($model->nombrematricula. " " . $model->apellidomatricula);
+                            $model->razonsocialmatricula = '';
+                            $model->save();
+                        }    
+                    }
+                   
                 }
                 return $this->render('empresa', [
                     'model' => $model,

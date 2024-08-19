@@ -52,13 +52,10 @@ class Matriculaempresa extends \yii\db\ActiveRecord
             return false;
         }
         $this->representante_legal = strtoupper($this->representante_legal);        
-        $this->emailmatricula = strtolower($this->emailmatricula);       
-        $this->historia = strtolower($this->historia);  
-        $this->vision = strtolower($this->vision);  
-        $this->mision = strtolower($this->mision); 
-        $this->historia = ucfirst($this->historia);  
-        $this->vision = ucfirst($this->vision);  
-        $this->mision = ucfirst($this->mision);  
+        $this->emailmatricula = strtolower($this->emailmatricula);   
+        $this->razonsocialmatricula = strtoupper($this->razonsocialmatricula);   
+        $this->nombrematricula = strtolower($this->nombrematricula);   
+        $this->apellidomatricula = strtolower($this->apellidomatricula);   
         return true;
     }
 
@@ -68,18 +65,17 @@ class Matriculaempresa extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nitmatricula', 'dv', 'razonsocialmatricula', 'nombrematricula', 'apellidomatricula', 'direccionmatricula', 'emailmatricula', 'iddepartamento', 'idmunicipio', 'paginaweb', 'id_tipo_regimen'], 'required'],
+            [['nitmatricula', 'dv', 'direccionmatricula', 'emailmatricula', 'iddepartamento', 'idmunicipio', 'id_tipo_regimen'], 'required'],
             [['dv', 'id_tipo_regimen'], 'integer'],
             [['porcentaje_iva'], 'number'],
-            [['declaracion','nombresistema', 'representante_legal'], 'string'],
+            [['nombresistema', 'representante_legal'], 'string'],
             [['nitmatricula', 'telefonomatricula', 'celularmatricula', 'iddepartamento', 'idmunicipio'], 'string', 'max' => 15],
-            [['razonsocialmatricula', 'nombrematricula', 'apellidomatricula', 'direccionmatricula', 'emailmatricula', 'paginaweb'], 'string', 'max' => 40],
+            [['razonsocialmatricula', 'nombrematricula', 'apellidomatricula', 'direccionmatricula', 'emailmatricula','nombre_completo'], 'string', 'max' => 40],
             [['representante_legal'], 'string', 'max' => 50],
             [['nitmatricula'], 'unique'],
             [['id_tipo_regimen'], 'exist', 'skipOnError' => true, 'targetClass' => TipoRegimen::className(), 'targetAttribute' => ['id_tipo_regimen' => 'id_tipo_regimen']],
             [['iddepartamento'], 'exist', 'skipOnError' => true, 'targetClass' => Departamento::className(), 'targetAttribute' => ['iddepartamento' => 'iddepartamento']],
             [['idmunicipio'], 'exist', 'skipOnError' => true, 'targetClass' => Municipio::className(), 'targetAttribute' => ['idmunicipio' => 'idmunicipio']],
-            [['factura_venta_libre'], 'default'],
         ];
     }
 
@@ -100,42 +96,16 @@ class Matriculaempresa extends \yii\db\ActiveRecord
             'emailmatricula' => 'Email:',
             'iddepartamento' => 'Departamento:',
             'idmunicipio' => 'Municipio:',
-            'paginaweb' => 'Pagina Web:',
-            'porcentajeiva' => 'Porcentaje Iva:',
-            'porcentajeretefuente' => 'Porcentaje Rete Fuente:',
-            'retefuente' => 'Base Rete Fuente:',
-            'porcentajereteiva' => 'Porcentaje Rete Iva:',
+            'porcentaje_iva' => 'Porcentaje Iva:',
             'id_tipo_regimen' => 'Tipo Regimen:',
-            'declaracion' => 'Declaración:',
-            'id_banco_factura' => 'Banco Factura:',
-            'idresolucion' => 'Actividad:',
             'nombresistema' => 'Nombre Sistema:',
-            'agente_retenedor' => 'Agente Retenedor:',
-            'gran_contribuyente' => 'Gran Contribuyente:',
-            'porcentaje_cesantias' => '% cesantias:',
-            'porcentaje_intereses' => '% intereses:',
-            'porcentaje_prima' => '% prima:',
-            'porcentaje_vacacion' => '% vacacion:',
             'representante_legal' => 'Representante legal:',
-            'vlr_minuto_vinculado' => 'Vr. minuto vinculado:',
-            'vlr_minuto_contrato' => 'Vr. minuto contrato:',
-            'porcentaje_empresa' => 'Porcentaje_empresa:',
-            'mision' => 'Mision:',
-            'vision' => 'Vision:',
-            'historia' => 'Historia:',
-            'ajuste_caja' => 'Ajuste caja:',
-            
+            'nombre_completo' => 'nombre_completo',
+           
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBancoFactura()
-    {
-        return $this->hasOne(Banco::className(), ['idbanco' => 'id_banco_factura']);
-    }
-
+   
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -160,11 +130,4 @@ class Matriculaempresa extends \yii\db\ActiveRecord
         return $this->hasOne(Municipio::className(), ['idmunicipio' => 'idmunicipio']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getResolucion()
-    {
-        return $this->hasOne(Resolucion::className(), ['idresolucion' => 'idresolucion']);
-    }
 }

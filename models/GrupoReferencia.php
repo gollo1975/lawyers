@@ -39,8 +39,8 @@ class GrupoReferencia extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_grupo' => 'Id Grupo',
-            'concepto' => 'Concepto',
+            'id_grupo' => 'Codigo',
+            'concepto' => 'Nombre del grupo',
         ];
     }
 

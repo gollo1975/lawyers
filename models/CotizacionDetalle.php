@@ -31,7 +31,16 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
     {
         return 'cotizacion_detalle';
     }
-
+    
+     public function beforeSave($insert) {
+	if(!parent::beforeSave($insert)){
+            return false;
+        }
+	# ToDo: Cambiar a cliente cargada de configuración.    
+	$this->nota = strtolower($this->nota);
+	
+        return true;
+    }
     /**
      * {@inheritdoc}
      */
@@ -41,7 +50,7 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
             [['id_cotizacion', 'codigo', 'id_detalle', 'cantidad_referencia', 'valor_unidad','subtotal','impuesto', 'total_linea'], 'integer'],
             [['referencia'], 'string', 'max' => 40],
             [['user_name'], 'string', 'max' => 15],
-            [['nota'], 'string', 'max' => 150],
+            [['nota'], 'string', 'max' => 200],
             [['id_cotizacion'], 'exist', 'skipOnError' => true, 'targetClass' => Cotizaciones::className(), 'targetAttribute' => ['id_cotizacion' => 'id_cotizacion']],
             [['codigo'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaProducto::className(), 'targetAttribute' => ['codigo' => 'codigo']],
             [['id_detalle'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaListaPrecio::className(), 'targetAttribute' => ['id_detalle' => 'id_detalle']],
@@ -65,7 +74,7 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
             'total_linea' => 'Total Linea',
             'user_name' => 'User Name',
             'subtotal' => 'subtotal',
-            'nota' => 'nota(150)',
+            'nota' => 'nota',
         ];
     }
 

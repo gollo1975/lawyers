@@ -31,7 +31,7 @@ class ModeloBuscar extends Model
             'clasificacion' => 'Clasificacion:',   
             'referencia' => 'Referencia:',
             'q' => 'Talla:',
-            'nota' => 'Observacion:',
+            'nota' => 'Nota(200):',
         ];
     }
 }

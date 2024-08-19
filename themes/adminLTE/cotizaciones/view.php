@@ -103,6 +103,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                     <tr style="font-size: 90%;">
                                         <th scope="col" style='background-color:#caf0f8;'>CODIGO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>REFERENCIA</th>
+                                        <th scope="col" style='background-color:#caf0f8;'>COSTO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>LISTA</th>
                                         <th scope="col" style='background-color:#caf0f8;'>VR. VENTA</th>
                                         <th scope="col" style='background-color:#caf0f8;'>CANT.</th>
@@ -123,6 +124,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                        <tr style="font-size: 90%;">
                                             <td>R-<?= $val->codigo ?></td>
                                             <td><?= $val->referencia ?></td>
+                                            <td style="text-align: right" ><?= ''. number_format($val->codigoReferencia->costo_producto,0) ?></td>
                                             <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('tipo_lista[]', $val->id_detalle, $conLista, ['class' => 'col-sm-12', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
                                             <td style="text-align: right"><?= '$'. number_format($val->valor_unidad,0)?></td>
                                             <td style="text-align: right"><?= ''. number_format($val->cantidad_referencia,0)?></td>

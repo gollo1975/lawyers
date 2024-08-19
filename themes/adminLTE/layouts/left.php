@@ -9,7 +9,7 @@
             </div>
             <div class="pull-left info">
                 <p><?= Yii::$app->user->identity->nombrecompleto ?></p>
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                <a href="#"><i class="fa fa-circle text-primary"></i> Online</a>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
                                 //['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
                                 //['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
                                 [
-                                    'label' => 'Archivos',
+                                    'label' => 'ARCHIVOS',
                                     'icon' => 'database',
                                     'url' => '#',
                                     'items' => [
@@ -56,6 +56,8 @@
                                                 ['label' => 'Departamento', 'icon' => 'plus-square-o', 'url' => ['/departamento/index']],  
                                                 ['label' => 'Municipio', 'icon' => 'plus-square-o', 'url' => ['/municipio/index']],
                                                 ['label' => 'Tipo Documento', 'icon' => 'plus-square-o', 'url' => ['/tipo-documento/index']],
+                                                ['label' => 'Tallas', 'icon' => 'plus-square-o', 'url' => ['/tallas/index']],
+                                                 ['label' => 'Grupo', 'icon' => 'plus-square-o', 'url' => ['/grupo-referencia/index']],
                                             ],
                                         ],
                                         [
@@ -88,97 +90,8 @@
                                     ],
                                 ],
                              
-                             
-                                //INICIO DEL MENU CONTABILIDAD
-                                 [
-                                    'label' => 'Contabilidad',
-                                    'icon' => 'bank',
-                                    'url' => '#',
-                                    'items' => [
-                                        [
-                                            'label' => 'Administración',
-                                            'icon' => 'database',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Cuentas', 'icon' => 'plus-square-o', 'url' => ['/cuenta-pub/index']],
-                                                ['label' => 'Tipo Recibo', 'icon' => 'plus-square-o', 'url' => ['/tipo-recibo/index']],
-                                                ['label' => 'Tipo Compra', 'icon' => 'plus-square-o', 'url' => ['/compra-tipo/index']],
-                                                ['label' => 'Concepto Compra', 'icon' => 'plus-square-o', 'url' => ['/compra-concepto/index']],
-                                                ['label' => 'Tipo Comprobante Egreso', 'icon' => 'plus-square-o', 'url' => ['/comprobante-egreso-tipo/index']],
-                                                ['label' => 'Tipo Comprobante (Exportar)', 'icon' => 'plus-square-o', 'url' => ['/contabilidad-comprobante-tipo/index']],
-                                                ['label' => 'Proveedor', 'icon' => 'plus-square-o', 'url' => ['/proveedor/index']],
-                                                ['label' => 'Doc Equivalente', 'icon' => 'plus-square-o', 'url' => ['/documento-equivalente/index']],
-                                            ],
-                                        ],
-                                        [
-                                            'label' => 'Utilidades',
-                                            'icon' => 'cube',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Contabiizar', 'icon' => 'plus-square-o', 'url' => ['/contabilizar/contabilizar']],
-                                            ],
-                                        ],
-                                        [
-                                            'label' => 'Consultas',
-                                            'icon' => 'question',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Recibo Caja', 'icon' => 'plus-square-o', 'url' => ['/recibocaja/indexconsulta']],
-                                                ['label' => 'Compras', 'icon' => 'plus-square-o', 'url' => ['/compra/indexconsulta']],
-                                                ['label' => 'Comprobante Egreso', 'icon' => 'plus-square-o', 'url' => ['/comprobante-egreso/indexconsulta']],
-                                            ],
-                                        ],
-                                        [
-                                            'label' => 'Movimientos',
-                                            'icon' => 'book',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Recibo Caja', 'icon' => 'plus-square-o', 'url' => ['/recibocaja/index']],
-                                                ['label' => 'Compras', 'icon' => 'plus-square-o', 'url' => ['/compra/index']],
-                                                ['label' => 'Comprobante Egreso', 'icon' => 'plus-square-o', 'url' => ['/comprobante-egreso/index']],
-                                            ],
-                                        ]
-                                    ],
-                                ],
-                                //TERMINA CONTABILIDAD
-                              // mdulo de facturacion
                                 [
-                                    'label' => 'Facturacion',
-                                    'icon' => 'dollar',
-                                    'url' => '#',
-                                    'items' => [
-                                        [
-                                            'label' => 'Administración',
-                                            'icon' => 'database',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Conceptos Notas', 'icon' => 'plus-square-o', 'url' => ['conceptonota/index']],
-                                                ['label' => 'Tipo Factura', 'icon' => 'plus-square-o', 'url' => ['tipo-factura/index']],
-                                            ],
-                                        ],
-                                        
-                                        [
-                                            'label' => 'Consultas',
-                                            'icon' => 'question',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Factura Venta', 'icon' => 'plus-square-o', 'url' => ['/facturaventa/indexconsulta']],
-                                            ],
-                                        ],
-                                      
-                                        [
-                                            'label' => 'Movimientos',
-                                            'icon' => 'book',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Factura Venta', 'icon' => 'plus-square-o', 'url' => ['/facturaventa/index']],
-                                                ['label' => 'Nota Crédito', 'icon' => 'plus-square-o', 'url' => ['/notacredito/index']],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'label' => 'General',
+                                    'label' => 'GENERAL',
                                     'icon' => 'wrench',
                                     'url' => '#',
                                     'items' => [

@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
 //models
 use app\models\Cotizaciones;
 use app\models\UsuarioDetalle;
+use app\models\CotizacionDetalle;
 
 
 /**
@@ -525,7 +526,7 @@ class CotizacionesController extends Controller
     //PERMITE IMPRIMIR
     public function actionImprimir_pedido($id)
     {
-        return $this->render('../formatos/reporte_pedido_cliente', [
+        return $this->render('../reportes/reporte_cotizacion_cliente', [
             'model' => $this->findModel($id),
             
         ]);
@@ -533,7 +534,7 @@ class CotizacionesController extends Controller
     
     public function actionImprimir_tallas($id)
     {
-        return $this->render('../formatos/reporte_pedido_tallas', [
+        return $this->render('../reportes/reporte_cotizacion_tallas', [
             'model' => $this->findModel($id),
             
         ]);
@@ -554,6 +555,7 @@ class CotizacionesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+       //EXPORTA EXCEL GENERAL
     
      public function actionExcelconsultaCotizacion($tableexcel) {   
         $objPHPExcel = new \PHPExcel();
@@ -586,13 +588,15 @@ class CotizacionesController extends Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setAutoSize(true);
 
         $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('A1', 'ID')
-                    ->setCellValue('B1', 'No PEDIDO')
+                    ->setCellValue('B1', 'Nº COTIZACION')
                     ->setCellValue('C1', 'DOCUMENTO')
                     ->setCellValue('D1', 'CLIENTE')
-                    ->setCellValue('E1', 'FECHA PEDIDO')
+                    ->setCellValue('E1', 'FECHA COTIZACION')
                     ->setCellValue('F1', 'FECHA ENTREGA')
                     ->setCellValue('G1', 'TOTAL UNIDADES')
                     ->setCellValue('H1', 'SUBTOTAL')
@@ -603,36 +607,40 @@ class CotizacionesController extends Controller
                     ->setCellValue('M1', 'CODIGO')
                     ->setCellValue('N1', 'REFERENCIA')
                     ->setCellValue('O1', 'VR UNITARIO')
-                    ->setCellValue('P1', 'CANTIDAD')
-                    ->setCellValue('Q1', 'SUBTOTA')
-                    ->setCellValue('R1', 'IVA')
-                    ->setCellValue('S1', 'TOTAL LINEA');
+                    ->setCellValue('P1', 'VR COSTO')
+                    ->setCellValue('Q1', 'CANTIDAD')
+                    ->setCellValue('R1', 'SUBTOTA')
+                    ->setCellValue('S1', 'IVA')
+                    ->setCellValue('T1', 'TOTAL LINEA')
+                     ->setCellValue('U1', 'OBSERVACION');
         $i = 2;
         
         foreach ($tableexcel as $val) {
-            $referencias  = PedidoClienteReferencias::find()->where(['=','id_pedido', $val->id_pedido])->all();
+            $referencias  = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $val->id_cotizacion])->all();
             foreach ($referencias as $referencia){
                                   
                 $objPHPExcel->setActiveSheetIndex(0)
-                        ->setCellValue('A' . $i, $val->id_pedido)
-                        ->setCellValue('B' . $i, $val->numero_pedido)
+                        ->setCellValue('A' . $i, $val->id_cotizacion)
+                        ->setCellValue('B' . $i, $val->numero_cotizacion)
                         ->setCellValue('C' . $i, $val->cliente->cedulanit)
                         ->setCellValue('D' . $i, $val->cliente->nombrecorto)
-                        ->setCellValue('E' . $i, $val->fecha_pedido)
+                        ->setCellValue('E' . $i, $val->fecha_cotizacion)
                         ->setCellValue('F' . $i, $val->fecha_entrega)
-                        ->setCellValue('G' . $i, $val->total_unidades)
-                        ->setCellValue('H' . $i, $val->valor_total)
+                        ->setCellValue('G' . $i, $val->total_prendas)
+                        ->setCellValue('H' . $i, $val->subtotal)
                         ->setCellValue('I' . $i, $val->impuesto)
-                        ->setCellValue('J' . $i, $val->total_pedido)
-                        ->setCellValue('K' . $i, $val->pedidoCerrado)
+                        ->setCellValue('J' . $i, $val->total_cotizacion)
+                        ->setCellValue('K' . $i, $val->procesoCerrado)
                         ->setCellValue('L' . $i, $val->user_name)
                         ->setCellValue('M' . $i, $referencia->codigo)
                         ->setCellValue('N' . $i, $referencia->referencia)
-                        ->setCellValue('O' . $i, $referencia->valor_unitario)
-                        ->setCellValue('P' . $i, $referencia->cantidad)
-                        ->setCellValue('Q' . $i, $referencia->subtotal)
-                        ->setCellValue('R' . $i, $referencia->iva)
-                        ->setCellValue('S' . $i, $referencia->total_linea);
+                        ->setCellValue('O' . $i, $referencia->valor_unidad)
+                        ->setCellValue('P' . $i, $referencia->codigoReferencia->costo_producto)
+                        ->setCellValue('Q' . $i, $referencia->cantidad_referencia)
+                        ->setCellValue('R' . $i, $referencia->subtotal)
+                        ->setCellValue('S' . $i, $referencia->impuesto)
+                        ->setCellValue('T' . $i, $referencia->total_linea)
+                        ->setCellValue('U' . $i, $referencia->nota);;
                 $i++;
             }
             $i = $i;
@@ -643,7 +651,94 @@ class CotizacionesController extends Controller
 
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Pedido_cliente.xlsx"');
+        header('Content-Disposition: attachment;filename="Cotizacion_cliente.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save('php://output');
+        exit;
+    }
+    
+    //EXCEL TALLAS
+    public function actionExcel_tallas($id, $id_referencia) {   
+        $talla = \app\models\CotizacionDetalleTalla::find()->where(['=','id_cotizacion', $id])
+                                                           ->andWhere(['=','id', $id_referencia])->all();
+        $objPHPExcel = new \PHPExcel();
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator("EMPRESA")
+            ->setLastModifiedBy("EMPRESA")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial')->setSize(10);
+        $objPHPExcel->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+       
+
+        $objPHPExcel->setActiveSheetIndex(0)
+                    
+                    ->setCellValue('B1', 'Nº COTIZACION')
+                    ->setCellValue('C1', 'DOCUMENTO')
+                    ->setCellValue('D1', 'CLIENTE')
+                    ->setCellValue('E1', 'FECHA COTIZACION')
+                    ->setCellValue('F1', 'FECHA ENTREGA')
+                    ->setCellValue('G1', 'USER NAME')
+                    ->setCellValue('H1', 'CODIGO')
+                    ->setCellValue('I1', 'REFERENCIA')
+                    ->setCellValue('J1', 'TALLA')
+                    ->setCellValue('K1', 'VR UNITARIO')
+                    ->setCellValue('L1', 'VR COSTO')
+                    ->setCellValue('M1', 'CANTIDAD')
+                    ->setCellValue('N1', 'OBSERVACION');
+        $i = 2;
+        
+        foreach ($talla as $val){
+                                  
+            $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('B' . $i, $val->cotizacion->numero_cotizacion)
+                    ->setCellValue('C' . $i, $val->cotizacion->cliente->cedulanit)
+                    ->setCellValue('D' . $i, $val->cotizacion->cliente->nombrecorto)
+                    ->setCellValue('E' . $i, $val->cotizacion->fecha_cotizacion)
+                    ->setCellValue('F' . $i, $val->cotizacion->fecha_entrega)
+                    ->setCellValue('G' . $i, $val->cotizacion->user_name)
+                    ->setCellValue('H' . $i, $val->detalleCotizacion->codigo)
+                    ->setCellValue('I' . $i, $val->detalleCotizacion->referencia)
+                    ->setCellValue('J' . $i, $val->talla->nombre_talla)
+                    ->setCellValue('K' . $i, $val->detalleCotizacion->valor_unidad)
+                    ->setCellValue('L' . $i, $val->detalleCotizacion->codigoReferencia->costo_producto)
+                    ->setCellValue('M' . $i, $val->cantidad)
+                    ->setCellValue('N' . $i, $val->detalleCotizacion->nota);
+                   
+            $i++;
+        }
+            
+        $objPHPExcel->getActiveSheet()->setTitle('Listado');
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Cotizacion_cliente.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

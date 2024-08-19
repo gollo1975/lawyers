@@ -103,7 +103,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                             if($model->cotizacion->autorizado == 0){
                                 echo Html::submitButton("<span class='glyphicon glyphicon-refresh'></span> Actualizar", ["class" => "btn btn-warning btn-sm", 'name' => 'actualizar_cantidades']);
                             }else{
-                                echo Html::submitButton("<span class='glyphicon glyphicon-refresh'></span> Exportar tallas", ["class" => "btn btn-success btn-sm", 'name' => 'exportar_tallas']); 
+                                echo  Html::a('<span class="glyphicon glyphicon-export"></span> Expotar excel', ['excel_tallas', 'id' => $model->id_cotizacion, 'id_referencia'=>$id_referencia], ['class' => 'btn btn-primary btn-sm']);
                             } ?>
                         </div>     
                     </div>    

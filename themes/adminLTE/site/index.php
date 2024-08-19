@@ -9,141 +9,126 @@ $empresa = \app\models\Matriculaempresa::findOne(1);
 $municipio = \app\models\Municipio::find()->all();
 $departamento = Departamento::find()->all();
 $cliente = \app\models\Cliente::find()->all();
-$this->params['breadcrumbs'][] = ['label' => 'SJ COTIZACIONES', 'url' => ['index']];
+$cotizacion = app\models\Cotizaciones::find()->all();
+$this->params['breadcrumbs'][] = ['label' => 'COTIZACIONES SJ', 'url' => ['index']];
 $this->title = $empresa->nombresistema;
 ?>
 
 <div class="panel panel-primary">
+     <div class="panel-heading ">
+          <h1>Sistema de Cotizacion</h1>
+     </div>
+    <div class="panel-body">
+       
+        <table class="table table-responsive align-center">
+            <head>
+            <br>
+            <br>
+             <br>
+                <tr>
+                
+                </tr>
+            </head> 
+             <br>
+              <br>
+              <section class="content">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-light-blue">
+                                <div class="inner">
+                                    <h4 style="text-align: center; color: #FFFFFF;"><span class='glyphicon glyphicon-home'> <font face="arial">MUNICIPIOS</font></span></h4>  
+                                    <h3 style="text-align: center;"><?= count($municipio)?></h3>
+                                </div>
+                                <div class="icon">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-aqua-gradient">
+                                <div class="inner">
+                                    <h4 style="text-align: center; color: #FFFFFF;"><span class='glyphicon glyphicon-list-alt'> <font face="arial">DEPARTAMENTOS</font></span></h4>  
+                                    <h3 style="text-align: center;"><?= count($departamento)?></h3>
+                                </div>
+                                <div class="icon">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-aqua-active">
+                                <div class="inner">
+                                    <h4 style="text-align: center; color: #FFFFFF;"><span class='glyphicon glyphicon-list'> <font face="arial">COTIZACIONES</font></span></h4>  
+                                    <h3 style="text-align: center;"><?= count($cotizacion)?></h3>
+                                </div>
+                                <div class="icon">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-purple-gradient">
+                                <div class="inner">
+                                    <h4 style="text-align: center; color: #FFFFFF;"><span class='glyphicon glyphicon-user'> <font face="arial">CLIENTES</font></span></h4>  
+                                    <h3 style="text-align: center;"><?= count($cliente)?></h3>
+                                </div>
+                                <div class="icon">
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>  
+                  
+             </section>        
+
+        </table>
+    </div>    
+
+</div>    
+
+<!--<!-- comment -->
+
+<div class="panel panel-primary">
         <div class="login-logo">
-            <a href="#"><b><?= $empresa->nombresistema ?></a>
+            <a href="#"></a>
        </div>
     <div class="panel-body">
-   <section class="content">
+        <div class="panel-body">
+            <table class="table table-bordered table-striped table-hover">
+                 <section class="content">
     <div class="container-fluid" style="text-align: center">
         <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-light-blue">
-                    <div class="inner">
-                        <h4 style="text-align: center; color: #FFFFFF;"><span class='glyphicon glyphicon-home'> <font face="arial">MUNICIPIOS</font></span></h4>  
-                        <h3 style="text-align: center;"><?= count($municipio)?></h3>
-                    </div>
-                    <div class="icon">
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                  <div class="inner">
-                    <h4 style="text-align: center; color: #2B5DB0;"><span class='glyphicon glyphicon-globe'> <font face="arial">DEPARTAMENTOS</font></span></h4>  
-                    <h3 style="text-align: center;"><?= count($departamento)?></h3>
-                  </div>
-                  <div class="icon">
-                  </div>
-                </div>
-            </div>    
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-olive-active">
-                  <div class="inner">
-                    <h4 style="text-align: center; color: white"><span class='glyphicon glyphicon-user'> <font face="arial">CLIENTES</font></span></h4>
-                    <h3 style="text-align: center;"><?= count($cliente)?></h3>
-                  </div>
-                  <div class="overlay">
-                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
-                  </div>
-                </div>
-            </div>  
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                  <div class="inner">
-                      <h4 style="text-align: center; color: #253886;"><span class='glyphicon glyphicon-user'> <font face="arial">PROVEEDORES</font></span></h4>
-                    <h3 style="text-align: center;"><?= 1?></h3>
-                  </div>
-                  <div class="overlay">
-                    <i ></i>
-                  </div>
-                </div>
-            </div>  
-           
-          </div>
+    
       </div>
     </section> 
+            </table>
+        </div> 
+    </div>    
+  
         
 
 <!-- Remove the container if you want to extend the Footer to full width. -->
-   <div class="container my-5">
+   <div class="container my-2">
 
-  <!-- Footer -->
-  <footer
-          class="text-center text-lg-start text-white"
-          style="background-color: white; width: 100%; text-align: center"
-          >
-    <!-- Section: Social media -->
-    <section
-             class="d-flex justify-content-between p-4"
-             style="background-color: #136C5D; text-align: center"
-             >
-      <!-- Left -->
-      <div class="me-5">
-          <span class="badge"> <h4><font face="arial"><?= $empresa->nombrematricula?></font></h4></span>
-      </div>
-      <!-- Left -->
+        <!-- Footer -->
+        <footer>
 
-      <!-- Right -->
-      
-      <!-- Right -->
-    </section>
-    <!-- Section: Social media -->
+        </footer>
+        <!-- Footer -->
 
-    <!-- Section: Links  -->
-    <section class="">
-      <div class="container text-center text-md-start mt-5">
-        <!-- Grid row -->
-        <div class="row mt-3">
-          <!-- Grid column -->
-          <div class="col-md-3 col-lg-6 col-xl-3 mx-auto mb-4">
-            <!-- Content -->
-            <h4 class="text-uppercase fw-bold"><b><span class="badge"><font face="arial">NUESTRA COMPAÑIA</font></span></b></h4>
-            <hr
-                class="mb-4 mt-0 d-inline-block mx-auto"
-                style="width: 100px; background-color: black; height: 3px"
-                />
-            <p style ="text-align: justify">
-                <b><font face="arial"><?= $empresa->nombrematricula?></font></b>, <font face="arial"><?= $empresa->nombrematricula?> </font>
-            </p>
-          </div>
-          
-          <div class="col-md-4 col-lg-6 col-xl-3 mx-auto mb-md-0 mb-4">
-            <!-- Links -->
-            <h4 class="text-uppercase fw-bold"><span class="badge"><font face="arial">CONTACTO</font></span></h4>
-            <hr
-                class="mb-4 mt-0 d-inline-block mx-auto"
-                style="width: 100px; background-color: black; height: 3px"
-                />
-            <p><i class='glyphicon glyphicon-user'></i>  Medellin - Colombia</p>
-            <p><i class='glyphicon glyphicon-envelope'></i>  soporte@diamantesj.com</p>
-            <p><i class='glyphicon glyphicon-phone'></i>  323 308 36 29 - 323 552 28 23</p>
-          </div>
-          <!-- Grid column -->
-        </div>
-        <!-- Grid row -->
-      </div>
-    </section>
-    <!-- Section: Links  -->
-
-    <!-- Copyright -->
-    <div
-         class="text-center p-4"
-         style="background-color: #136C5D"
-         >
-        <h4 class="text-uppercase fw-bold"><span class="badge"> <font face="arial">© 2024 Copyright | Todos los dereechos reservados | DIAMANTE SJ SAS . Version 1.0</font> </span></h4>
-     
-     
     </div>
-    <!-- Copyright -->
-  </footer>
-  <!-- Footer -->
-
-</div>
     </div>
 </div>   
+
+  
+        <footer class="main-footer">
+            <div class="text-center p-5">    
+                <strong>Copyright &copy; 2024 <a href="https://diamantesj.com">DIAMANTE SJ</a>.</strong>
+                All rights reserved.
+                <div class="float-right d-none d-sm-inline-block">
+                  <b>Version</b> 1.0
+                </div>
+            </div>    
+          </footer>
+    
+    
+

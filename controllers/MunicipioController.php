@@ -120,9 +120,9 @@ class MunicipioController extends Controller
             $this->redirect(["municipio/index"]);
         } catch (IntegrityException $e) {
             $this->redirect(["municipio/index"]);
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registro, tiene procesos asociados');
         } catch (\Exception $e) {            
-            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registrp, tiene procesos asociados');
+            Yii::$app->getSession()->setFlash('error', 'Error al eliminar el registro, tiene procesos asociados');
             $this->redirect(["municipio/index"]);
         }
     }
