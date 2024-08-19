@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 /* @var $model app\models\ComprobanteEgreso */
 
 $this->title = 'LISTADO DE TALLAS';
-$this->params['breadcrumbs'][] = ['label' => 'Cotizaciones', 'url' => ['view','id' => $id]];
+$this->params['breadcrumbs'][] = ['label' => 'Cotizaciones', 'url' => ['view','id' => $id, 'token' => $token]];
 $this->params['breadcrumbs'][] = $model->id_cotizacion;
 ?>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
 
     <p>
         <div class="btn-group btn-sm" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['view', 'id' => $id], ['class' => 'btn btn-primary btn-sm']);?>
+            <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['view', 'id' => $id, 'token' => $token], ['class' => 'btn btn-primary btn-sm']);?>
         </div>    
     </p>
     <div class="panel panel-primary">
@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                            <td style= 'width: 25px; height: 25px;'>
                                                <?php 
                                                 if($model->cotizacion->autorizado == 0){
-                                                    echo Html::a('', ['eliminar_lineas', 'id_talla' => $val->codigo_talla, 'id' => $id, 'id_referencia' =>$id_referencia], [
+                                                    echo Html::a('', ['eliminar_lineas', 'id_talla' => $val->codigo_talla, 'id' => $id, 'id_referencia' =>$id_referencia, 'token' => $token], [
                                                         'class' => 'glyphicon glyphicon-trash',
                                                         'data' => [
                                                             'confirm' => 'Esta seguro de eliminar el registro?',

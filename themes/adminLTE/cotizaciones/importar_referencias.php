@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
 
 $this->title = 'REFERENCIAS';
-$this->params['breadcrumbs'][] = ['label' => 'Referencias', 'url' => ['view', 'id' => $id]];
+$this->params['breadcrumbs'][] = ['label' => 'Referencias', 'url' => ['view', 'id' => $id, 'token' => $token]];
 $this->params['breadcrumbs'][] = $id;
 
 $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo', 'concepto');
@@ -18,12 +18,12 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
 ?>
     <div class="modal-body">
         <p>
-            <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['view', 'id' => $id], ['class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['view', 'id' => $id, 'token' => $token], ['class' => 'btn btn-primary btn-sm']) ?>
         </p>
         
         <?php $formulario = ActiveForm::begin([
             "method" => "get",
-            "action" => Url::toRoute(["cotizaciones/cargar_nueva_referencia", 'id' => $id]),
+            "action" => Url::toRoute(["cotizaciones/cargar_nueva_referencia", 'id' => $id, 'token' => $token]),
             "enableClientValidation" => true,
             'options' => ['class' => 'form-horizontal'],
             'fieldConfig' => [
@@ -53,7 +53,7 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
                 </div>
                 <div class="panel-footer text-right">
                     <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary btn-sm",]) ?>
-                     <a align="right" href="<?= Url::toRoute(["cotizaciones/cargar_nueva_referencia", 'id' => $id]) ?>" class="btn btn-primary btn-sm"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
+                     <a align="right" href="<?= Url::toRoute(["cotizaciones/cargar_nueva_referencia", 'id' => $id, 'token' => $token]) ?>" class="btn btn-primary btn-sm"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
                 </div>
             </div>
         </div>
@@ -77,25 +77,42 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
                 <div class="panel-body">
                      <table class="table table-bordered table-hover">
                         <thead>
-                        <tr>
-                            <th scope="col" style='background-color:#caf0f8;'>CODIGO</th>
-                            <th scope="col" style='background-color:#caf0f8;'>NOMBRE DE LA REFERENCIA</th>
-                            <th scope="col" style='background-color:#caf0f8;'>COSTO REFERENCIA</th>
-                             <th scope="col" style='background-color:#caf0f8;'>CLASIFICACION</th>
-                            <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
-                        </tr>
+                            <tr>
+                                <th scope="col" style='background-color:#caf0f8;'>CODIGO</th>
+                                <th scope="col" style='background-color:#caf0f8;'>NOMBRE DE LA REFERENCIA</th>
+                                <th scope="col" style='background-color:#caf0f8;'>IMAGEN</th>
+                                <th scope="col" style='background-color:#caf0f8;'>COSTO REFERENCIA</th>
+                                 <th scope="col" style='background-color:#caf0f8;'>CLASIFICACION</th>
+                                <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($operacion as $val): ?>
-                        <tr style="font-size: 85%;">
-                            <td>R-<?= $val->codigo ?></td>
-                            <td><?= $val->descripcion_referencia ?></td>
-                            <td style="text-align: right"><?= ''. number_format($val->costo_producto,0) ?></td>
-                            <td><?= $val->grupo->concepto ?></td>
-                            <td style= 'width: 25px; height: 25px;'><input type="checkbox" name="codigo_referencia[]" value="<?= $val->codigo ?>"></td> 
-                        </tr>
-                        </tbody>
-                        <?php endforeach; ?>
+                            <?php
+                            $cadena = '';
+                                        $item = \app\models\Documentodir::findOne(1);
+                            foreach ($operacion as $val): 
+                                $valor = app\models\DirectorioArchivos::find()->where(['=','codigo', $val->codigo])
+                                                                  ->andWhere(['=','predeterminado', 1])->andWhere(['=','numero', $item->codigodocumento])->one();
+                                ?>
+                                <tr style="font-size: 85%;">
+                                    <td>R-<?= $val->codigo ?></td>
+                                    <td><?= $val->descripcion_referencia ?></td>
+                                    <?php if($valor){
+                                        $cadena = 'Documentos/'.$valor->numero.'/'.$valor->codigo.'/'. $valor->nombre;
+                                        if($valor->extension == 'png' || $valor->extension == 'jpeg' || $valor->extension == 'jpg'){?>
+                                           <td  style="width: 10%; height: 20%; text-align: center; background-color: white" title="<?php echo $val->descripcion_referencia?>"> <?= yii\bootstrap\Html::img($cadena, ['width' => '80%;', 'height' => '80%;'])?></td>
+                                        <?php }else {?>
+                                            <td><?= 'NOT FOUND'?></td>
+                                        <?php } 
+                                    }else{?>
+                                          <td><?= 'No found'?></td>
+                                    <?php }?>      
+                                    <td style="text-align: right"><?= ''. number_format($val->costo_producto,0) ?></td>
+                                    <td><?= $val->grupo->concepto ?></td>
+                                    <td style= 'width: 25px; height: 25px;'><input type="checkbox" name="codigo_referencia[]" value="<?= $val->codigo ?>"></td> 
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>     
                     </table>
                 </div>
                 <div class="panel-footer text-right">

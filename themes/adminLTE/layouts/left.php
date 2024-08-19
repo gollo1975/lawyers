@@ -68,6 +68,7 @@
                                             ['label' => 'Cliente', 'icon' => 'plus-square-o', 'url' => ['/clientes/index']],
                                             ['label' => 'Insumos', 'icon' => 'plus-square-o', 'url' => ['/insumos/index']], 
                                             ['label' => 'Referencias', 'icon' => 'plus-square-o', 'url' => ['/referencia-producto/index']], 
+                                             ['label' => 'Subir imagenes', 'icon' => 'plus-square-o', 'url' => ['/referencia-producto/validador_imagen']],     
                                         ]        
                                         ],
                                         [
@@ -76,7 +77,8 @@
                                             'url' => '#',
                                             'items' => [
                                               ['label' => 'Clientes', 'icon' => 'plus-square-o', 'url' => ['/clientes/index_consulta']],
-                                              ['label' => 'Cumpleaños', 'icon' => 'plus-square-o', 'url' => ['/clientes/cumpleanos']],
+                                              ['label' => 'Cotizaciones', 'icon' => 'plus-square-o', 'url' => ['/cotizaciones/index_cotizaciones']],
+                                              ['label' => 'Utilidad x Referencia', 'icon' => 'plus-square-o', 'url' => ['/cotizaciones/search_rentabilidad']],
                                             ],
                                         ],
                                         [

@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $formulario = ActiveForm::begin([
     "method" => "get",
-    "action" => Url::toRoute(["cotizaciones/crear_tallas_referencia", 'id' => $id,'id_referencia' => $id_referencia]),
+    "action" => Url::toRoute(["cotizaciones/crear_tallas_referencia", 'id' => $id,'id_referencia' => $id_referencia, 'token' => $token]),
     "enableClientValidation" => true,
     'options' => ['class' => 'form-horizontal'],
     
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="panel-footer text-right">
             <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary",]) ?>
-            <a align="right" href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", 'id' => $id, 'id_referencia' => $id_referencia]) ?>" class="btn btn-primary"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
+            <a align="right" href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", 'id' => $id, 'id_referencia' => $id_referencia, 'token' => $token]) ?>" class="btn btn-primary"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
         </div>
     </div>
 </div>

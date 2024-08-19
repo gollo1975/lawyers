@@ -14,8 +14,6 @@ use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\data\Pagination;
 use kartik\depdrop\DepDrop;
-use app\models\AgentesComerciales;
-
 
 $this->title = 'CONSULTA (CLIENTES)';
 $this->params['breadcrumbs'][] = $this->title;
@@ -32,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <!--<h1>Lista proveedor</h1>-->
 <?php $formulario = ActiveForm::begin([
     "method" => "get",
-    "action" => Url::toRoute("clientes/index_consulta_clientes"),
+    "action" => Url::toRoute("clientes/index_consulta"),
     "enableClientValidation" => true,
     'options' => ['class' => 'form-horizontal'],
     'fieldConfig' => [
@@ -42,30 +40,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
 ]);
-$vendedor = ArrayHelper::map(AgentesComerciales::find()->where(['=','estado', 0])->orderBy('nombre_completo ASC')->all(), 'id_agente', 'nombre_completo');
 ?>
-
-<div class="panel panel-success panel-filters">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<div class="panel panel-primary panel-filters">
     <div class="panel-heading" onclick="mostrarfiltro()">
         Filtros de busqueda <i class="glyphicon glyphicon-filter"></i>
     </div>
 	
-    <div class="panel-body" id="filtrocliente" style="display:none">
+    <div class="panel-body" id="filtrocliente" style="display:block">
         <div class="row" >
-            <?= $formulario->field($form, "nitcedula")->input("search") ?>
-            <?= $formulario->field($form, "nombre_completo")->input("search") ?>
-            <?= $formulario->field($form, 'vendedor')->widget(Select2::classname(), [
-                'data' => $vendedor,
-                'options' => ['prompt' => 'Seleccione...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); ?> 
-            <?= $formulario->field($form, 'activo')->dropdownList(['0' => 'SI', '1' => 'NO'], ['prompt' => 'Seleccione...']) ?>
+            <?= $formulario->field($form, "cedulanit")->input("search") ?>
+            <?= $formulario->field($form, "nombrecorto")->input("search") ?>
         </div>
         <div class="panel-footer text-right">
             <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary",]) ?>
-            <a align="right" href="<?= Url::toRoute("clientes/index_consulta_clientes") ?>" class="btn btn-primary"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
+            <a align="right" href="<?= Url::toRoute("clientes/index_consulta") ?>" class="btn btn-success"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
         </div>
     </div>
 </div>
@@ -73,45 +62,39 @@ $vendedor = ArrayHelper::map(AgentesComerciales::find()->where(['=','estado', 0]
 <?php $formulario->end() ?>
 
 <div class="table-responsive">
-<div class="panel panel-success ">
+<div class="panel panel-primary ">
     <div class="panel-heading">
         Registros <span class="badge"><?= $pagination->totalCount ?></span>
     </div>
         <table class="table table-bordered table-hover">
             <thead>
            <tr style="font-size: 90%;">    
-                <th scope="col" style='background-color:#B9D5CE;'>Tipo documento</th>
-                <th scope="col" style='background-color:#B9D5CE;'>Cedula/Nit</th>
-                <th scope="col" style='background-color:#B9D5CE;'>Cliente</th>
-                <th scope="col" style='background-color:#B9D5CE;'>Dirección</th>
-                 <th scope="col" style='background-color:#B9D5CE;'>Teléfono</th>
-                 <th scope="col" style='background-color:#B9D5CE;'>Celular</th>
-                 <th scope="col" style='background-color:#B9D5CE;'>Email</th>
-                <th scope="col" style='background-color:#B9D5CE;'>Departamento</th>
-                <th scope="col" style='background-color:#B9D5CE;'>Municipio</th>
-                <th scope="col" style='background-color:#B9D5CE;'><span title="Estado actual del cliente">Act.</span></th>
-                <th scope="col" style='background-color:#B9D5CE;'></th>  
+                <th scope="col" style='background-color:#caf0f8;'>TIPO DOCUMENTO</th>
+                <th scope="col" style='background-color:#caf0f8;'>DOCUMENTO</th>
+                <th scope="col" style='background-color:#caf0f8;'>CLIENTE</th>
+                <th scope="col" style='background-color:#caf0f8;'>DIRECCION</th>
+                 <th scope="col" style='background-color:#caf0f8;'>TELEFONO</th>
+                 <th scope="col" style='background-color:#caf0f8;'>CELULAR</th>
+                 <th scope="col" style='background-color:#caf0f8;'>EMAIL</th>
+                <th scope="col" style='background-color:#caf0f8;'>DEPARTAMENTO</th>
+                <th scope="col" style='background-color:#caf0f8;'>MUNICIPIO</th>
+                <th scope="col" style='background-color:#caf0f8;'></th>  
             </tr>
             </thead>
             <tbody>
             <?php foreach ($model as $val): ?>
             <tr style="font-size: 90%;">                   
-                 <td><?= $val->tipoDocumento->tipo_documento ?></td>
-                <td><?= $val->nit_cedula ?></td>
-                <td><?= $val->nombre_completo ?></td>
-                <td><?= $val->direccion ?></td>
-                <td><?= $val->telefono ?></td>
-                <td><?= $val->celular ?></td>
-                 <td><?= $val->email_cliente ?></td>
-                <td><?= $val->codigoDepartamento->departamento ?></td>
-                <td><?= $val->codigoMunicipio->municipio ?></td>
-                <?php if($val->estado_cliente == 0){?>
-                    <td style='background-color:#F7EDEA;'><?= $val->estadoCliente ?></td>
-                <?php }else{?>
-                    <td style='background-color:#F6C8BE;'><?= $val->estadoCliente ?></td>
-                <?php }?>    
+                 <td><?= $val->tipo->tipo ?></td>
+                <td><?= $val->cedulanit ?></td>
+                <td><?= $val->nombrecorto ?></td>
+                <td><?= $val->direccioncliente ?></td>
+                <td><?= $val->telefonocliente ?></td>
+                <td><?= $val->celularcliente ?></td>
+                 <td><?= $val->emailcliente ?></td>
+                <td><?= $val->departamento->departamento ?></td>
+                <td><?= $val->municipio->municipio ?></td>
                 <td style= 'width: 25px; height: 20px;'>
-                    <a href="<?= Url::toRoute(["clientes/view", "id" => $val->id_cliente, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
+                    <a href="<?= Url::toRoute(["clientes/view", "id" => $val->idcliente, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                 </td>
             </tr>
             </tbody>

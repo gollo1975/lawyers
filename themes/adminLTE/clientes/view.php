@@ -30,7 +30,11 @@ $this->params['breadcrumbs'][] = $model->idcliente;
 
     <!--<?= Html::encode($this->title) ?>-->
     <p>
-        <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']) ?>
+        <?php if($token == 0){
+            echo Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']);
+        }else{
+            echo Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index_consulta'], ['class' => 'btn btn-primary btn-sm']);
+        }?>    
     </p>
     <div class="panel panel-primary">
         <div class="panel-heading">

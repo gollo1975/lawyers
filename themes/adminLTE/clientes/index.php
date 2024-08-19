@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td><?= $val->departamento->departamento ?></td>
                 <td><?= $val->municipio->municipio ?></td>
                 <td style= 'width: 25px; height: 20px;'>
-                    <a href="<?= Url::toRoute(["clientes/view", "id" => $val->idcliente]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
+                    <a href="<?= Url::toRoute(["clientes/view", "id" => $val->idcliente, 'token' => $token ]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                 </td>
                 <td style= 'width: 25px; height: 20px;'>
                     <a href="<?= Url::toRoute(["clientes/update", "id" => $val->idcliente])?>" ><span class="glyphicon glyphicon-pencil"></span></a>

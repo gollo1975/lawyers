@@ -62,6 +62,7 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
         <ul class="nav nav-tabs" role="tablist">
              <li role="presentation" class="active"><a href="#simuladorcosto"aria-controls="simuladorcosto" role="tab" data-toggle="tab">Simulador de costo <span class="badge"><?= count($simulador) ?></span></a></li>
             <li role="presentation"><a href="#listaprecio"aria-controls="listaprecio" role="tab" data-toggle="tab">Lista de precios <span class="badge"><?= count($lista_precio) ?></span></a></li>
+            <li role="presentation"><a href="#imagenes"aria-controls="imagenes" role="tab" data-toggle="tab">Imagenes <span class="badge"><?= count($imagenes) ?></span></a></li>
             
         </ul>
         <div class="tab-content">
@@ -163,6 +164,50 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                 </div>
             </div> 
             <!--TEMINA TABS DE PRECIOS-->
+            <div role="tabpanel" class="tab-pane" id="imagenes">
+                <div class="table-responsive">
+                    <div class="panel panel-success">
+                        <div class="panel-body">
+                            <div class="jumbotron">
+                                <div class="container">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <div id="carousel-example-captions" class="carousel slide" data-ride="carousel"> 
+                                            <ol class="carousel-indicators">
+                                                <?php for ($i=0; $i<count($imagenes); $i++):
+                                                    $active = "active";?>
+					            <li data-target="#carousel-example-captions" data-slide-to="<?php echo $i;?>" class="<?php echo $active;?>"></li>
+					            <?php
+						    $active = "";
+                                                endfor;?>
+                                            </ol>
+                                            <div class="carousel-inner" role="listbox"> 
+                                                <?php
+                                                $active="active";
+                                                foreach ($imagenes as $dato){
+                                                   $cadena = 'Documentos/' . $dato->numero . '/' . $dato->codigo . '/' . $dato->nombre;
+                                                   if($dato->extension == 'png' || $dato->extension == 'jpeg' || $dato->extension == 'jpg'){  ?>
+                                                    <div class="item <?php echo $active;?>"> 
+                                                        <img style="width: 100%; height: 100%" src="<?= $cadena;?>" data-holder-rendered = "true"> 
+                                                            <div class="carousel-caption"> 
+                                                               <p><?= $dato->descripcion;?></p>
+                                                            </div> 
+                                                    </div>
+                                                    <?php
+                                                    $active="";
+                                                   } 
+                                                } ?>
+                                            </div> 
+                                            <a class="left carousel-control" href="#carousel-example-captions" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a> 
+                                            <a class="right carousel-control" href="#carousel-example-captions" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">Next</span> </a> 
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>        
+                    </div>   
+                </div>
+            </div>
+            <!--TERMINA TABS-->
         </div>    
     </div>  
       <?php ActiveForm::end(); ?>

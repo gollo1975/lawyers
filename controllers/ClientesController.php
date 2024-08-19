@@ -32,7 +32,7 @@ use app\models\Ordenproduccion;
 
 class ClientesController extends Controller {
 
-    public function actionIndex() {
+    public function actionIndex($token = 0) {
         if (Yii::$app->user->identity){
             if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',4])->all()){
                 $form = new FormFiltroCliente;
@@ -87,6 +87,7 @@ class ClientesController extends Controller {
                             'model' => $model,
                             'form' => $form,
                             'pagination' => $pages,
+                            'token' => $token,
                 ]);
             }else{
                 return $this->redirect(['site/sinpermiso']);
@@ -218,10 +219,10 @@ class ClientesController extends Controller {
         return $this->render("update", ["model" => $model,  "municipio" => $municipio]);
     }
 
-    public function actionView($id) {
-        // $model = new List();            
+    public function actionView($id, $token) {
+                
         $model = Cliente::find()->where(['idcliente' => $id])->one();
-        return $this->render('view', ['model' => $model
+        return $this->render('view', ['model' => $model , 'token' => $token,
         ]);
     }
 
@@ -261,10 +262,10 @@ class ClientesController extends Controller {
         }
     }
     
-    public function actionIndex_consulta() {
+    public function actionIndex_consulta($token = 1) {
         if (Yii::$app->user->identity){
-        if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',27])->all()){
-            $form = new FormFiltroConsultaCliente;
+        if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',11])->all()){
+            $form = new FormFiltroConsultaCliente();
             $cedulanit = null;
             $nombrecorto = null;
             if ($form->load(Yii::$app->request->get())) {
@@ -272,7 +273,7 @@ class ClientesController extends Controller {
                     $cedulanit = Html::encode($form->cedulanit);
                     $nombrecorto = Html::encode($form->nombrecorto);
                     $table = Cliente::find()
-                            ->andFilterWhere(['like', 'cedulanit', $cedulanit])
+                            ->andFilterWhere(['=', 'cedulanit', $cedulanit])
                             ->andFilterWhere(['like', 'nombrecorto', $nombrecorto])
                             ->orderBy('idcliente desc');
                     $tableexcel = $table->all();
@@ -312,10 +313,11 @@ class ClientesController extends Controller {
                 }
             }
             $to = $count->count();
-            return $this->render('index_consulta', [
+            return $this->render('search_consulta_clientes', [
                         'model' => $model,
                         'form' => $form,
                         'pagination' => $pages,
+                        'token' => $token,
             ]);
         }else{
             return $this->redirect(['site/sinpermiso']);
@@ -323,72 +325,6 @@ class ClientesController extends Controller {
         }else{
             return $this->redirect(['site/login']);
         }
-    }
-    
-    //cumpleaños del mes
-    public function actionCumpleanos() {
-        if (Yii::$app->user->identity){
-            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',17])->all()){
-                $form = new \app\models\FormFiltroCumpleanos();
-                $mes = null;
-                $mensaje = '';
-                if ($form->load(Yii::$app->request->get())) {
-                    if ($form->validate()) {
-                        $mes = Html::encode($form->mes);
-                        $table = Cliente::find()->orderBy('idcliente desc');
-                        $count = clone $table;
-                        $to = $count->count();
-                        $pages = new Pagination([
-                            'pageSize' => 10,
-                            'totalCount' => $count->count()
-                        ]);
-                        $model = $table
-                                ->offset($pages->offset)
-                                ->limit($pages->limit)
-                                ->all();
-                        
-                    } else {
-                        $form->getErrors();
-                    }
-                } else {
-                    $table = Cliente::find()
-                            ->orderBy('idcliente desc');
-                    $count = clone $table;
-                    $pages = new Pagination([
-                        'pageSize' => 10,
-                        'totalCount' => $count->count(),
-                    ]);
-                    $model = $table
-                            ->offset($pages->offset)
-                            ->limit($pages->limit)
-                            ->all();
-                }
-                $to = $count->count();
-                return $this->render('cumpleanos', [
-                            'model' => $model,
-                            'form' => $form,
-                            'pagination' => $pages,
-                            'mes' => $mes,
-                            'mensaje' => $mensaje,
-                ]);
-            }else{
-                return $this->redirect(['site/sinpermiso']);
-            }
-        }else{
-            return $this->redirect(['site/login']);
-        }    
-    }
-    
-    public function actionViewconsulta($id)
-        {
-        $proceso = \app\models\Demandas::find()->where(['=','idcliente', $id])->orderBy('fecha_presentacion DESC')->all();
-        $facturas = \app\models\Facturaventa::find()->where(['=','idcliente', $id])->orderBy('fecha_inicio DESC')->all();
-        $table = Cliente::find()->where(['idcliente' => $id])->one();
-        return $this->render('view_consulta', [
-            'table' => $table,
-            'facturas' => $facturas,
-            'proceso' => $proceso,
-        ]);
     }
     
     public function actionMunicipios($id) {

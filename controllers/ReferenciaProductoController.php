@@ -125,6 +125,8 @@ class ReferenciaProductoController extends Controller
     {
         $lista_precio = \app\models\ReferenciaListaPrecio::find()->where(['=','codigo', $id])->all();
         $simulador = \app\models\ReferenciaSimulador::find()->where(['=','codigo', $id])->all();
+        $item = \app\models\Documentodir::findOne(1);
+        $imagenes = \app\models\DirectorioArchivos::find()->where(['=', 'codigo', $id])->andWhere(['=', 'numero', $item->codigodocumento])->all();
         if (isset($_POST["actualizar_precio_venta"])) {
             if (isset($_POST["listado_precios"])) {
                  $intIndice = 0;
@@ -160,6 +162,7 @@ class ReferenciaProductoController extends Controller
             'model' => $this->findModel($id),
             'lista_precio' => $lista_precio,
             'simulador' => $simulador,
+            'imagenes' => $imagenes,
         ]);
     }
     
@@ -335,6 +338,64 @@ class ReferenciaProductoController extends Controller
             'form' => $form,
 
         ]);
+    }
+    
+     //PROCESO QUE VALIDA LA CARGA DE IMAGENES DEL PRODUCTO
+     public function actionValidador_imagen($token = 0) {
+       if (Yii::$app->user->identity){
+            if (UsuarioDetalle::find()->where(['=','codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=','id_permiso',13])->all()){
+                $form = new \app\models\ModeloBuscar();
+                $codigo = null;
+                $referencia = null;
+                if ($form->load(Yii::$app->request->get())) {
+                    if ($form->validate()) {
+                        $codigo = Html::encode($form->codigo);
+                        $referencia = Html::encode($form->referencia);
+                        $table = ReferenciaProducto::find()
+                                ->andFilterWhere(['like','descripcion_referencia', $referencia])
+                                ->andFilterWhere(['=','codigo', $codigo]);
+                        $table = $table->orderBy('codigo ASC');  
+                        $tableexcel = $table->all();
+                        $count = clone $table;
+                        $to = $count->count();
+                        $pages = new Pagination([
+                            'pageSize' => 6,
+                            'totalCount' => $count->count()
+                        ]);
+                        $model = $table
+                                ->offset($pages->offset)
+                                ->limit($pages->limit)
+                                ->all();
+                    } else {
+                        $form->getErrors();
+                    }
+                } else {
+                    $table = ReferenciaProducto::find()->orderBy('codigo ASC');
+                    $tableexcel = $table->all();
+                    $count = clone $table;
+                    $pages = new Pagination([
+                        'pageSize' => 6,
+                        'totalCount' => $count->count(),
+                    ]);
+                    $model = $table
+                            ->offset($pages->offset)
+                            ->limit($pages->limit)
+                            ->all();
+                }
+
+                $to = $count->count();
+                return $this->render('validador_archivo_imagenes', [
+                            'model' => $model,
+                            'form' => $form,
+                            'pagination' => $pages,
+                            'token' => $token,
+                ]);
+            }else{
+                return $this->redirect(['site/sinpermiso']);
+            }
+        }else{
+            return $this->redirect(['site/login']);
+        }    
     }
    
 

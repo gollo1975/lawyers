@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <!--<h1>Lista Facturas</h1>-->
 <?php $formulario = ActiveForm::begin([
     "method" => "get",
-    "action" => Url::toRoute("cotizaciones/index"),
+    "action" => Url::toRoute("cotizaciones/index_cotizaciones"),
     "enableClientValidation" => true,
     'options' => ['class' => 'form-horizontal'],
     'fieldConfig' => [
@@ -72,7 +72,7 @@ $ConCliente = ArrayHelper::map(app\models\Cliente::find()->orderBy('nombrecorto 
         </div>
         <div class="panel-footer text-right">
             <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary btn-sm",]) ?>
-            <a align="right" href="<?= Url::toRoute("cotizaciones/index") ?>" class="btn btn-primary btn-sm"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
+            <a align="right" href="<?= Url::toRoute("cotizaciones/index_cotizaciones") ?>" class="btn btn-success btn-sm"><span class='glyphicon glyphicon-refresh'></span> Actualizar</a>
         </div>
     </div>
 </div>
@@ -122,11 +122,15 @@ $ConCliente = ArrayHelper::map(app\models\Cliente::find()->orderBy('nombrecorto 
                     <td style= 'width: 25px; height: 25px;'>
                             <a href="<?= Url::toRoute(["cotizaciones/view", "id" => $val->id_cotizacion,'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                     </td>
-                    <?php if(!\app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $val->id_cotizacion])->one()){?>
-                        <td style= 'width: 25px; height: 25px;'>
-                                <a href="<?= Url::toRoute(["cotizaciones/update", "id" => $val->id_cotizacion ]) ?>" ><span class="glyphicon glyphicon-pencil"></span></a>
-                        </td>
-                    <?php }else{?>
+                    <?php if(!\app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $val->id_cotizacion])->one()){
+                        if($token == 0){  ?>
+                            <td style= 'width: 25px; height: 25px;'>
+                                    <a href="<?= Url::toRoute(["cotizaciones/update", "id" => $val->id_cotizacion ]) ?>" ><span class="glyphicon glyphicon-pencil"></span></a>
+                            </td>
+                        <?php }else{?>
+                            <td style= 'width: 25px; height: 25px;'></td>
+                        <?php }    
+                    }else{?>
                         <td style= 'width: 25px; height: 25px;'></td>
                     <?php }?>    
              

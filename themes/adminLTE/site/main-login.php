@@ -19,7 +19,7 @@ $fieldOptions2 = [
     'inputTemplate' => "{input}<span class='glyphicon glyphicon-lock form-control-feedback'></span>"
 ];
 ?>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <div class="login-box">
     <div class="login-logo">
         <?php $empresa = Matriculaempresa::findOne(1) ;?>
@@ -27,7 +27,7 @@ $fieldOptions2 = [
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
-         <div class="panel panel-success">
+         <div class="panel panel-primary">
             <div class="panel-heading">
                 <td colspan="2"></td><span class="badge"><h4>Iniciar sesión</h4></span>
             </div>
@@ -52,14 +52,14 @@ $fieldOptions2 = [
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <?= Html::submitButton("<span class='glyphicon glyphicon-share'></span> Conectar", ['name' => 'login-button','class' => 'btn btn-success btn-sm']); ?>                
+                    <?= Html::submitButton("<span class='glyphicon glyphicon-share'></span> Conectar", ['name' => 'login-button','class' => 'btn btn-primary btn-sm']); ?>                
                 </div>
                 <!-- /.col -->
             </div>
             <br>
             <br>        
             <div class="row" align="center">
-                <img src="dist/images/logos/logolayers.png" align="center" width="40%" height="50%">
+                <img src="dist/images/logos/logoempresa.png" align="center" width="40%" height="50%">
             </div>
             <?php ActiveForm::end(); ?>
        </div>

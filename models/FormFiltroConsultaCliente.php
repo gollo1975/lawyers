@@ -25,8 +25,8 @@ class FormFiltroConsultaCliente extends Model
     public function attributeLabels()
     {
         return [
-            'cedulanit' => 'Nro Identificacion',
-            'nombrecorto' => 'Cliente:',
+            'cedulanit' => 'Documento:',
+            'nombrecorto' => 'Nombre del cliente:',
         ];
     }
 }

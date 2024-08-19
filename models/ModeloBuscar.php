@@ -15,13 +15,14 @@ class ModeloBuscar extends Model
     public $clasificacion;
     public $q;
     public $nota;
+    public $codigo;
 
 
     public function rules()
     {
         return [            
             [['clasificacion'], 'integer'],
-            [['referencia','q','nota'], 'string'],
+            [['referencia','q','nota','codigo'], 'string'],
         ];
     }
 
@@ -32,6 +33,7 @@ class ModeloBuscar extends Model
             'referencia' => 'Referencia:',
             'q' => 'Talla:',
             'nota' => 'Nota(200):',
+            'codigo' => 'Codigo referencia:',
         ];
     }
 }

@@ -18,18 +18,29 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
 
     <p>
         <div class="btn-group btn-sm" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']);
-            if ($model->autorizado == 0 && $model->numero_cotizacion == 0) { 
-                echo Html::a('<span class="glyphicon glyphicon-ok"></span> Autorizar', ['autorizado', 'id' => $model->id_cotizacion], ['class' => 'btn btn-default btn-sm']); }
-            else {
-                if ($model->autorizado == 1 && $model->numero_cotizacion == 0) {
-                    echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion], ['class' => 'btn btn-default btn-sm']);
-                    echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar pedido', ['cerrar_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-info btn-sm',
-                         'data' => ['confirm' => 'Esta seguro que desea cerrar la cotizacion del cliente ('.$model->cliente->nombrecorto.')', 'method' => 'post']]);
-                }else{    
-                     echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir pedido', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
-                     echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir tallas', ['/cotizaciones/imprimir_tallas', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
-                }    
+            <?php if($token == 0){
+                echo Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index'], ['class' => 'btn btn-primary btn-sm']);
+            }else{
+                echo Html::a('<span class="glyphicon glyphicon-circle-arrow-left"></span> Regresar', ['index_cotizaciones'], ['class' => 'btn btn-primary btn-sm']);
+            }
+            if($token == 0){
+                if ($model->autorizado == 0 && $model->numero_cotizacion == 0) { 
+                    echo Html::a('<span class="glyphicon glyphicon-ok"></span> Autorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']); }
+                else {
+                    if ($model->autorizado == 1 && $model->numero_cotizacion == 0 ) {
+                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']);
+                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar pedido', ['cerrar_pedido', 'id' => $model->id_cotizacion,'token' => $token],['class' => 'btn btn-info btn-sm',
+                             'data' => ['confirm' => 'Esta seguro que desea cerrar la cotizacion del cliente ('.$model->cliente->nombrecorto.')', 'method' => 'post']]);
+                    }else{    
+                         echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                         echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir tallas', ['/cotizaciones/imprimir_tallas', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                    }    
+                }
+            }else{
+                if($model->numero_cotizacion > 0){
+                   echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                         echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir tallas', ['/cotizaciones/imprimir_tallas', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']); 
+                }
             }?>
         </div>    
     </p>
@@ -103,6 +114,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                     <tr style="font-size: 90%;">
                                         <th scope="col" style='background-color:#caf0f8;'>CODIGO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>REFERENCIA</th>
+                                        <th scope="col" style='background-color:#caf0f8;'>IMAGEN</th>
                                         <th scope="col" style='background-color:#caf0f8;'>COSTO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>LISTA</th>
                                         <th scope="col" style='background-color:#caf0f8;'>VR. VENTA</th>
@@ -117,15 +129,31 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($referencias as $val): 
+                                    <?php
+                                    $cadena = '';
+                                    $item = \app\models\Documentodir::findOne(1);
+                                    foreach ($referencias as $val): 
+                                        //permite buscar la imgane
+                                        $valor = app\models\DirectorioArchivos::find()->where(['=','codigo', $val->codigo])
+                                                                  ->andWhere(['=','predeterminado', 1])->andWhere(['=','numero', $item->codigodocumento])->one();
                                         $conLista = app\models\ReferenciaListaPrecio::find()->where(['=','codigo', $val->codigo])->all();
                                         $conLista = ArrayHelper::map($conLista, 'id_detalle', 'verLista');
                                         ?>
                                        <tr style="font-size: 90%;">
                                             <td>R-<?= $val->codigo ?></td>
                                             <td><?= $val->referencia ?></td>
+                                            <?php if($valor){
+                                                $cadena = 'Documentos/'.$valor->numero.'/'.$valor->codigo.'/'. $valor->nombre;
+                                                if($valor->extension == 'png' || $valor->extension == 'jpeg' || $valor->extension == 'jpg'){?>
+                                                   <td  style=" text-align: center; background-color: white" title="<?php echo $val->codigoReferencia->descripcion_referencia ?>"> <?= yii\bootstrap\Html::img($cadena, ['width' => '80;', 'height' => '60;'])?></td>
+                                                <?php }else {?>
+                                                    <td><?= 'NOT FOUND'?></td>
+                                                <?php } 
+                                            }else{?>
+                                                  <td></td>
+                                            <?php }?>      
                                             <td style="text-align: right" ><?= ''. number_format($val->codigoReferencia->costo_producto,0) ?></td>
-                                            <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('tipo_lista[]', $val->id_detalle, $conLista, ['class' => 'col-sm-12', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
+                                            <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('tipo_lista[]', $val->id_detalle, $conLista, ['class' => 'col-sm-8', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
                                             <td style="text-align: right"><?= '$'. number_format($val->valor_unidad,0)?></td>
                                             <td style="text-align: right"><?= ''. number_format($val->cantidad_referencia,0)?></td>
                                             <td style="text-align: right"><?= '$'. number_format($val->subtotal,0)?></td>
@@ -136,18 +164,18 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                     $conTalla = \app\models\CotizacionDetalleTalla::find()->where(['=','id', $val->id])->one(); 
                                                     if(!$conTalla){ ?>
                                                         <td style= 'width: 25px; height: 25px;'>
-                                                            <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
+                                                            <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
                                                         </td>
                                                         <td style= 'width: 25px; height: 25px;'></td>
                                                         <td style= 'width: 25px; height: 25px;'></td>
                                                     <?php }else{?>
                                                         <td style= 'width: 25px; height: 25px;'>
-                                                            <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
+                                                            <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
                                                         </td>
                                                         <td style="width: 25px; height: 25px;">
                                                             <!-- Inicio Nuevo Detalle proceso -->
                                                               <?= Html::a('<span class="glyphicon glyphicon-list"></span> ',
-                                                                  ['/cotizaciones/subir_nota', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id],
+                                                                  ['/cotizaciones/subir_nota', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token],
                                                                   [
                                                                       'title' => 'Permite crear las observaciones de la talla.',
                                                                       'data-toggle'=>'modal',
@@ -161,7 +189,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                             </div>
                                                         </td>
                                                         <td style= 'width: 25px; height: 25px;'>
-                                                            <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
+                                                            <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                                                         </td>
                                                         
                                                     <?php }    
@@ -174,7 +202,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                     <td style= 'width: 25px; height: 25px;'></td>
                                                     <td style= 'width: 25px; height: 25px;'></td>
                                                      <td style= 'width: 25px; height: 25px;'>
-                                                                 <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
+                                                                 <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                                                         </td>
                                                     
                                             <?php }?>        
@@ -191,9 +219,9 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                             if($model->autorizado == 0){
                                 if(count($referencias) == 0){?>
 
-                                        <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion], ['class' => 'btn btn-success btn-sm']) ?>
+                                        <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-success btn-sm']) ?>
                                 <?php }else{?>
-                                    <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion], ['class' => 'btn btn-success btn-sm']) ?>
+                                    <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-success btn-sm']) ?>
                                     <?= Html::submitButton("<span class='glyphicon glyphicon-refresh'></span> Actualizar", ["class" => "btn btn-primary btn-sm", 'name' => 'actualizar_linea']) ?>
                                     <?= Html::submitButton("<span class='glyphicon glyphicon-trash'></span> Eliminar", ["class" => "btn btn-danger btn-sm", 'name' => 'eliminar_referencia']) ?>
                                 <?php }

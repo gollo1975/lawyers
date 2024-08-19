@@ -45,7 +45,7 @@ class CotizacionesController extends Controller
      * Lists all Cotizaciones models.
      * @return mixed
      */
-     public function actionIndex() {
+    public function actionIndex($token = 0) {
         if (Yii::$app->user->identity) {
             if (UsuarioDetalle::find()->where(['=', 'codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=', 'id_permiso',7])->all()) {
                 $form = new \app\models\FiltroBusquedaCotizacion();
@@ -105,6 +105,78 @@ class CotizacionesController extends Controller
                             'modelo' => $modelo,
                             'form' => $form,
                             'pagination' => $pages,
+                            'token' => $token,
+                ]);
+            } else {
+                return $this->redirect(['site/sinpermiso']);
+            }
+        } else {
+            return $this->redirect(['site/login']);
+        }
+    }
+    
+    //CONSULTA DE COTIZACIONES
+      public function actionIndex_cotizaciones($token = 1) {
+        if (Yii::$app->user->identity) {
+            if (UsuarioDetalle::find()->where(['=', 'codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=', 'id_permiso',12])->all()) {
+                $form = new \app\models\FiltroBusquedaCotizacion();
+                $numero = null;
+                $cliente = null;
+                $fecha_inicio = null;
+                $fecha_corte = null;
+                if ($form->load(Yii::$app->request->get())) {
+                    if ($form->validate()) {
+                        $numero = Html::encode($form->numero);
+                        $cliente = Html::encode($form->cliente);
+                        $fecha_inicio = Html::encode($form->fecha_inicio);
+                        $fecha_corte = Html::encode($form->fecha_corte);
+                        $table = Cotizaciones::find()
+                                ->andFilterWhere(['=', 'numero_cotizacion', $numero])
+                                ->andFilterWhere(['=', 'id_cliente', $cliente])
+                                ->andFilterWhere(['between', 'fecha_cotizacion', $fecha_inicio, $fecha_corte]);
+                        $table = $table->orderBy('id_cotizacion DESC');
+                        $tableexcel = $table->all();
+                        $count = clone $table;
+                        $to = $count->count();
+                        $pages = new Pagination([
+                            'pageSize' => 15,
+                            'totalCount' => $count->count()
+                        ]);
+                        $modelo = $table
+                                ->offset($pages->offset)
+                                ->limit($pages->limit)
+                                ->all();
+                        if (isset($_POST['excel'])) {
+                            $check = isset($_REQUEST['id_cotizacion DESC']);
+                            $this->actionExcelconsultaCotizacion($tableexcel);
+                        }
+                    } else {
+                        $form->getErrors();
+                    }
+                } else {
+                    $table = Cotizaciones::find()
+                             ->orderBy('id_cotizacion DESC');
+                    $tableexcel = $table->all();
+                    $count = clone $table;
+                    $pages = new Pagination([
+                        'pageSize' => 15,
+                        'totalCount' => $count->count(),
+                    ]);
+                    $modelo = $table
+                            ->offset($pages->offset)
+                            ->limit($pages->limit)
+                            ->all();
+                    if (isset($_POST['excel'])) {
+                        //$table = $table->all();
+                        $this->actionExcelconsultaCotizacion($tableexcel);
+                    }
+                }
+                $to = $count->count();
+                return $this->render('index_cotizaciones', [
+                            'modelo' => $modelo,
+                            'form' => $form,
+                            'pagination' => $pages,
+                            'token' => $token,
                 ]);
             } else {
                 return $this->redirect(['site/sinpermiso']);
@@ -120,7 +192,7 @@ class CotizacionesController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $token)
     {
         $referencias = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
         //actualiza los regisgtros de las referencias
@@ -140,7 +212,7 @@ class CotizacionesController extends Controller
                 }
                 $intIndice++;
             } 
-             return $this->redirect(['cotizaciones/view', 'id' => $id]);
+             return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
         } 
         //ELIMINA LAS REFERENCIAS CREADAS EN LAS VISTA
         if (Yii::$app->request->post()) {
@@ -151,7 +223,7 @@ class CotizacionesController extends Controller
                             $eliminar = \app\models\CotizacionDetalle::findOne($intCodigo);
                             $eliminar->delete();
                             Yii::$app->getSession()->setFlash('success', 'Registro Eliminado.');
-                            $this->redirect(["cotizaciones/view", 'id' => $id]);
+                            $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
                         } catch (IntegrityException $e) {
                           
                             Yii::$app->getSession()->setFlash('error', 'Error al eliminar el detalle, tiene registros asociados en otros procesos');
@@ -169,11 +241,12 @@ class CotizacionesController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
             'referencias' => $referencias,
+             'token' => $token,
         ]);
     }
     
     //PERMITE VER LAS TALLAS DE LA REFERENCIA
-    public function actionVer_tallas($id, $id_referencia) {
+    public function actionVer_tallas($id, $id_referencia , $token) {
         $tallas_referencia = \app\models\CotizacionDetalleTalla::find()->where(['=','id', $id_referencia])->all();
         $model = \app\models\CotizacionDetalle::findOne($id_referencia);
         if (isset($_POST["actualizar_cantidades"])) {
@@ -191,13 +264,14 @@ class CotizacionesController extends Controller
                 }  
             }
              $this->ContarCantidadTalla($id_referencia);
-             return $this->redirect(['cotizaciones/ver_tallas', 'id' => $id,'id_referencia' => $id_referencia]);
+             return $this->redirect(['cotizaciones/ver_tallas', 'id' => $id,'id_referencia' => $id_referencia, 'token' => $token]);
         }    
          return $this->render('ver_tallas', [
             'id' => $id,
             'tallas_referencia' => $tallas_referencia,
             'model' => $model,
             'id_referencia' => $id_referencia,
+             'token' => $token,
         ]);
     }
     
@@ -230,12 +304,12 @@ class CotizacionesController extends Controller
     }
    
     //PROCESO QUE ELIMINA UN TALLA DEL LISTADO DE TALLAS
-    public function actionEliminar_lineas($id_talla, $id_referencia, $id)
+    public function actionEliminar_lineas($id_talla, $id_referencia, $id, $token)
     {
         $dato = \app\models\CotizacionDetalleTalla::findOne($id_talla);
         $dato->delete();
         $this->ContarCantidadTalla($id_referencia);
-       return $this->redirect(['cotizaciones/ver_tallas', 'id' => $id,'id_referencia' => $id_referencia]);
+       return $this->redirect(['cotizaciones/ver_tallas', 'id' => $id,'id_referencia' => $id_referencia, 'token' => $token]);
     }
     
     
@@ -297,7 +371,7 @@ class CotizacionesController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
    //PROCESO QUE AUTORIZA EL PRODUCTO
-    public function actionAutorizado($id) {
+    public function actionAutorizado($id, $token) {
         $pedido = Cotizaciones::findOne($id);
         $referencias = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->one();
         $sw = 0;
@@ -325,28 +399,28 @@ class CotizacionesController extends Controller
                             $pedido->autorizado = 0;
                             $pedido->save();
                         } 
-                        return $this->redirect(['cotizaciones/view', 'id' => $id]);
+                        return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
                    }else{
                        Yii::$app->getSession()->setFlash('error','Favor ingresar las tallas y las cantidades de cada referencia para autorizar la cotización. ');
-                         return $this->redirect(['cotizaciones/view', 'id' => $id]);
+                         return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
                    }
                }else{
                   Yii::$app->getSession()->setFlash('warning','Favor ingresar las tallas a cada referencia para autorizar la cotizacion. ');
-                  return $this->redirect(['cotizaciones/view', 'id' => $id]);  
+                  return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);  
                }
                
            }else{
                 Yii::$app->getSession()->setFlash('warning','Selecciona las listas de precio y presiona ACTUALIZAR. Luego debe de ingresar las tallas de cada referencias. ');
-                return $this->redirect(['cotizaciones/view', 'id' => $id]);   
+                return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);   
            }
         }else{
             Yii::$app->getSession()->setFlash('error', 'No hay REFERENCIAS asignadas a la cotizacion del cliente ('.$pedido->cliente->nombrecorto. ').');
-            return $this->redirect(['cotizaciones/view', 'id' => $id]); 
+            return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]); 
         }
     }
     
     //PROCESO QUE CIERRA EL PEDIDO
-    public function actionCerrar_pedido($id) {
+    public function actionCerrar_pedido($id, $token) {
         $model = Cotizaciones::findOne($id);
          //generar consecutivo
         $registro = \app\models\Consecutivo::findOne(2);
@@ -358,7 +432,7 @@ class CotizacionesController extends Controller
         $registro->consecutivo = $valor;
         $registro->save();
         $this->CalcularTotalPedido($id);
-        return $this->redirect(['cotizaciones/view', 'id' => $id]); 
+        return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]); 
     }
     
     //PROCESO QUE TOTALIZA Y CALCULA LOS VALORES DE CADA REFERENCIA
@@ -381,7 +455,7 @@ class CotizacionesController extends Controller
     
     
      //BUSCA INSUMOS PARA AGREGAR AL SIMULADOR
-    public function actionCargar_nueva_referencia($id){
+    public function actionCargar_nueva_referencia($id, $token){
         $operacion = \app\models\ReferenciaProducto::find()->where(['>','costo_producto', 0])->orderBy('descripcion_referencia ASC')->all();
         $form = new \app\models\ModeloBuscar();
         $referencia = null;
@@ -397,7 +471,7 @@ class CotizacionesController extends Controller
                 $count = clone $operacion;
                 $to = $count->count();
                 $pages = new Pagination([
-                    'pageSize' => 15,
+                    'pageSize' => 8,
                     'totalCount' => $count->count()
                 ]);
                 $operacion = $operacion
@@ -412,7 +486,7 @@ class CotizacionesController extends Controller
             $tableexcel = $operacion->all();
             $count = clone $operacion;
             $pages = new Pagination([
-                        'pageSize' => 15,
+                        'pageSize' => 8,
                         'totalCount' => $count->count(),
             ]);
              $operacion = $operacion
@@ -437,7 +511,7 @@ class CotizacionesController extends Controller
                         $table->save(false);
                     }    
                 }
-                return $this->redirect(['view','id' => $id]);
+                return $this->redirect(['view','id' => $id, 'token' => $token]);
             }
         }
         return $this->render('importar_referencias', [
@@ -445,12 +519,13 @@ class CotizacionesController extends Controller
             'pagination' => $pages,
             'id' => $id,
             'form' => $form,
+            'token' => $token,
 
         ]);
     }
     
     //CREAR TALLAS
-     public function actionCrear_tallas_referencia($id, $id_referencia){
+     public function actionCrear_tallas_referencia($id, $id_referencia, $token){
         $tallas = \app\models\Tallas::find()->orderBy('id_talla ASC')->all();
         $form = new \app\models\ModeloBuscar();
         $q = null;
@@ -490,19 +565,20 @@ class CotizacionesController extends Controller
                         $table->save(false); 
                     }
                 }
-                $this->redirect(["cotizaciones/view", 'id' => $id]);
+                $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
         }
         return $this->render('crear_tallas', [
             'tallas' => $tallas,            
             'id' => $id,
             'form' => $form,
             'id_referencia' => $id_referencia,
+            'token' => $token,
         ]);
     
     }
     
      //modificar cantidades produccion
-    public function actionSubir_nota($id, $id_referencia) {
+    public function actionSubir_nota($id, $id_referencia, $token) {
         $model = new \app\models\ModeloBuscar();
         $table = \app\models\CotizacionDetalle::findOne($id_referencia);
        
@@ -510,7 +586,7 @@ class CotizacionesController extends Controller
             if (isset($_POST["grabar_nota"])) { 
                 $table->nota = $model->nota;
                 $table->save(false);
-                $this->redirect(["cotizaciones/view", 'id' => $id]);
+                $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
             }    
         }
          if (Yii::$app->request->get()) {
