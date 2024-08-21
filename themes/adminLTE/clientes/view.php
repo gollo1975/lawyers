@@ -99,7 +99,7 @@ $this->params['breadcrumbs'][] = $model->idcliente;
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="contactos">
                 <div class="table-responsive">
-                    <div class="panel panel-success">
+                    <div class="panel panel-primary">
                         <div class="panel-body">
                             <table class="table table-bordered table-hover">
                                 <thead>

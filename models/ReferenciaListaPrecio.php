@@ -35,6 +35,7 @@ class ReferenciaListaPrecio extends \yii\db\ActiveRecord
             [['id_lista', 'codigo', 'valor_venta'], 'integer'],
             [['valor_venta'], 'required'],
             [['user_name'], 'string', 'max' => 15],
+            [['nota'], 'string', 'max' => 200],
             [['id_lista'], 'exist', 'skipOnError' => true, 'targetClass' => ListaPrecios::className(), 'targetAttribute' => ['id_lista' => 'id_lista']],
             [['codigo'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaProducto::className(), 'targetAttribute' => ['codigo' => 'codigo']],
         ];
@@ -51,6 +52,7 @@ class ReferenciaListaPrecio extends \yii\db\ActiveRecord
             'codigo' => 'Codigo',
             'valor_venta' => 'Valor Venta',
             'user_name' => 'User Name',
+            'nota' => 'nota',
         ];
     }
 

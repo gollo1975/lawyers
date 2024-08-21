@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <div class="table table-responsive">
-    <div class="panel panel-success ">
+    <div class="panel panel-primary ">
         <div class="panel-heading">
             Permisos
         </div>
@@ -74,12 +74,12 @@ $form = ActiveForm::begin([
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th scope="col" style='background-color:#B9D5CE;'>Id</th>
-                        <th scope="col" style='background-color:#B9D5CE;'>Módulo</th>
-                        <th scope="col" style='background-color:#B9D5CE;'>Menú Operación</th>
-                        <th scope="col" style='background-color:#B9D5CE;'>Permiso</th>
+                        <th scope="col" style='background-color:#caf0f8;'>ID</th>
+                        <th scope="col" style='background-color:#caf0f8;'>MODULO</th>
+                        <th scope="col" style='background-color:#caf0f8;'>MENU DE OPERACION</th>
+                        <th scope="col" style='background-color:#caf0f8;'>PERMISO</th>
                         
-                        <th scope="col" style='background-color:#B9D5CE;'><input type="checkbox" onclick="marcar(this);"/></th>
+                        <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,8 +96,8 @@ $form = ActiveForm::begin([
             </table>
         </div>
         <div class="panel-footer text-right">                        
-            <?= Html::a('Nuevo', ['site/newpermiso','id' => $model->codusuario], ['class' => 'btn btn-primary btn-sm']) ?>
-            <?= Html::submitButton("<span class='glyphicon glyphicon-trash'></span> Eliminar", ["class" => "btn btn-danger btn-xs", 'name' => 'eliminar']) ?>
+            <?= Html::a("<span class='glyphicon glyphicon-plus'></span> Nuevo", ['site/newpermiso','id' => $model->codusuario], ['class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::submitButton("<span class='glyphicon glyphicon-trash'></span> Eliminar", ["class" => "btn btn-danger btn-sm", 'name' => 'eliminar']) ?>
         </div>
     </div>
 </div>

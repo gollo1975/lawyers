@@ -30,13 +30,14 @@ $this->title = 'Nuevo Permiso';
 ]); ?>
 
 <?php
+
 if ($mensaje != ""){
     ?> <div class="alert alert-danger"><?= $mensaje ?></div> <?php
 }
 ?>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <div class="table table-responsive">
-    <div class="panel panel-success ">
+    <div class="panel panel-primary ">
         <div class="panel-heading">
             Permisos
         </div>
@@ -44,21 +45,31 @@ if ($mensaje != ""){
             <table class="table table-condensed">
                 <thead>
                 <tr>
-                    <th scope="col" style='background-color:#B9D5CE;'>Id</th>
-                    <th scope="col" style='background-color:#B9D5CE;'>Módulo</th>
-                    <th scope="col" style='background-color:#B9D5CE;' >Menú Operación</th>
-                    <th scope="col" style='background-color:#B9D5CE;'>Permiso</th>                    
-                    <th scope="col" style='background-color:#B9D5CE;'><input type="checkbox" onclick="marcar(this);"/></th>
+                    <th scope="col" style='background-color:#caf0f8;'>ID</th>
+                    <th scope="col" style='background-color:#caf0f8;'>MODULO</th>
+                    <th scope="col" style='background-color:#caf0f8;' >MENU DE OPERACION</th>
+                    <th scope="col" style='background-color:#caf0f8;'>PERMISOS</th>                    
+                    <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($permisos as $val): ?>
-                    <tr style="font-size: 85%;">                    
-                    <td><?= $val->id_permiso ?></td>
-                    <td><?= $val->modulo ?></td>
-                    <td><?= $val->menu_operacion ?></td>
-                    <td><?= $val->permiso ?></td>                    
-                    <td><input type="checkbox" name="idpermiso[]" value="<?= $val->id_permiso ?>"></td>
+                <?php foreach ($permisos as $val):
+                    if(\app\models\UsuarioDetalle::find()->where(['=','codusuario', $id])->andWhere(['=','id_permiso', $val->id_permiso])->one()){
+                        ?>
+                        <tr style="font-size: 85%;">                    
+                        <td><?= $val->id_permiso ?></td>
+                        <td><?= $val->modulo ?></td>
+                        <td><?= $val->menu_operacion ?></td>
+                        <td><?= $val->permiso ?></td>                    
+                        <td><input type="checkbox" name="idpermiso[]" value="<?= $val->id_permiso ?>" disabled = "false" ></td>
+                    <?php }else{?>
+                        <tr style="font-size: 85%;">                    
+                        <td><?= $val->id_permiso ?></td>
+                        <td><?= $val->modulo ?></td>
+                        <td><?= $val->menu_operacion ?></td>
+                        <td><?= $val->permiso ?></td>                    
+                        <td><input type="checkbox" name="idpermiso[]" value="<?= $val->id_permiso ?>" ></td>
+                    <?php }?>    
                 </tr>
                 </tbody>
                 <?php endforeach; ?>

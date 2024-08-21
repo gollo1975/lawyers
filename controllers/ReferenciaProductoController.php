@@ -216,6 +216,29 @@ class ReferenciaProductoController extends Controller
         return ($codigo);
     }
 
+    
+        //modificar cantidades produccion
+    public function actionSubir_nota($id, $id_referencia) {
+        $model = new \app\models\ModeloBuscar();
+        $table = \app\models\ReferenciaListaPrecio::findOne($id_referencia);
+       
+        if ($model->load(Yii::$app->request->post())) {
+            if (isset($_POST["grabar_nota"])) { 
+                $table->nota = $model->nota;
+                $table->save(false);
+                $this->redirect(["referencia-producto/view", 'id' => $id]);
+            }    
+        }
+         if (Yii::$app->request->get()) {
+            $model->nota = $table->nota; 
+         }
+        return $this->renderAjax('nota_referencia', [
+            'model' => $model,
+            'id_referencia' => $id_referencia,
+            'id' => $id,
+        ]);
+    }
+    
     /**
      * Updates an existing ReferenciaProducto model.
      * If update is successful, the browser will be redirected to the 'view' page.

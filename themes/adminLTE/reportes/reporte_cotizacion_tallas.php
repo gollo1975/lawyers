@@ -163,7 +163,7 @@ class PDF extends FPDF {
                 $pdf->Cell(40, 4, utf8_decode(substr($talla->detalleCotizacion->referencia, 0, 27)) , 0, 0, 'L');
                 $pdf->Cell(12, 4, $talla->talla->nombre_talla, 0, 0, 'L');
                 $pdf->Cell(13, 4, $talla->cantidad, 0, 0, 'R');
-                $pdf->Cell(112, 4, utf8_decode(substr($detalle->detalleCotizacion->nota, 0, 100)) , 0, 0, 'L');
+                $pdf->MultiCell (112, 4, utf8_decode(substr($detalle->detalleCotizacion->nota, 0, 200)) , 'L');
                 $pdf->Ln();
                 $pdf->SetAutoPageBreak(true, 20);
                 $cant += $detalle->cantidad;
@@ -173,26 +173,26 @@ class PDF extends FPDF {
               $this->Ln();  
             }else{
                $this->Ln(3);
-            $header = array('CODIGO', 'REFERENCIA', 'TALLA', 'CANT.','OBSERVACION');
-            $this->SetFillColor(200, 200, 200);
-            $this->SetTextColor(0);
-            $this->SetDrawColor(0, 0, 0);
-            $this->SetLineWidth(.2);
-            $this->SetFont('', 'B', 8);
+                $header = array('CODIGO', 'REFERENCIA', 'TALLA', 'CANT.','OBSERVACION');
+                $this->SetFillColor(200, 200, 200);
+                $this->SetTextColor(0);
+                $this->SetDrawColor(0, 0, 0);
+                $this->SetLineWidth(.2);
+                $this->SetFont('', 'B', 8);
 
-            //creamos la cabecera de la tabla.
-            $w = array(15, 40, 12, 13, 112);
-            for ($i = 0; $i < count($header); $i++)
-                if ($i == 0 || $i == 1)
-                    $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
-                else
-                    $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
+                //creamos la cabecera de la tabla.
+                $w = array(15, 40, 12, 13, 112);
+                for ($i = 0; $i < count($header); $i++)
+                    if ($i == 0 || $i == 1)
+                        $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
+                    else
+                        $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
 
-            //Restauración de colores y fuentes
-            $this->SetFillColor(224, 235, 255);
-            $this->SetTextColor(0);
-            $this->SetFont('');
-            $this->Ln(5); 
+                //Restauración de colores y fuentes
+                $this->SetFillColor(224, 235, 255);
+                $this->SetTextColor(0);
+                $this->SetFont('');
+                $this->Ln(5); 
             }
         }
         

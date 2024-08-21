@@ -121,6 +121,8 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                                             <th scope="col" style='background-color:#caf0f8;'>VLR VENTA</th>
                                             <th scope="col" style='background-color:#caf0f8;'>LISTA PRECIOS</th>
                                             <th scope="col" style='background-color:#caf0f8;'>USER NAME</th>
+                                            <th scope="col" style='background-color:#caf0f8; width: 40%'>NOTA</th>
+                                            <th scope="col" style='background-color:#caf0f8;'></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -128,9 +130,26 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                                         foreach ($lista_precio as $lista):?>
                                             <tr style="font-size: 90%;">
                                                 <td><?= $lista->id_detalle?></td>
-                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="precio_venta_publico[]" value="<?= $lista->valor_venta ?>" style="text-align: right" size="9" required="true"> </td> 
-                                                <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('lista_precio[]', $lista->id_lista, $listaPrecio, ['class' => 'col-sm-10', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
+                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="precio_venta_publico[]" value="<?= $lista->valor_venta ?>" style="text-align: right" size="7" required="true"> </td> 
+                                                <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('lista_precio[]', $lista->id_lista, $listaPrecio, ['class' => 'col-sm-8', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
                                                 <td><?= $lista->user_name?></td>
+                                                 <td><?= $lista->nota?></td>
+                                                <td style="width: 25px; height: 25px;">
+                                                       <!-- Inicio Nuevo Detalle proceso -->
+                                                         <?= Html::a('<span class="glyphicon glyphicon-list"></span> ',
+                                                             ['/referencia-producto/subir_nota', 'id' => $model->codigo, 'id_referencia' => $lista->id_detalle],
+                                                             [
+                                                                 'title' => 'Permite crear las observaciones al precio de venta.',
+                                                                 'data-toggle'=>'modal',
+                                                                 'data-target'=>'#modalsubirnota'.$lista->id_detalle,
+                                                             ])    
+                                                        ?>
+                                                       <div class="modal remote fade" id="modalsubirnota<?= $lista->id_detalle ?>">
+                                                         <div class="modal-dialog modal-lg" style ="width: 550px;">
+                                                             <div class="modal-content"></div>
+                                                         </div>
+                                                       </div>
+                                                   </td>
                                                 <input type="hidden" name="listado_precios[]" value="<?= $lista->id_detalle ?>">
                                                  
                                             </tr>

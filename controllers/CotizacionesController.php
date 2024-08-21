@@ -133,7 +133,8 @@ class CotizacionesController extends Controller
                         $table = Cotizaciones::find()
                                 ->andFilterWhere(['=', 'numero_cotizacion', $numero])
                                 ->andFilterWhere(['=', 'id_cliente', $cliente])
-                                ->andFilterWhere(['between', 'fecha_cotizacion', $fecha_inicio, $fecha_corte]);
+                                ->andFilterWhere(['between', 'fecha_cotizacion', $fecha_inicio, $fecha_corte])
+                                ->andwhere(['=','proceso_cerrado', 1]);
                         $table = $table->orderBy('id_cotizacion DESC');
                         $tableexcel = $table->all();
                         $count = clone $table;
@@ -154,7 +155,7 @@ class CotizacionesController extends Controller
                         $form->getErrors();
                     }
                 } else {
-                    $table = Cotizaciones::find()
+                    $table = Cotizaciones::find()->where(['=','proceso_cerrado', 1])
                              ->orderBy('id_cotizacion DESC');
                     $tableexcel = $table->all();
                     $count = clone $table;

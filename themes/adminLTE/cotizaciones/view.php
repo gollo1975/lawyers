@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                 else {
                     if ($model->autorizado == 1 && $model->numero_cotizacion == 0 ) {
                         echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']);
-                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar pedido', ['cerrar_pedido', 'id' => $model->id_cotizacion,'token' => $token],['class' => 'btn btn-info btn-sm',
+                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar cotización', ['cerrar_pedido', 'id' => $model->id_cotizacion,'token' => $token],['class' => 'btn btn-info btn-sm',
                              'data' => ['confirm' => 'Esta seguro que desea cerrar la cotizacion del cliente ('.$model->cliente->nombrecorto.')', 'method' => 'post']]);
                     }else{    
                          echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);

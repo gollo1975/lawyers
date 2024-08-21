@@ -98,13 +98,7 @@
                                     'url' => '#',
                                     'items' => [
                                         ['label' => 'Empresa', 'icon' => 'nav-icon fas fa-file', 'url' => ['empresa/empresa', 'id' => 1]],
-                                         [
-                                        'label' => 'Contenido',
-                                        'icon' => 'comment',
-                                        'url' => '#',
-                                        'items' => [
-                                            ['label' => 'Formato principal', 'icon' => 'tumblr-square', 'url' => ['formato-contenido/index']],
-                                        ]],
+                                         
                                     ],
                                 ],
                                  
