@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $model->idcliente;
             <?php
               $contMaquina = 1;
              ?>
-            <li role="presentation" class="active"><a href="#contactos" aria-controls="contactos" role="tab" data-toggle="tab">Contactos  <span class="badge"><?= 1 ?></span></a></li>
+            <li role="presentation" class="active"><a href="#contactos" aria-controls="contactos" role="tab" data-toggle="tab">Contactos  <span class="badge"><?= count($Concontacto) ?></span></a></li>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="contactos">
@@ -105,17 +105,70 @@ $this->params['breadcrumbs'][] = $model->idcliente;
                                 <thead>
                                     <tr style='font-size:90%;'>
                                         <th scope="col" style='background-color:#caf0f8;'>ID</th>                        
-                                        <th scope="col" style='background-color:#caf0f8;'>NOMBRE CONTACTO</th>                        
-                                        <th scope="col" style='background-color:#caf0f8;'>EMAIL</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>NOMBRES</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>APELLIDOS</th>                        
                                         <th scope="col" style='background-color:#caf0f8;'>CELULAR</th> 
+                                         <th scope="col" style='background-color:#caf0f8;'>EMAIL</th> 
                                         <th scope="col" style='background-color:#caf0f8;'>F. NACIMIENTO</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>CARGO</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'></th> 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                   
+                                   <?php 
+                                        foreach ($Concontacto as $val):?>
+                                            <tr style='font-size:90%;'>
+                                                 <td> <?= $val->id_contacto?></td>
+                                                <td> <?= $val->nombres?></td>
+                                                <td> <?= $val->apellidos?></td>
+                                                <td> <?= $val->celular?></td>
+                                                <td> <?= $val->email?></td>
+                                                <td> <?= $val->fecha_nacimiento?></td>
+                                                <td> <?= $val->cargo->cargo?></td> 
+                                                 <?php if($token == 0){?>
+                                                    <td style= 'width: 25px; height: 20px;'>
+                                                       <!-- Inicio Nuevo Detalle proceso -->
+                                                          <?= Html::a('<span class="glyphicon glyphicon-pencil"></span>',
+                                                              ['/clientes/editar_contacto','id' => $model->idcliente, 'token' =>$token, 'detalle' => $val->id_contacto],
+                                                              [
+                                                                  'title' => 'Editar los contactos del cliente',
+                                                                  'data-toggle'=>'modal',
+                                                                  'data-target'=>'#modaleditarcontacto'.$model->idcliente,
+                                                              ])    
+                                                         ?>
+                                                        <div class="modal remote fade" id="modaleditarcontacto<?= $model->idcliente ?>">
+                                                            <div class="modal-dialog modal-lg" style ="width: 530px;">
+                                                                 <div class="modal-content"></div>
+                                                            </div>
+                                                        </div> 
+                                                    </td>   
+                                                <?php }else{?>
+                                                    <td style= 'width: 25px; height: 20px;'></td>
+                                                <?php }?>    
+                                            </tr>
+                                     <?php endforeach;?>
                                 </tbody>      
                             </table>
                         </div>
+                        <?php if($token == 0){?>
+                            <div class="panel-footer text-right" >  
+                                <!-- Inicio Nuevo Detalle proceso -->
+                                  <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Crear contactos',
+                                      ['/clientes/new_contacto','id' => $model->idcliente, 'token' =>$token],
+                                      [
+                                          'title' => 'Crea los contactos del cliente',
+                                          'data-toggle'=>'modal',
+                                          'data-target'=>'#modalcrearcontacto'.$model->idcliente,
+                                          'class' => 'btn btn-success btn-sm'
+                                      ])    
+                                 ?>
+                                <div class="modal remote fade" id="modalcrearcontacto<?= $model->idcliente ?>">
+                                    <div class="modal-dialog modal-lg" style ="width: 530px;">
+                                         <div class="modal-content"></div>
+                                    </div>
+                                </div> 
+                            </div>   
+                        <?php }?>
                     </div>   
                 </div>
             </div>

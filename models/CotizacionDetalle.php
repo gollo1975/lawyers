@@ -47,10 +47,11 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cotizacion', 'codigo', 'id_detalle', 'cantidad_referencia', 'valor_unidad','subtotal','impuesto', 'total_linea'], 'integer'],
+            [['id_cotizacion', 'codigo', 'id_detalle', 'cantidad_referencia', 'valor_unidad','subtotal','impuesto', 'total_linea','id_grupo'], 'integer'],
             [['referencia'], 'string', 'max' => 40],
             [['user_name'], 'string', 'max' => 15],
             [['nota'], 'string', 'max' => 200],
+            [['fecha_cotizacion','safe']],
             [['id_cotizacion'], 'exist', 'skipOnError' => true, 'targetClass' => Cotizaciones::className(), 'targetAttribute' => ['id_cotizacion' => 'id_cotizacion']],
             [['codigo'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaProducto::className(), 'targetAttribute' => ['codigo' => 'codigo']],
             [['id_detalle'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaListaPrecio::className(), 'targetAttribute' => ['id_detalle' => 'id_detalle']],
@@ -75,6 +76,8 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
             'user_name' => 'User Name',
             'subtotal' => 'subtotal',
             'nota' => 'nota',
+            'id_grupo' => 'Grupo:',
+            'fecha_cotizacion' => 'Fecha cotizacion:',
         ];
     }
 

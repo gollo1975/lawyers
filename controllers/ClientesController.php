@@ -222,7 +222,8 @@ class ClientesController extends Controller {
     public function actionView($id, $token) {
                 
         $model = Cliente::find()->where(['idcliente' => $id])->one();
-        return $this->render('view', ['model' => $model , 'token' => $token,
+        $Concontacto = \app\models\ClientesContactos::find()->where(['=','id_cliente', $id])->all();
+        return $this->render('view', ['model' => $model , 'token' => $token, 'Concontacto' => $Concontacto
         ]);
     }
 
@@ -336,6 +337,73 @@ class ClientesController extends Controller {
                 echo "<option value='$row->idmunicipio' required>$row->municipio</option>";
             }
         }
+    }
+    
+    //CREA UN NUEVO CONTACTO DEL CLIENTE
+    public function actionNew_contacto($id, $token) {
+
+        $model = new \app\models\ModeloContactoCliente();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                if (isset($_POST["nuevo_contacto_cliente"])) {
+                    $table = new \app\models\ClientesContactos();
+                    $table->id_cliente = $id;
+                    $table->nombres = strtoupper($model->nombres);
+                    $table->apellidos = strtoupper($model->apellidos);
+                    $table->celular = $model->celular;
+                    $table->email = $model->email;
+                    $table->id_cargo = $model->cargo;
+                    $table->fecha_nacimiento = $model->fecha_nacimiento;
+                    $table->user_name = Yii::$app->user->identity->username;
+                    $table->save(false);
+                    $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
+                }
+            } else {
+                $model->getErrors();
+            }
+        }
+        return $this->renderAjax('form_nuevo_contacto', [
+                    'model' => $model,
+                    'id' => $id,
+                    'token' => $token,
+        ]);
+    }
+    
+    //EDITAR CONTACTO
+    public function actionEditar_contacto($id, $token, $detalle) {
+        
+        $model = new \app\models\ModeloContactoCliente();
+        
+        $table = \app\models\ClientesContactos::findOne($detalle);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                if (isset($_POST["nuevo_contacto_cliente"])) {
+                    $table->nombres = strtoupper($model->nombres);
+                    $table->apellidos = strtoupper($model->apellidos);
+                    $table->celular = $model->celular;
+                    $table->email = $model->email;
+                    $table->id_cargo = $model->cargo;
+                    $table->fecha_nacimiento = $model->fecha_nacimiento;
+                    $table->save(false);
+                    $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
+                }
+           } else {
+                $model->getErrors();
+            }
+        }
+        if (Yii::$app->request->get()) {
+            $model->nombres = $table->nombres;
+            $model->apellidos = $table->apellidos;
+            $model->celular = $table->celular;
+            $model->email = $table->email;
+            $model->fecha_nacimiento = $table->fecha_nacimiento;
+            $model->cargo = $table->id_cargo;
+        }
+        return $this->renderAjax('form_nuevo_contacto', [
+                    'model' => $model,
+                    'id' => $id,
+                    'token' => $token,
+        ]);
     }
     
     public function actionExcelDepartamento($tableexcel) {                

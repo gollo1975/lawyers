@@ -116,7 +116,7 @@ class CotizacionesController extends Controller
     }
     
     //CONSULTA DE COTIZACIONES
-      public function actionIndex_cotizaciones($token = 1) {
+    public function actionIndex_cotizaciones($token = 1) {
         if (Yii::$app->user->identity) {
             if (UsuarioDetalle::find()->where(['=', 'codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=', 'id_permiso',12])->all()) {
                 $form = new \app\models\FiltroBusquedaCotizacion();
@@ -187,6 +187,68 @@ class CotizacionesController extends Controller
         }
     }
 
+    //RENTABILIDAD X REFERENCIA
+    public function actionSearch_rentabilidad() {
+        if (Yii::$app->user->identity) {
+            if (UsuarioDetalle::find()->where(['=', 'codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=', 'id_permiso',14])->all()) {
+                $form = new \app\models\FiltroBusquedaCotizacion();
+                $numero = null;
+                $cliente = null;
+                $fecha_inicio = null;
+                $fecha_corte = null;
+                $grupo = null;
+                $referencia= null; $codigo = null;
+                $modelo = null;
+                $pages = null;
+                if ($form->load(Yii::$app->request->get())) {
+                    if ($form->validate()) {
+                        $numero = Html::encode($form->numero);
+                        $cliente = Html::encode($form->cliente);
+                        $fecha_inicio = Html::encode($form->fecha_inicio);
+                        $fecha_corte = Html::encode($form->fecha_corte);
+                        $grupo = Html::encode($form->grupo);
+                        $referencia = Html::encode($form->referencia);
+                        $codigo = Html::encode($form->codigo);
+                        $table = CotizacionDetalle::find()
+                                ->andFilterWhere(['=', 'codigo', $codigo])
+                                ->andFilterWhere(['like', 'referencia', $referencia])
+                                ->andFilterWhere(['=', 'id_cotizacion', $numero])
+                                ->andFilterWhere(['=', 'id_cotizacion', $cliente])
+                                ->andFilterWhere(['=', 'id_grupo', $grupo])
+                                ->andFilterWhere(['between', 'fecha_cotizacion', $fecha_inicio, $fecha_corte]);
+                        $table = $table->orderBy('id_cotizacion DESC');
+                        $tableexcel = $table->all();
+                        $count = clone $table;
+                        $to = $count->count();
+                        $pages = new Pagination([
+                            'pageSize' => 15,
+                            'totalCount' => $count->count()
+                        ]);
+                        $modelo = $table
+                                ->offset($pages->offset)
+                                ->limit($pages->limit)
+                                ->all();
+                        if (isset($_POST['excel'])) {
+                            $check = isset($_REQUEST['id_cotizacion DESC']);
+                            $this->actionExcelconsultaRentabilidad($tableexcel);
+                        }
+                    } else {
+                        $form->getErrors();
+                    }
+                } 
+                return $this->render('search_rentabilidad', [
+                            'modelo' => $modelo,
+                            'form' => $form,
+                            'pagination' => $pages,
+                ]);
+            } else {
+                return $this->redirect(['site/sinpermiso']);
+            }
+        } else {
+            return $this->redirect(['site/login']);
+        }
+    }
+    
     /**
      * Displays a single Cotizaciones model.
      * @param integer $id
@@ -206,7 +268,7 @@ class CotizacionesController extends Controller
                 $table = \app\models\CotizacionDetalle::findOne($intCodigo);
                 $table->id_detalle = $_POST["tipo_lista"][$intIndice];
                 $table->valor_unidad = $BuscarLista->valor_venta;
-                $table->save();
+                $table->save(false);
                 if($table->cantidad_referencia > 0){
                     $id_referencia = $intCodigo;
                     $this->ContarCantidadTalla($id_referencia);
@@ -285,7 +347,7 @@ class CotizacionesController extends Controller
             $sumar += $talla->cantidad;
         endforeach;
         $referencia->cantidad_referencia = $sumar;
-        $referencia->save();
+        $referencia->save(false);
        $this->CalcularValoresReferencia($id_referencia);
         
     }
@@ -301,7 +363,7 @@ class CotizacionesController extends Controller
        $referencia->subtotal = $subtotal;
        $referencia->impuesto = $iva;
        $referencia->total_linea = $total;
-       $referencia->save();
+       $referencia->save(false);
     }
    
     //PROCESO QUE ELIMINA UN TALLA DEL LISTADO DE TALLAS
@@ -509,6 +571,8 @@ class CotizacionesController extends Controller
                         $table->codigo = $intCodigo;
                         $table->referencia = $item->descripcion_referencia;
                         $table->user_name = Yii::$app->user->identity->username;
+                        $table->id_grupo = $item->id_grupo;
+                        $table->fecha_cotizacion = date('Y-m-d');
                         $table->save(false);
                     }    
                 }

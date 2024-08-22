@@ -1,7 +1,6 @@
 <?php
 //modelos
 use app\models\Cargos;
-use app\models\EntidadBancarias;
 //clases
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
@@ -22,7 +21,7 @@ $form = ActiveForm::begin([
             'options' => []
         ],
         ]);
-$cargo = ArrayHelper::map(Cargos::find()->orderBy('nombre_cargo ASC' )->all(), 'id_cargo', 'nombre_cargo');
+$cargo = ArrayHelper::map(Cargos::find()->orderBy('cargo ASC' )->all(), 'id_cargo', 'cargo');
 ?>
 
     <div class="modal-header">
@@ -31,7 +30,7 @@ $cargo = ArrayHelper::map(Cargos::find()->orderBy('nombre_cargo ASC' )->all(), '
     </div>
     <div class="modal-body">        
         <div class="table table-responsive">
-            <div class="panel panel-success ">
+            <div class="panel panel-primary ">
                 <div class="panel-heading" style="text-align: left ">
                   NUEVO CONTACTO  
                 </div>
