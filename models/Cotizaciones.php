@@ -41,11 +41,12 @@ class Cotizaciones extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cliente', 'fecha_entrega', 'observacion'], 'required'],
-            [['id_cliente', 'numero_cotizacion', 'total_prendas', 'subtotal', 'impuesto', 'total_cotizacion', 'autorizado', 'proceso_cerrado'], 'integer'],
+            [['id_cliente', 'fecha_entrega','tipo_cotizacion'], 'required'],
+            [['id_cliente', 'numero_cotizacion', 'total_prendas', 'subtotal', 'impuesto', 'total_cotizacion', 'autorizado', 
+                 'tipo_cotizacion','proceso_cerrado'], 'integer'],
             [['fecha_cotizacion', 'fecha_entrega', 'fecha_registro'], 'safe'],
             [['user_name'], 'string', 'max' => 15],
-            [['observacion'], 'string', 'max' => 100],
+            [['observacion'], 'string', 'max' => 200],
             [['id_cliente'], 'exist', 'skipOnError' => true, 'targetClass' => Cliente::className(), 'targetAttribute' => ['id_cliente' => 'idcliente']],
         ];
     }
@@ -70,6 +71,7 @@ class Cotizaciones extends \yii\db\ActiveRecord
             'proceso_cerrado' => 'Proceso cerrado:',
             'user_name' => 'User Name',
             'observacion' => 'Observacion:',
+            'tipo_cotizacion' => 'Tipo cotización:',
         ];
     }
 
@@ -105,5 +107,13 @@ class Cotizaciones extends \yii\db\ActiveRecord
             $procesocerrado = 'SI';            
         }
         return $procesocerrado;
+    }
+    public function getTipoCotizacion() {
+        if($this->tipo_cotizacion == 0){
+            $tipocotizacion = 'SIN TALLAS';
+        }else{
+            $tipocotizacion = 'CON TALLAS';            
+        }
+        return $tipocotizacion;
     }
 }

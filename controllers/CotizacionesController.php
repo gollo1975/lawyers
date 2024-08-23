@@ -258,10 +258,11 @@ class CotizacionesController extends Controller
     public function actionView($id, $token)
     {
         $referencias = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
+        $model = Cotizaciones::findOne($id);
         //actualiza los regisgtros de las referencias
         if (isset($_POST["actualizar_linea"])) {
             $intIndice = 0;
-            $variable = 0;
+            $variable = 0; $unidades = 0;
             foreach ($_POST["listado_referencia"] as $intCodigo) {
                 $variable = $_POST["tipo_lista"][$intIndice];
                 $BuscarLista = \app\models\ReferenciaListaPrecio::findOne($variable);
@@ -302,7 +303,7 @@ class CotizacionesController extends Controller
         }    
         
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
             'referencias' => $referencias,
              'token' => $token,
         ]);
@@ -447,30 +448,41 @@ class CotizacionesController extends Controller
                }
            endforeach;
            if($sw == 0){
-               $tallas = \app\models\CotizacionDetalleTalla::find()->where(['=','id_cotizacion', $id])->all();
-               if(count($tallas) > 0){
-                   foreach ($tallas as $talla):
-                       if($talla->cantidad  == 0){
-                           $sw1 = 1;
-                       }
-                   endforeach;
-                   if($sw1 == 0){
-                        if($pedido->autorizado == 0){
-                            $pedido->autorizado = 1;
-                            $pedido->save();
-                        }else{
-                            $pedido->autorizado = 0;
-                            $pedido->save();
-                        } 
-                        return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
-                   }else{
-                       Yii::$app->getSession()->setFlash('error','Favor ingresar las tallas y las cantidades de cada referencia para autorizar la cotización. ');
-                         return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
-                   }
+               if($pedido->tipo_cotizacion == 0){
+                    if($pedido->autorizado == 0){
+                        $pedido->autorizado = 1;
+                        $pedido->save();
+                    }else{
+                        $pedido->autorizado = 0;
+                        $pedido->save();
+                    } 
+                    return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
                }else{
-                  Yii::$app->getSession()->setFlash('warning','Favor ingresar las tallas a cada referencia para autorizar la cotizacion. ');
-                  return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);  
-               }
+                    $tallas = \app\models\CotizacionDetalleTalla::find()->where(['=','id_cotizacion', $id])->all();
+                    if(count($tallas) > 0){
+                        foreach ($tallas as $talla):
+                            if($talla->cantidad  == 0){
+                                $sw1 = 1;
+                            }
+                        endforeach;
+                        if($sw1 == 0){
+                             if($pedido->autorizado == 0){
+                                 $pedido->autorizado = 1;
+                                 $pedido->save();
+                             }else{
+                                 $pedido->autorizado = 0;
+                                 $pedido->save();
+                             } 
+                             return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
+                        }else{
+                            Yii::$app->getSession()->setFlash('error','Favor ingresar las tallas y las cantidades de cada referencia para autorizar la cotización. ');
+                              return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
+                        }
+                    }else{
+                       Yii::$app->getSession()->setFlash('warning','Favor ingresar las tallas a cada referencia para autorizar la cotizacion. ');
+                       return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);  
+                    }
+                }    
                
            }else{
                 Yii::$app->getSession()->setFlash('warning','Selecciona las listas de precio y presiona ACTUALIZAR. Luego debe de ingresar las tallas de cada referencias. ');
@@ -517,76 +529,89 @@ class CotizacionesController extends Controller
     }
     
     
+    //ACTUALIZAR SALDOS
+     public function actionActualizar_saldos($id, $token) {
+        $this->CalcularTotalPedido($id);
+        return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);   
+     }
+    
      //BUSCA INSUMOS PARA AGREGAR AL SIMULADOR
     public function actionCargar_nueva_referencia($id, $token){
         $operacion = \app\models\ReferenciaProducto::find()->where(['>','costo_producto', 0])->orderBy('descripcion_referencia ASC')->all();
         $form = new \app\models\ModeloBuscar();
         $referencia = null;
         $clasificacion = null;
-        if ($form->load(Yii::$app->request->get())) {
-            if ($form->validate()) {
-                $referencia = Html::encode($form->referencia);  
-                $clasificacion = Html::encode($form->clasificacion); 
-                $operacion = \app\models\ReferenciaProducto::find()
-                        ->andFilterWhere(['like','descripcion_referencia', $referencia])
-                        ->andFilterWhere(['=','id_grupo', $clasificacion]);
-                $operacion = $operacion->orderBy('descripcion_referencia ASC');                    
-                $count = clone $operacion;
-                $to = $count->count();
-                $pages = new Pagination([
-                    'pageSize' => 8,
-                    'totalCount' => $count->count()
-                ]);
-                $operacion = $operacion
-                        ->offset($pages->offset)
-                        ->limit($pages->limit)
-                        ->all();         
-            } else {
-                $form->getErrors();
-            }                    
-        }else{
-            $operacion = \app\models\ReferenciaProducto::find()->where(['>','costo_producto', 0])->orderBy('descripcion_referencia ASC');
-            $tableexcel = $operacion->all();
-            $count = clone $operacion;
-            $pages = new Pagination([
+        $detalle = CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
+        if(count($detalle) <> 8){
+            if ($form->load(Yii::$app->request->get())) {
+                if ($form->validate()) {
+                    $referencia = Html::encode($form->referencia);  
+                    $clasificacion = Html::encode($form->clasificacion); 
+                    $operacion = \app\models\ReferenciaProducto::find()
+                            ->andFilterWhere(['like','descripcion_referencia', $referencia])
+                            ->andFilterWhere(['=','id_grupo', $clasificacion]);
+                    $operacion = $operacion->orderBy('descripcion_referencia ASC');                    
+                    $count = clone $operacion;
+                    $to = $count->count();
+                    $pages = new Pagination([
                         'pageSize' => 8,
-                        'totalCount' => $count->count(),
-            ]);
-             $operacion = $operacion
+                        'totalCount' => $count->count()
+                    ]);
+                    $operacion = $operacion
                             ->offset($pages->offset)
                             ->limit($pages->limit)
-                            ->all();
-        }
-        //PROCESO DE GUARDAR
-         if (isset($_POST["enviar_referencias"])) {
-            if(isset($_POST["codigo_referencia"])){
-                $intIndice = 0;
-                foreach ($_POST["codigo_referencia"] as $intCodigo) {
-                    ///VALIDA QUE NO HAYA REGISTRO DUPLICADOS
-                    $registro = \app\models\CotizacionDetalle::find()->where(['=','codigo', $intCodigo])->andWhere(['=','id_cotizacion', $id])->one();
-                    if(!$registro){
-                        $item = \app\models\ReferenciaProducto::findOne($intCodigo);
-                        $table = new \app\models\CotizacionDetalle();
-                        $table->id_cotizacion = $id;
-                        $table->codigo = $intCodigo;
-                        $table->referencia = $item->descripcion_referencia;
-                        $table->user_name = Yii::$app->user->identity->username;
-                        $table->id_grupo = $item->id_grupo;
-                        $table->fecha_cotizacion = date('Y-m-d');
-                        $table->save(false);
-                    }    
-                }
-                return $this->redirect(['view','id' => $id, 'token' => $token]);
+                            ->all();         
+                } else {
+                    $form->getErrors();
+                }                    
+            }else{
+                $operacion = \app\models\ReferenciaProducto::find()->where(['>','costo_producto', 0])->orderBy('descripcion_referencia ASC');
+                $tableexcel = $operacion->all();
+                $count = clone $operacion;
+                $pages = new Pagination([
+                            'pageSize' => 8,
+                            'totalCount' => $count->count(),
+                ]);
+                 $operacion = $operacion
+                                ->offset($pages->offset)
+                                ->limit($pages->limit)
+                                ->all();
             }
-        }
-        return $this->render('importar_referencias', [
-            'operacion' => $operacion,            
-            'pagination' => $pages,
-            'id' => $id,
-            'form' => $form,
-            'token' => $token,
+            //PROCESO DE GUARDAR
+             if (isset($_POST["enviar_referencias"])) {
+                if(isset($_POST["codigo_referencia"])){
+                    $intIndice = 0;
+                    foreach ($_POST["codigo_referencia"] as $intCodigo) {
+                        ///VALIDA QUE NO HAYA REGISTRO DUPLICADOS
+                        $registro = \app\models\CotizacionDetalle::find()->where(['=','codigo', $intCodigo])->andWhere(['=','id_cotizacion', $id])->one();
+                        if(!$registro){
+                            $item = \app\models\ReferenciaProducto::findOne($intCodigo);
+                            $table = new \app\models\CotizacionDetalle();
+                            $table->id_cotizacion = $id;
+                            $table->codigo = $intCodigo;
+                            $table->referencia = $item->descripcion_referencia;
+                            $table->user_name = Yii::$app->user->identity->username;
+                            $table->id_grupo = $item->id_grupo;
+                            $table->nota_comercial = $item->nota_comercial;
+                            $table->fecha_cotizacion = date('Y-m-d');
+                            $table->save(false);
+                        }    
+                    }
+                    return $this->redirect(['view','id' => $id, 'token' => $token]);
+                }
+            }
+            return $this->render('importar_referencias', [
+                'operacion' => $operacion,            
+                'pagination' => $pages,
+                'id' => $id,
+                'form' => $form,
+                'token' => $token,
 
-        ]);
+            ]);
+        }else{
+            Yii::$app->getSession()->setFlash('warning','Solo se pueden crea OCHO (8) referencias en una misma cotizacion. Favor hacer otra cotizacion. ');
+            return $this->redirect(['view','id' => $id, 'token' => $token]); 
+        }    
     }
     
     //CREAR TALLAS
@@ -646,31 +671,43 @@ class CotizacionesController extends Controller
     public function actionSubir_nota($id, $id_referencia, $token) {
         $model = new \app\models\ModeloBuscar();
         $table = \app\models\CotizacionDetalle::findOne($id_referencia);
-       
+        $cotizacion = Cotizaciones::findOne($id);
         if ($model->load(Yii::$app->request->post())) {
             if (isset($_POST["grabar_nota"])) { 
                 $table->nota = $model->nota;
+                $table->cantidad_referencia = $model->cantidad;
                 $table->save(false);
-                $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
+                $this->CalcularValoresReferencia($id_referencia);
+               return $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
             }    
         }
          if (Yii::$app->request->get()) {
             $model->nota = $table->nota; 
+            $model->cantidad = $table->cantidad_referencia; 
          }
         return $this->renderAjax('nota_referencia', [
             'model' => $model,
             'id_referencia' => $id_referencia,
             'id' => $id,
+            'tipo_cotizacion' => $cotizacion->tipo_cotizacion,
         ]);
     }
     
     //PERMITE IMPRIMIR
-    public function actionImprimir_pedido($id)
+    public function actionImprimir_cotizacion($id)
     {
-        return $this->render('../reportes/reporte_cotizacion_cliente', [
-            'model' => $this->findModel($id),
-            
-        ]);
+        $empresa = \app\models\Matriculaempresa::findOne(1);
+        if($empresa->tipo_formato == 0){
+             return $this->render('../reportes/reporte_cotizacion_cliente', [
+                'model' => $this->findModel($id),
+            ]);
+        }else{
+            return $this->render('../reportes/reporte_cotizacion_cliente_detalle', [
+               'model' => $this->findModel($id),
+          
+            ]); 
+        }
+       
     }
     
     public function actionImprimir_tallas($id)

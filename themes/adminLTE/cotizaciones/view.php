@@ -28,17 +28,23 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                     echo Html::a('<span class="glyphicon glyphicon-ok"></span> Autorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']); }
                 else {
                     if ($model->autorizado == 1 && $model->numero_cotizacion == 0 ) {
-                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']);
-                        echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar cotización', ['cerrar_pedido', 'id' => $model->id_cotizacion,'token' => $token],['class' => 'btn btn-info btn-sm',
-                             'data' => ['confirm' => 'Esta seguro que desea cerrar la cotizacion del cliente ('.$model->cliente->nombrecorto.')', 'method' => 'post']]);
+                        if($model->tipo_cotizacion <> 0){
+                            echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']);
+                            echo Html::a('<span class="glyphicon glyphicon-remove"></span> Cerrar cotización', ['cerrar_pedido', 'id' => $model->id_cotizacion,'token' => $token],['class' => 'btn btn-info btn-sm',
+                                 'data' => ['confirm' => 'Esta seguro que desea cerrar la cotizacion del cliente ('.$model->cliente->nombrecorto.')', 'method' => 'post']]);
+                        }else{
+                            echo Html::a('<span class="glyphicon glyphicon-remove"></span> Actualizar saldos   ', ['actualizar_saldos', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-warning btn-sm']);
+                            echo Html::a('<span class="glyphicon glyphicon-remove"></span> Desautorizar', ['autorizado', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-default btn-sm']);
+                            echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_cotizacion', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                        }    
                     }else{    
-                         echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                         echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_cotizacion', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
                          echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir tallas', ['/cotizaciones/imprimir_tallas', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
                     }    
                 }
             }else{
                 if($model->numero_cotizacion > 0){
-                   echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_pedido', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
+                   echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir cotización', ['/cotizaciones/imprimir_cotizacion', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']);
                          echo Html::a('<span class="glyphicon glyphicon-print"></span> Imprimir tallas', ['/cotizaciones/imprimir_tallas', 'id' => $model->id_cotizacion],['class' => 'btn btn-default btn-sm']); 
                 }
             }?>
@@ -83,6 +89,8 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                     <td align="right"><?= Html::encode(''.number_format($model->total_cotizacion,0)) ?></td>
                 </tr>
                 <tr style="font-size: 85%;">
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'tipo_cotizacion') ?>:</th>
+                    <td align="right"><?= Html::encode($model->tipoCotizacion) ?></td>
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'observacion') ?>:</th>
                     <td colspan="7"><?= Html::encode($model->observacion) ?></td>
                 </tr>
@@ -166,7 +174,22 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                         <td style= 'width: 25px; height: 25px;'>
                                                             <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
                                                         </td>
-                                                        <td style= 'width: 25px; height: 25px;'></td>
+                                                        <td style="width: 25px; height: 25px;">
+                                                            <!-- Inicio Nuevo Detalle proceso -->
+                                                              <?= Html::a('<span class="glyphicon glyphicon-list"></span> ',
+                                                                  ['/cotizaciones/subir_nota', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token],
+                                                                  [
+                                                                      'title' => 'Permite crear las observaciones de la talla.',
+                                                                      'data-toggle'=>'modal',
+                                                                      'data-target'=>'#modalsubirnota'.$val->id,
+                                                                  ])    
+                                                             ?>
+                                                            <div class="modal remote fade" id="modalsubirnota<?= $val->id ?>">
+                                                              <div class="modal-dialog modal-lg" style ="width: 550px;">
+                                                                  <div class="modal-content"></div>
+                                                              </div>
+                                                            </div>
+                                                        </td>
                                                         <td style= 'width: 25px; height: 25px;'></td>
                                                     <?php }else{?>
                                                         <td style= 'width: 25px; height: 25px;'>

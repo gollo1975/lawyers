@@ -2,7 +2,7 @@
 
 use inquid\pdf\FPDF;
 use app\models\Cotizaciones;
-use app\models\CotizacionDetalleTalla;
+use app\models\CotizacionDetalle;
 use app\models\Matriculaempresa;
 use app\models\Municipio;
 use app\models\Departamento;
@@ -63,7 +63,7 @@ class PDF extends FPDF {
         $this->SetFillColor(220, 220, 220);
         $this->SetXY(10, 39);
         $this->SetFont('Arial', 'B', 12);
-        $this->Cell(162, 7, utf8_decode("TALLAS DE LA COTIZACION"), 0, 0, 'l', 0);
+        $this->Cell(162, 7, utf8_decode("COTIZACION"), 0, 0, 'l', 0);
         $this->Cell(30, 7, utf8_decode('N°. '.str_pad($cotizacion->numero_cotizacion, 5, "0", STR_PAD_LEFT)), 0, 0, 'l', 0);
         $this->SetFillColor(200, 200, 200);
         //FIN
@@ -89,7 +89,7 @@ class PDF extends FPDF {
         //FIN
         $this->SetXY(10, 57);
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(26, 5, utf8_decode("Fecha pedido:"), 0, 0, 'l', 1);
+        $this->Cell(26, 5, utf8_decode("Fecha cotización:"), 0, 0, 'l', 1);
         $this->SetFont('Arial', '', 8);
         $this->Cell(75, 5, utf8_decode($cotizacion->fecha_cotizacion), 0, 0, 'L',1);
         $this->SetFont('Arial', 'B', 8);
@@ -108,14 +108,29 @@ class PDF extends FPDF {
         $this->Cell(71, 5, utf8_decode($cotizacion->user_name), 0, 0, 'L', 1);
         //FIN
         //Lineas del encabezado
-        $this->Line(10,68,10,240);
-        $this->Line(25,68,25,240);
-        $this->Line(65,68,65,240);
-        $this->Line(77,68,77,240);
-        $this->Line(90,68,90,240);
-        $this->Line(202,68,202,240);
-        $this->Line(202,240,10,240);
-        
+        $this->Line(10,68,10,200);
+        $this->Line(10,87,202,87);//fila entre registro
+        $this->Line(25,68,25,200);
+        $this->Line(10,103,202,103);//fila entre registro
+        $this->Line(56,68,56,200);
+        $this->Line(10,119,202,119);//fila entre registro
+        $this->Line(68,68,68,200);
+        $this->Line(10,135,202,135);//fila entre registro
+        $this->Line(88,68,88,200);
+        $this->Line(10,151,202,151);//fila entre registro
+        $this->Line(112,68,112,200);
+        $this->Line(10,167,202,167);//fila entre registro
+        $this->Line(202,68,202,200);
+        $this->Line(10,183,202,183);//fila entre registro
+        $this->Line(202,68,202,200);
+        //Cuadro de la nota
+        $this->Line(10,200,157,200);//linea horizontal superior
+        $this->Line(10,182,10,182);//linea vertical
+        $this->Line(10,208,157,208);//linea horizontal inferior
+        //Linea de las observacines
+        $this->Line(10,190,10,240);//linea vertical
+        //lineas para los cuadros de nit/cc,fecha,firma        
+     
             
         //Detalle factura
         $this->EncabezadoDetalles();
@@ -123,7 +138,7 @@ class PDF extends FPDF {
 
     function EncabezadoDetalles() {
         $this->Ln(7);
-        $header = array('CODIGO', 'REFERENCIA', 'TALLA', 'CANT.', 'OBSERVACION');
+        $header = array('CODIGO','REFERENCIA','CANT.', 'VLR UNIT.','TOTAL', 'DESCRIPCION VENTA');
         $this->SetFillColor(200, 200, 200);
         $this->SetTextColor(0);
         $this->SetDrawColor(0, 0, 0);
@@ -131,7 +146,7 @@ class PDF extends FPDF {
         $this->SetFont('', 'B', 8);
 
         //creamos la cabecera de la tabla.
-        $w = array(15, 40, 12, 13,112);
+        $w = array(15, 31, 12, 20, 24, 90);
         for ($i = 0; $i < count($header); $i++)
             if ($i == 0 || $i == 1)
                 $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
@@ -147,56 +162,65 @@ class PDF extends FPDF {
 
     function Body($pdf,$model) {
         $config = \app\models\Matriculaempresa::findOne(1);
-        $detalles = CotizacionDetalleTalla::find()->where(['=','id_cotizacion',$model->id_cotizacion])
-                                              ->groupBy('id')->all();
+        $detalles = CotizacionDetalle::find()->where(['=','id_cotizacion',$model->id_cotizacion])->all();
         $pdf->SetX(10);
         $pdf->SetFont('Arial', '', 8);
-        $cant = 0; $totalLinea = 0;$auxiliar = 0;
-        $total = count($detalles);
+        $cant = 0;
         foreach ($detalles as $detalle) { 
-            $totalLinea += 1;
-            $tallas = CotizacionDetalleTalla::find()->where(['=','id',$detalle->id])
-                                              ->orderBy('id_talla ASC')->all();
-            foreach ($tallas as $talla){
-                $pdf->SetFont('Arial', '', 7);
-                $pdf->Cell(15, 4, $talla->detalleCotizacion->codigo, 0, 0, 'L');
-                $pdf->Cell(40, 4, utf8_decode(substr($talla->detalleCotizacion->referencia, 0, 27)) , 0, 0, 'L');
-                $pdf->Cell(12, 4, $talla->talla->nombre_talla, 0, 0, 'L');
-                $pdf->Cell(13, 4, $talla->cantidad, 0, 0, 'R');
-                $pdf->MultiCell (112, 4, utf8_decode(substr($detalle->detalleCotizacion->nota_comercial, 0, 200)) , 'L');
-                $pdf->Ln();
-                $pdf->SetAutoPageBreak(true, 20);
-                $cant += $detalle->cantidad;
-            }
-              
-             if ($totalLinea == $total){
-              $this->Ln();  
-            }else{
-               $this->Ln(3);
-                $header = array('CODIGO', 'REFERENCIA', 'TALLA', 'CANT.','OBSERVACION');
-                $this->SetFillColor(200, 200, 200);
-                $this->SetTextColor(0);
-                $this->SetDrawColor(0, 0, 0);
-                $this->SetLineWidth(.2);
-                $this->SetFont('', 'B', 8);
-
-                //creamos la cabecera de la tabla.
-                $w = array(15, 40, 12, 13, 112);
-                for ($i = 0; $i < count($header); $i++)
-                    if ($i == 0 || $i == 1)
-                        $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
-                    else
-                        $this->Cell($w[$i], 4, $header[$i], 1, 0, 'C', 1);
-
-                //Restauración de colores y fuentes
-                $this->SetFillColor(224, 235, 255);
-                $this->SetTextColor(0);
-                $this->SetFont('');
-                $this->Ln(5); 
-            }
+            $pdf->SetFont('Arial', '', 7);
+            $pdf->Cell(15, 4, ('R-'.$detalle->codigo), 0, 0, 'L');
+            $pdf->Cell(31, 4, utf8_decode(substr($detalle->referencia, 0, 19)), 'L');
+            $pdf->Cell(12, 4, number_format($detalle->cantidad_referencia,0), 0, 0, 'C');
+            $pdf->Cell(20, 4, '$ '.number_format($detalle->valor_unidad, 0), 0, 0, 'R');
+            $pdf->Cell(24, 4, '$ '.number_format($detalle->total_linea, 0), 0, 0, 'R');   
+            $pdf->MultiCell (90, 4, utf8_decode(substr($detalle->nota,0, 200)), 0, 'J');
+            $pdf->Ln();
+            $pdf->SetAutoPageBreak(true, 20);
+            $cant += $detalle->cantidad_referencia;
         }
+        $this->SetFillColor(200, 200, 200);
+        $pdf->SetXY(10, 200);
+        $this->SetFont('Arial', 'B', 9);
+        $pdf->MultiCell(146, 4, utf8_decode(valorEnLetras($model->total_cotizacion)),0,'J');
+        $pdf->SetXY(157, 200);
+         $this->SetFont('Arial', 'B', 9);
+        $pdf->MultiCell(20, 8, 'SUBTOTAL:',1,'C');
+        $pdf->SetXY(177, 200);
+        $this->SetFont('Arial', '', 9);
+        $pdf->MultiCell(25, 8, '$ '.number_format($model->subtotal, 0, '.', ','),1,'R');
+        $pdf->SetXY(10, 208);
+        $this->SetFont('Arial', '', 9);
+        $pdf->MultiCell(146, 4, utf8_decode($model->observacion),0,'J');
+        $this->SetFont('Arial', 'B', 9);
+        $pdf->SetXY(157, 208);
+        $pdf->MultiCell(20, 8, 'RETE FTE:',1,'C');
+        $this->SetFont('Arial', '', 9);
+        $pdf->SetXY(177, 208);
+        $pdf->MultiCell(25, 8, number_format(0, 0, '.', ','),1,'R');
+        $this->SetFont('Arial', 'B', 9);
+        $pdf->SetXY(157, 216);
+        $pdf->MultiCell(20, 8, 'IVA:',1,'C');
+        $pdf->SetXY(177, 216);
+        $this->SetFont('Arial', '', 9);
+        $pdf->MultiCell(25, 8, '$'.number_format($model->impuesto, 0, '.', ','),1,'R');
+        $pdf->SetXY(157, 224);
+        $this->SetFont('Arial', 'B', 9);
+        $pdf->MultiCell(20, 8, 'RETE IVA:',1,'C');
+        $pdf->SetXY(177, 224);
+        $this->SetFont('Arial', '', 9);
+        $pdf->MultiCell(25, 8, number_format(0, 0, '.', ','),1,'R');
+        $pdf->SetXY(10, 232);
+        $pdf->MultiCell(109, 8, '',1,'R',1);
+        $pdf->SetXY(119, 232);
+        $pdf->MultiCell(38, 8, 'TOTAL CANTIDAD: '.$cant,1,'C',1);
+        $pdf->SetXY(157, 232); 
+        $this->SetFont('Arial', 'B', 9);
+        $pdf->MultiCell(20, 8, 'TOTAL:',1,'C',1);
+        $pdf->SetXY(177, 232);
+        $this->SetFont('Arial', '', 9); 
+        $pdf->MultiCell(25, 8, '$ '.number_format($model->total_cotizacion, 0, '.', ','),1,'R',1);
         
-        $pdf->SetXY(10, 265);//firma trabajador
+         $pdf->SetXY(10, 265);//firma trabajador
         $this->SetFont('', 'B', 9);
         $pdf->Cell(35, 5, 'FIRMA CLIENTE: ____________________________________________________', 0, 0, 'L',0);
         $pdf->SetXY(10, 270);
@@ -219,7 +243,7 @@ $pdf->AddPage();
 $pdf->Body($pdf,$model);
 $pdf->AliasNbPages();
 $pdf->SetFont('Times', '', 10);
-$pdf->Output("Tallas_Cotizacion_$model->numero_cotizacion.pdf", 'D');
+$pdf->Output("Cotizacion_Cliente_$model->numero_cotizacion.pdf", 'D');
 
 exit;
 

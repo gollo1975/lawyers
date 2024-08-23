@@ -36,9 +36,14 @@ $form = ActiveForm::begin([
                 <div class="panel-body">
                     
                     <div class="row">
-                        <?= $form->field($model, 'nota', ['template' => '{label}<div class="col-sm-8 form-group">{input}{error}</div>'])->textarea(['rows' => 5, 'onKeyUp' => 'maximo(this, 200)', 'onKeyDown' => 'maximo(this, 200)']) ?>
+                        <?= $form->field($model, 'nota', ['template' => '{label}<div class="col-sm-9 form-group">{input}{error}</div>'])->textarea(['rows' => 5, 'onKeyUp' => 'maximo(this, 200)', 'onKeyDown' => 'maximo(this, 200)']) ?>
                         
                     </div>
+                    <?php if($tipo_cotizacion == 0){?>
+                        <div class="row">
+                            <?= $form->field($model, 'cantidad')->textInput(['maxlength' => true]) ?>  
+                        </div>      
+                    <?php }?>
                        
                 </div>  
                     <div class="panel-footer text-right">

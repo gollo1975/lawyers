@@ -42,7 +42,11 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                     <td><?= Html::encode($model->user_name) ?></td>
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'costo_producto') ?></th>
                     <td style="text-align: right"><?= Html::encode(''. number_format($model->costo_producto,0)) ?></td>                    
-                </tr>    
+                </tr>  
+                 <tr style="font-size: 90%;">
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'nota_comercial') ?></th>
+                    <td colspan="6"><?= Html::encode($model->nota_comercial) ?></td>                    
+                </tr>   
                  <tr style="font-size: 90%;">
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'descripcion') ?></th>
                     <td colspan="6"><?= Html::encode($model->descripcion) ?></td>                    

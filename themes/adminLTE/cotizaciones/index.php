@@ -122,7 +122,7 @@ $ConCliente = ArrayHelper::map(app\models\Cliente::find()->orderBy('nombrecorto 
                     <td style= 'width: 25px; height: 25px;'>
                             <a href="<?= Url::toRoute(["cotizaciones/view", "id" => $val->id_cotizacion,'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                     </td>
-                    <?php if(!\app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $val->id_cotizacion])->one()){?>
+                    <?php if($val->autorizado == 0 ){?>
                         <td style= 'width: 25px; height: 25px;'>
                                 <a href="<?= Url::toRoute(["cotizaciones/update", "id" => $val->id_cotizacion ]) ?>" ><span class="glyphicon glyphicon-pencil"></span></a>
                         </td>

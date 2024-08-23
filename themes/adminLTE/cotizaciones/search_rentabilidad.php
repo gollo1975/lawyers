@@ -137,7 +137,7 @@ $ConCliente = ArrayHelper::map(app\models\Cliente::find()->orderBy('nombrecorto 
                         <td style="text-align: right"><?= '$ '. number_format($val->valor_unidad, 0)?></td>
                         <td style="text-align: right"><?= '$ '. number_format($renta)?></td>
                         <td style="text-align: right"><?= $porcentaje ?> %</td>
-                        <td style="text-align: right"><?=''. number_format($renta * $val->cantidad_referencia,0) ?> %</td>
+                        <td style="text-align: right"><?=''. number_format($renta * $val->cantidad_referencia,0) ?> </td>
                        
 
                 </tbody>            

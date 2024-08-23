@@ -82,7 +82,8 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
                                 <th scope="col" style='background-color:#caf0f8;'>NOMBRE DE LA REFERENCIA</th>
                                 <th scope="col" style='background-color:#caf0f8;'>IMAGEN</th>
                                 <th scope="col" style='background-color:#caf0f8;'>COSTO REFERENCIA</th>
-                                 <th scope="col" style='background-color:#caf0f8;'>CLASIFICACION</th>
+                                <th scope="col" style='background-color:#caf0f8;'>CLASIFICACION</th>
+                                <th scope="col" style='background-color:#caf0f8; width: 30%'>NOTA COMERCIAL</th>
                                 <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
                             </tr>
                         </thead>
@@ -109,6 +110,7 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
                                     <?php }?>      
                                     <td style="text-align: right"><?= ''. number_format($val->costo_producto,0) ?></td>
                                     <td><?= $val->grupo->concepto ?></td>
+                                    <td ><p style="text-align: justify;"><?= $val->nota_comercial ?></p></td>
                                     <td style= 'width: 25px; height: 25px;'><input type="checkbox" name="codigo_referencia[]" value="<?= $val->codigo ?>"></td> 
                                 </tr>
                             <?php endforeach; ?>
