@@ -36,7 +36,7 @@ class ClientesContactos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cliente', 'id_cargo'], 'integer'],
+            [['id_cliente', 'id_cargo','predeterminado'], 'integer'],
             [['nombres', 'apellidos', 'id_cargo','celular'], 'required'],
             [['fecha_nacimiento', 'fecha_registro'], 'safe'],
             [['nombres', 'apelidos'], 'string', 'max' => 30],
@@ -63,6 +63,7 @@ class ClientesContactos extends \yii\db\ActiveRecord
             'fecha_nacimiento' => 'Fecha Nacimiento',
             'user_name' => 'User Name',
             'fecha_registro' => 'Fecha Registro',
+            'predeterminado' => 'Predterminado',
         ];
     }
 
@@ -80,5 +81,15 @@ class ClientesContactos extends \yii\db\ActiveRecord
     public function getCargo()
     {
         return $this->hasOne(Cargos::className(), ['id_cargo' => 'id_cargo']);
+    }
+    
+    public function getPredeterminadoRegistro() {
+        if($this->predeterminado == 0){
+            $predeterminado = 'NO';
+        }else{
+            $predeterminado = 'SI';
+            
+        }
+        return $predeterminado;
     }
 }

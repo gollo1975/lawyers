@@ -223,7 +223,10 @@ class ClientesController extends Controller {
                 
         $model = Cliente::find()->where(['idcliente' => $id])->one();
         $Concontacto = \app\models\ClientesContactos::find()->where(['=','id_cliente', $id])->all();
-        return $this->render('view', ['model' => $model , 'token' => $token, 'Concontacto' => $Concontacto
+        $ConDireccion = \app\models\ClientesDirecciones::find()->where(['=','idcliente', $id])->all();
+        return $this->render('view', ['model' => $model , 'token' => $token,
+                          'Concontacto' => $Concontacto,
+                          'ConDireccion' => $ConDireccion,
         ]);
     }
 
@@ -290,7 +293,7 @@ class ClientesController extends Controller {
                             ->all();
                     if(isset($_POST['excel'])){
                         //$table = $table->all();
-                        $this->actionExcelconsulta($tableexcel);
+                        $this->actionExcelDepartamento($tableexcel);
                     }
                 } else {
                     $form->getErrors();
@@ -310,7 +313,7 @@ class ClientesController extends Controller {
                         ->all();
                 if(isset($_POST['excel'])){
                     //$table = $table->all();
-                    $this->actionExcelconsulta($tableexcel);
+                   $this->actionExcelDepartamento($tableexcel);
                 }
             }
             $to = $count->count();
@@ -339,6 +342,64 @@ class ClientesController extends Controller {
         }
     }
     
+    //CREA UN NUEVA DIRECCION DEL CLIENTE
+    public function actionNew_direccion($id, $token) {
+
+        $model = new \app\models\ModeloDireccionesCliente();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                if (isset($_POST["nuevo_contacto_cliente"])) {
+                    $table = new \app\models\ClientesDirecciones();
+                    $table->idcliente = $id;
+                    $table->iddepartamento = $model->iddepartamento;
+                    $table->idmunicipio = $model->idmunicipio;
+                    $table->nueva_direccion = strtoupper($model->direccion);
+                    $table->user_name = Yii::$app->user->identity->username;
+                    $table->save(false);
+                    $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
+                }
+            } else {
+                $model->getErrors();
+            }
+        }
+        return $this->renderAjax('form_nueva_direcciones', [
+                    'model' => $model,
+                    'id' => $id,
+                    'token' => $token,
+        ]);
+    }
+    
+    //EDITAR LA UEVA DIRECCION DEL CLIENTE
+    public function actionEditar_direccion($id, $token, $id_detalle) {
+        
+        $model = new \app\models\ModeloDireccionesCliente();
+        
+        $table = \app\models\ClientesDirecciones::findOne($id_detalle);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                if (isset($_POST["nuevo_contacto_cliente"])) {
+                    $table->iddepartamento = $model->iddepartamento;
+                    $table->idmunicipio = $model->idmunicipio;
+                    $table->nueva_direccion = strtoupper($model->direccion);
+                    $table->save(false);
+                    $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
+                }
+           } else {
+                $model->getErrors();
+            }
+        }
+        if (Yii::$app->request->get()) {
+            $model->iddepartamento = $table->iddepartamento;
+            $model->idmunicipio = $table->idmunicipio;
+            $model->direccion = $table->nueva_direccion;
+        }
+        return $this->renderAjax('form_nueva_direcciones', [
+                    'model' => $model,
+                    'id' => $id,
+                    'token' => $token,
+        ]);
+    }
+    
     //CREA UN NUEVO CONTACTO DEL CLIENTE
     public function actionNew_contacto($id, $token) {
 
@@ -355,6 +416,7 @@ class ClientesController extends Controller {
                     $table->id_cargo = $model->cargo;
                     $table->fecha_nacimiento = $model->fecha_nacimiento;
                     $table->user_name = Yii::$app->user->identity->username;
+                    $table->predeterminado = $model->predeterminado;
                     $table->save(false);
                     $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
                 }
@@ -384,6 +446,7 @@ class ClientesController extends Controller {
                     $table->email = $model->email;
                     $table->id_cargo = $model->cargo;
                     $table->fecha_nacimiento = $model->fecha_nacimiento;
+                    $table->predeterminado = $model->predeterminado;
                     $table->save(false);
                     $this->redirect(["clientes/view", 'id' => $id,'token' => $token]);
                 }
@@ -398,6 +461,7 @@ class ClientesController extends Controller {
             $model->email = $table->email;
             $model->fecha_nacimiento = $table->fecha_nacimiento;
             $model->cargo = $table->id_cargo;
+            $model->predeterminado = $table->predeterminado;
         }
         return $this->renderAjax('form_nuevo_contacto', [
                     'model' => $model,

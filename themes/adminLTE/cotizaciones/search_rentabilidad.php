@@ -63,13 +63,6 @@ $ConCliente = ArrayHelper::map(app\models\Cliente::find()->orderBy('nombrecorto 
                            'format' => 'yyyy-m-d',
                            'todayHighlight' => true]])
             ?>
-            <?= $formulario->field($form, 'cliente')->widget(Select2::classname(), [
-                'data' => $ConCliente,
-                'options' => ['prompt' => 'Seleccione...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); ?>
             <?= $formulario->field($form, 'grupo')->widget(Select2::classname(), [
                 'data' => $ConGrupo,
                 'options' => ['prompt' => 'Seleccione...'],

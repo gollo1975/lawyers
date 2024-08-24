@@ -193,7 +193,6 @@ class CotizacionesController extends Controller
             if (UsuarioDetalle::find()->where(['=', 'codusuario', Yii::$app->user->identity->codusuario])->andWhere(['=', 'id_permiso',14])->all()) {
                 $form = new \app\models\FiltroBusquedaCotizacion();
                 $numero = null;
-                $cliente = null;
                 $fecha_inicio = null;
                 $fecha_corte = null;
                 $grupo = null;
@@ -203,7 +202,6 @@ class CotizacionesController extends Controller
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {
                         $numero = Html::encode($form->numero);
-                        $cliente = Html::encode($form->cliente);
                         $fecha_inicio = Html::encode($form->fecha_inicio);
                         $fecha_corte = Html::encode($form->fecha_corte);
                         $grupo = Html::encode($form->grupo);
@@ -213,7 +211,6 @@ class CotizacionesController extends Controller
                                 ->andFilterWhere(['=', 'codigo', $codigo])
                                 ->andFilterWhere(['like', 'referencia', $referencia])
                                 ->andFilterWhere(['=', 'id_cotizacion', $numero])
-                                ->andFilterWhere(['=', 'id_cotizacion', $cliente])
                                 ->andFilterWhere(['=', 'id_grupo', $grupo])
                                 ->andFilterWhere(['between', 'fecha_cotizacion', $fecha_inicio, $fecha_corte]);
                         $table = $table->orderBy('id_cotizacion DESC');
@@ -735,7 +732,7 @@ class CotizacionesController extends Controller
     }
        //EXPORTA EXCEL GENERAL
     
-     public function actionExcelconsultaCotizacion($tableexcel) {   
+    public function actionExcelconsultaCotizacion($tableexcel) {   
         $objPHPExcel = new \PHPExcel();
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("EMPRESA")
@@ -818,7 +815,7 @@ class CotizacionesController extends Controller
                         ->setCellValue('R' . $i, $referencia->subtotal)
                         ->setCellValue('S' . $i, $referencia->impuesto)
                         ->setCellValue('T' . $i, $referencia->total_linea)
-                        ->setCellValue('U' . $i, $referencia->nota);;
+                        ->setCellValue('U' . $i, $referencia->nota);
                 $i++;
             }
             $i = $i;
@@ -842,6 +839,89 @@ class CotizacionesController extends Controller
         $objWriter->save('php://output');
         exit;
     }
+    
+    //CONSULTA DE RENTABILIDAD
+     public function actionExcelconsultaRentabilidad($tableexcel) {   
+        $objPHPExcel = new \PHPExcel();
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator("EMPRESA")
+            ->setLastModifiedBy("EMPRESA")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial')->setSize(10);
+        $objPHPExcel->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+        $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A1', 'CODIGO')
+                    ->setCellValue('B1', 'REFERENCIA')
+                    ->setCellValue('C1', 'No COTIZACION')
+                    ->setCellValue('D1', 'GRUPO')
+                    ->setCellValue('E1', 'DOCUMENTO')
+                    ->setCellValue('F1', 'CLIENTE')
+                    ->setCellValue('G1', 'FECHA COTIZACION')
+                    ->setCellValue('H1', 'UNIDADES VENDIDAS')
+                    ->setCellValue('I1', 'COSTO REFERENCIA')
+                    ->setCellValue('J1', 'VALOR VENTA')
+                    ->setCellValue('K1', 'GANANCIA X REFERENCIA')
+                    ->setCellValue('L1', 'MARGEN DE GANANCIA')
+                    ->setCellValue('M1', 'TOTAL GANANCIA');
+        $i = 2;
+        $renta = 0; $porcentaje = 0;
+        foreach ($tableexcel as $val) {
+            $renta = ($val->valor_unidad - $val->codigoReferencia->costo_producto);
+            $porcentaje = ''.number_format((($renta / $val->valor_unidad)*100),2); 
+            $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $val->codigo)
+                    ->setCellValue('B' . $i, $val->referencia)
+                    ->setCellValue('C' . $i, $val->cotizacion->numero_cotizacion)
+                    ->setCellValue('D' . $i, $val->grupo->concepto)
+                    ->setCellValue('E' . $i, $val->cotizacion->cliente->cedulanit)
+                    ->setCellValue('F' . $i, $val->cotizacion->cliente->nombrecorto)
+                    ->setCellValue('G' . $i, $val->fecha_cotizacion)
+                    ->setCellValue('H' . $i, $val->cantidad_referencia)
+                    ->setCellValue('I' . $i, $val->codigoReferencia->costo_producto)
+                    ->setCellValue('J' . $i, $val->valor_unidad)
+                    ->setCellValue('K' . $i, $renta)
+                    ->setCellValue('L' . $i, $porcentaje)
+                    ->setCellValue('M' . $i, $renta * $val->cantidad_referencia);
+                  
+            $i++;
+        }
+
+        $objPHPExcel->getActiveSheet()->setTitle('Listado');
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Rentabilidad.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save('php://output');
+        exit;
+    }
+    
     
     //EXCEL TALLAS
     public function actionExcel_tallas($id, $id_referencia) {   

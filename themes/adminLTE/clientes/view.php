@@ -91,10 +91,8 @@ $this->params['breadcrumbs'][] = $model->idcliente;
     <!--INICIO LOS TABS-->
     <div>
         <ul class="nav nav-tabs" role="tablist">
-            <?php
-              $contMaquina = 1;
-             ?>
             <li role="presentation" class="active"><a href="#contactos" aria-controls="contactos" role="tab" data-toggle="tab">Contactos  <span class="badge"><?= count($Concontacto) ?></span></a></li>
+            <li role="presentation" ><a href="#direcciones" aria-controls="direcciones" role="tab" data-toggle="tab">Dirección de envios  <span class="badge"><?= count($ConDireccion) ?></span></a></li>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="contactos">
@@ -111,6 +109,7 @@ $this->params['breadcrumbs'][] = $model->idcliente;
                                          <th scope="col" style='background-color:#caf0f8;'>EMAIL</th> 
                                         <th scope="col" style='background-color:#caf0f8;'>F. NACIMIENTO</th> 
                                         <th scope="col" style='background-color:#caf0f8;'>CARGO</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'>PRE.</th> 
                                         <th scope="col" style='background-color:#caf0f8;'></th> 
                                     </tr>
                                 </thead>
@@ -125,6 +124,7 @@ $this->params['breadcrumbs'][] = $model->idcliente;
                                                 <td> <?= $val->email?></td>
                                                 <td> <?= $val->fecha_nacimiento?></td>
                                                 <td> <?= $val->cargo->cargo?></td> 
+                                                <td> <?= $val->predeterminadoRegistro?></td> 
                                                  <?php if($token == 0){?>
                                                     <td style= 'width: 25px; height: 20px;'>
                                                        <!-- Inicio Nuevo Detalle proceso -->
@@ -172,7 +172,77 @@ $this->params['breadcrumbs'][] = $model->idcliente;
                     </div>   
                 </div>
             </div>
-           
+            <!--TERMINA TABS CONTACTOS--->
+            <div role="tabpanel" class="tab-pane" id="direcciones">
+                <div class="table-responsive">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr style='font-size:90%;'>
+                                        <th scope="col" style='background-color:#caf0f8;'>ID</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>DIRECCION</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>DEPARAMENTO</th>                        
+                                        <th scope="col" style='background-color:#caf0f8;'>MUNICIPIO</th> 
+                                        <th scope="col" style='background-color:#caf0f8;'></th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   <?php 
+                                        foreach ($ConDireccion as $val):?>
+                                            <tr style='font-size:90%;'>
+                                                 <td> <?= $val->id_direccion?></td>
+                                                <td> <?= $val->nueva_direccion?></td>
+                                                <td> <?= $val->departamento->departamento?></td>
+                                                <td> <?= $val->municipio->municipio?></td>
+                                                 <?php if($token == 0){?>
+                                                    <td style= 'width: 25px; height: 20px;'>
+                                                       <!-- Inicio Nuevo Detalle proceso -->
+                                                          <?= Html::a('<span class="glyphicon glyphicon-pencil"></span>',
+                                                              ['/clientes/editar_direccion','id' => $model->idcliente, 'token' =>$token, 'id_detalle' => $val->id_direccion],
+                                                              [
+                                                                  'title' => 'Editar las direcciones de envio cliente',
+                                                                  'data-toggle'=>'modal',
+                                                                  'data-target'=>'#modaleditardireccion'.$model->idcliente,
+                                                              ])    
+                                                         ?>
+                                                        <div class="modal remote fade" id="modaleditardireccion<?= $model->idcliente ?>">
+                                                            <div class="modal-dialog modal-lg" style ="width: 580px;">
+                                                                 <div class="modal-content"></div>
+                                                            </div>
+                                                        </div> 
+                                                    </td>   
+                                                <?php }else{?>
+                                                    <td style= 'width: 25px; height: 20px;'></td>
+                                                <?php }?>    
+                                            </tr>
+                                     <?php endforeach;?>
+                                </tbody>      
+                            </table>
+                        </div>
+                        <?php if($token == 0){?>
+                            <div class="panel-footer text-right" >  
+                                <!-- Inicio Nuevo Detalle proceso -->
+                                  <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Crear direcciones',
+                                      ['/clientes/new_direccion','id' => $model->idcliente, 'token' =>$token],
+                                      [
+                                          'title' => 'Crea las nuevas direcciones de envio',
+                                          'data-toggle'=>'modal',
+                                          'data-target'=>'#modalcreardirecciones'.$model->idcliente,
+                                          'class' => 'btn btn-warning btn-sm'
+                                      ])    
+                                 ?>
+                                <div class="modal remote fade" id="modalcreardirecciones<?= $model->idcliente ?>">
+                                    <div class="modal-dialog modal-lg" style ="width: 580px;">
+                                         <div class="modal-content"></div>
+                                    </div>
+                                </div> 
+                            </div>   
+                        <?php }?>
+                    </div>   
+                </div>
+            </div>
+            <!--TERMINA TABS DIRECCIONES--->
         </div>
     </div> 
     <?php ActiveForm::end(); ?>  

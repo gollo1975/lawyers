@@ -60,6 +60,9 @@ $cargo = ArrayHelper::map(Cargos::find()->orderBy('cargo ASC' )->all(), 'id_carg
                                    'required' => true]])
                            ?>
                     </div>
+                    <div class="ronw">
+                         <?= $form->field($model, 'predeterminado')->dropDownList(['0' => 'NO', '1' => 'SI'],['prompt' => 'Seleccione ...']) ?>
+                    </div>
                 </div>  
                     <div class="panel-footer text-right">
                        <?= Html::submitButton("<span class='glyphicon glyphicon-floppy-disk'></span> Enviar", ["class" => "btn btn-primary", 'name' => 'nuevo_contacto_cliente']) ?>                    

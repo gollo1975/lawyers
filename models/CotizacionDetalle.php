@@ -47,6 +47,7 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
             [['id_cotizacion'], 'exist', 'skipOnError' => true, 'targetClass' => Cotizaciones::className(), 'targetAttribute' => ['id_cotizacion' => 'id_cotizacion']],
             [['codigo'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaProducto::className(), 'targetAttribute' => ['codigo' => 'codigo']],
             [['id_detalle'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaListaPrecio::className(), 'targetAttribute' => ['id_detalle' => 'id_detalle']],
+            [['id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => GrupoReferencia::className(), 'targetAttribute' => ['id_grupo' => 'id_grupo']],
         ];
     }
 
@@ -96,5 +97,13 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
     public function getDetalle()
     {
         return $this->hasOne(ReferenciaListaPrecio::className(), ['id_detalle' => 'id_detalle']);
+    }
+    
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGrupo()
+    {
+        return $this->hasOne(GrupoReferencia::className(), ['id_grupo' => 'id_grupo']);
     }
 }

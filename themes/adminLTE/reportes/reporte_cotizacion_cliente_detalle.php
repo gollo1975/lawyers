@@ -163,6 +163,7 @@ class PDF extends FPDF {
     function Body($pdf,$model) {
         $config = \app\models\Matriculaempresa::findOne(1);
         $detalles = CotizacionDetalle::find()->where(['=','id_cotizacion',$model->id_cotizacion])->all();
+        $contacto = \app\models\ClientesContactos::find()->where(['=','id_cliente', $model->id_cliente])->andWhere(['=','predeterminado', 1])->one();
         $pdf->SetX(10);
         $pdf->SetFont('Arial', '', 8);
         $cant = 0;
@@ -220,6 +221,13 @@ class PDF extends FPDF {
         $this->SetFont('Arial', '', 9); 
         $pdf->MultiCell(25, 8, '$ '.number_format($model->total_cotizacion, 0, '.', ','),1,'R',1);
         
+        //conacto
+       if($contacto){
+            $pdf->SetXY(10, 244);
+            $this->SetFont('Arial', '', 8); 
+            $pdf->MultiCell(192, 8, utf8_decode('Contacto: '. $contacto->nombres. ' '. $contacto->apellidos. '  Cargo: ' .$contacto->cargo->cargo),0, 1, 'L',1);
+       }     
+
          $pdf->SetXY(10, 265);//firma trabajador
         $this->SetFont('', 'B', 9);
         $pdf->Cell(35, 5, 'FIRMA CLIENTE: ____________________________________________________', 0, 0, 'L',0);

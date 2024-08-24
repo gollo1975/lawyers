@@ -21,6 +21,15 @@ class GrupoReferencia extends \yii\db\ActiveRecord
     {
         return 'grupo_referencia';
     }
+    public function beforeSave($insert) {
+	if(!parent::beforeSave($insert)){
+            return false;
+        }
+	# ToDo: Cambiar a cliente cargada de configuración.    
+	$this->concepto = strtoupper($this->concepto);
+	
+        return true;
+    }
 
     /**
      * {@inheritdoc}
