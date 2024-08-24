@@ -6,6 +6,7 @@ return [
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',
+    'attributes' => [PDO::ATTR_CASE => PDO::CASE_LOWER],
     
   /*  'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=181.129.107.162;dbname=maquiladigital',
