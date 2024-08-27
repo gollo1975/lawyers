@@ -257,24 +257,26 @@ class CotizacionesController extends Controller
         $referencias = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
         $model = Cotizaciones::findOne($id);
         //actualiza los regisgtros de las referencias
-        if (isset($_POST["actualizar_linea"])) {
-            $intIndice = 0;
-            $variable = 0; $unidades = 0;
-            foreach ($_POST["listado_referencia"] as $intCodigo) {
-                $variable = $_POST["tipo_lista"][$intIndice];
-                $BuscarLista = \app\models\ReferenciaListaPrecio::findOne($variable);
-                $table = \app\models\CotizacionDetalle::findOne($intCodigo);
-                $table->id_detalle = $_POST["tipo_lista"][$intIndice];
-                $table->valor_unidad = $BuscarLista->valor_venta;
-                $table->save(false);
-                if($table->cantidad_referencia > 0){
-                    $id_referencia = $intCodigo;
-                    $this->ContarCantidadTalla($id_referencia);
-                }
-                $intIndice++;
+        if (Yii::$app->request->post()) {
+            if (isset($_POST["actualizar_linea_referencia"])) {
+                $intIndice = 0;
+                $variable = 0; $unidades = 0;
+                foreach ($_POST["listado_referencia"] as $intCodigo) {
+                    $variable = $_POST["tipo_lista"][$intIndice];
+                    $BuscarLista = \app\models\ReferenciaListaPrecio::findOne($variable);
+                    $table = \app\models\CotizacionDetalle::findOne($intCodigo);
+                    $table->id_detalle = $_POST["tipo_lista"][$intIndice];
+                    $table->valor_unidad = $BuscarLista->valor_venta;
+                    $table->save(false);
+                    if($table->cantidad_referencia > 0){
+                        $id_referencia = $intCodigo;
+                        $this->ContarCantidadTalla($id_referencia);
+                    }
+                    $intIndice++;
+                } 
+                 return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
             } 
-             return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
-        } 
+        }    
         //ELIMINA LAS REFERENCIAS CREADAS EN LAS VISTA
         if (Yii::$app->request->post()) {
             if (isset($_POST["eliminar_referencia"])) {
@@ -383,6 +385,7 @@ class CotizacionesController extends Controller
     public function actionCreate()
     {
         $model = new Cotizaciones();
+        $empresa = \app\models\Matriculaempresa::findOne(1);
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -394,7 +397,7 @@ class CotizacionesController extends Controller
             $model->save();
             return $this->redirect(['index']);
         }
-
+        $model->observacion = $empresa->condicion_comercial;
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -538,9 +541,7 @@ class CotizacionesController extends Controller
         $form = new \app\models\ModeloBuscar();
         $referencia = null;
         $clasificacion = null;
-        $detalle = CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
-        if(count($detalle) <> 8){
-            if ($form->load(Yii::$app->request->get())) {
+        if ($form->load(Yii::$app->request->get())) {
                 if ($form->validate()) {
                     $referencia = Html::encode($form->referencia);  
                     $clasificacion = Html::encode($form->clasificacion); 
@@ -605,10 +606,6 @@ class CotizacionesController extends Controller
                 'token' => $token,
 
             ]);
-        }else{
-            Yii::$app->getSession()->setFlash('warning','Solo se pueden crea OCHO (8) referencias en una misma cotizacion. Favor hacer otra cotizacion. ');
-            return $this->redirect(['view','id' => $id, 'token' => $token]); 
-        }    
     }
     
     //CREAR TALLAS
@@ -672,7 +669,9 @@ class CotizacionesController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if (isset($_POST["grabar_nota"])) { 
                 $table->nota = $model->nota;
-                $table->cantidad_referencia = $model->cantidad;
+                if($cotizacion->tipo_cotizacion == 0 ){
+                    $table->cantidad_referencia = $model->cantidad;
+                }    
                 $table->save(false);
                 $this->CalcularValoresReferencia($id_referencia);
                return $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
@@ -997,6 +996,84 @@ class CotizacionesController extends Controller
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Cotizacion_cliente.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save('php://output');
+        exit;
+    }
+    
+    //EXCEL REFERENCIAS
+    public function actionExcel_referencias($id) {   
+        $referencias = \app\models\CotizacionDetalle::find()->where(['=','id_cotizacion', $id])->all();
+        $objPHPExcel = new \PHPExcel();
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator("EMPRESA")
+            ->setLastModifiedBy("EMPRESA")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial')->setSize(10);
+        $objPHPExcel->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+
+        $objPHPExcel->setActiveSheetIndex(0)
+                    
+                    ->setCellValue('A1', 'CLIENTE')
+                    ->setCellValue('B1', 'No COTIZACION')
+                    ->setCellValue('C1', 'CODIGO')
+                    ->setCellValue('D1', 'REFERENCIA')
+                    ->setCellValue('E1', 'CANTIDAD')
+                    ->setCellValue('F1', 'GRUPO')
+                    ->setCellValue('G1', 'CODIGO HOMOLOGADO')
+                    ->setCellValue('H1', 'COSTO')
+                    ->setCellValue('I1', 'LISTA PRECIO')
+                    ->setCellValue('J1', 'NOTA PRECIO')
+                    ->setCellValue('K1', 'NOTA COMERCIAL');
+        $i = 2;
+        
+        foreach ($referencias as $val){
+                                  
+            $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $val->cotizacion->cliente->nombrecorto)
+                    ->setCellValue('B' . $i, $val->cotizacion->numero_cotizacion)
+                    ->setCellValue('C' . $i, $val->codigo)
+                    ->setCellValue('D' . $i, $val->referencia)
+                    ->setCellValue('E' . $i, $val->cantidad_referencia)
+                    ->setCellValue('F' . $i, $val->grupo->concepto)
+                    ->setCellValue('G' . $i, $val->codigoReferencia->codigo_homologado)
+                    ->setCellValue('H' . $i, $val->codigoReferencia->costo_producto)
+                    ->setCellValue('I' . $i, $val->detalle->valor_venta)
+                    ->setCellValue('J' . $i, $val->detalle->nota)
+                    ->setCellValue('K' . $i, $val->codigoReferencia->nota_comercial);
+                   
+            $i++;
+        }
+            
+        $objPHPExcel->getActiveSheet()->setTitle('Listado');
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Cotizacion_referencias.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

@@ -69,7 +69,8 @@ $municipio = ArrayHelper::map(Municipio::find()->all(), 'idmunicipio', 'municipi
         </div>      
         <div class="row">
             <?= $form->field($model, 'representante_legal')->textInput(['maxlength' => true]) ?> 
-        </div>
+              <?= $form->field($model, 'condicion_comercial', ['template' => '{label}<div class="col-sm-4 form-group">{input}{error}</div>'])->textarea(['rows' => 4, 'maxlength' => true, 'size' => 250]) ?>
+         </div>
         <div class="panel-footer text-right">			                        
             <?= Html::submitButton("<span class='glyphicon glyphicon-floppy-disk'></span> Actualizar", ["class" => "btn btn-primary",]) ?>
         </div>

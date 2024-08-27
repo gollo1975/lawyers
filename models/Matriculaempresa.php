@@ -68,7 +68,7 @@ class Matriculaempresa extends \yii\db\ActiveRecord
             [['nitmatricula', 'dv', 'direccionmatricula', 'emailmatricula', 'iddepartamento', 'idmunicipio', 'id_tipo_regimen'], 'required'],
             [['dv', 'id_tipo_regimen','tipo_formato'], 'integer'],
             [['porcentaje_iva'], 'number'],
-            [['nombresistema', 'representante_legal'], 'string'],
+            [['nombresistema', 'representante_legal','condicion_comercial'], 'string'],
             [['nitmatricula', 'telefonomatricula', 'celularmatricula', 'iddepartamento', 'idmunicipio'], 'string', 'max' => 15],
             [['razonsocialmatricula', 'nombrematricula', 'apellidomatricula', 'direccionmatricula', 'emailmatricula','nombre_completo'], 'string', 'max' => 40],
             [['representante_legal'], 'string', 'max' => 50],
@@ -102,6 +102,7 @@ class Matriculaempresa extends \yii\db\ActiveRecord
             'representante_legal' => 'Representante legal:',
             'nombre_completo' => 'nombre_completo',
             'tipo_formato' => 'Tipo formato:',
+            'condicion_comercial' => 'Condicion comercial:',
            
         ];
     }

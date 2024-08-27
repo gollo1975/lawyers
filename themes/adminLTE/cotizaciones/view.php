@@ -245,12 +245,14 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                         <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-success btn-sm']) ?>
                                 <?php }else{?>
                                     <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Nueva Referencias', ['cotizaciones/cargar_nueva_referencia', 'id' => $model->id_cotizacion, 'token' => $token], ['class' => 'btn btn-success btn-sm']) ?>
-                                    <?= Html::submitButton("<span class='glyphicon glyphicon-refresh'></span> Actualizar", ["class" => "btn btn-primary btn-sm", 'name' => 'actualizar_linea']) ?>
+                                    <?= Html::submitButton("<span class='glyphicon glyphicon-refresh'></span> Actualizar", ["class" => "btn btn-primary btn-sm", 'name' => 'actualizar_linea_referencia']) ?>
                                     <?= Html::submitButton("<span class='glyphicon glyphicon-trash'></span> Eliminar", ["class" => "btn btn-danger btn-sm", 'name' => 'eliminar_referencia']) ?>
                                 <?php }
-                            }?>
+                            }else{
+                                echo  Html::a('<span class="glyphicon glyphicon-export"></span> Expotar excel', ['excel_referencias', 'id' => $model->id_cotizacion], ['class' => 'btn btn-success btn-sm']);
+                            } ?>
                         </div>     
-                    </div>    
+                   </div>    
                 </div>
             </div> 
             <!--TERMINA TABS DE OPERACIONES-->

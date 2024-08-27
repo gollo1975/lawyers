@@ -109,26 +109,19 @@ class PDF extends FPDF {
         //FIN
         //Lineas del encabezado
         $this->Line(10,68,10,200);
-        $this->Line(10,87,202,87);//fila entre registro
         $this->Line(25,68,25,200);
-        $this->Line(10,103,202,103);//fila entre registro
-        $this->Line(56,68,56,200);
-        $this->Line(10,119,202,119);//fila entre registro
+         $this->Line(56,68,56,200);
         $this->Line(68,68,68,200);
-        $this->Line(10,135,202,135);//fila entre registro
         $this->Line(88,68,88,200);
-        $this->Line(10,151,202,151);//fila entre registro
         $this->Line(112,68,112,200);
-        $this->Line(10,167,202,167);//fila entre registro
         $this->Line(202,68,202,200);
-        $this->Line(10,183,202,183);//fila entre registro
         $this->Line(202,68,202,200);
         //Cuadro de la nota
-        $this->Line(10,200,157,200);//linea horizontal superior
+        $this->Line(10,200,202,200);//linea horizontal superior
         $this->Line(10,182,10,182);//linea vertical
-        $this->Line(10,208,157,208);//linea horizontal inferior
+        $this->Line(10,208,202,208);//linea horizontal inferior
         //Linea de las observacines
-        $this->Line(10,190,10,240);//linea vertical
+        $this->Line(10,190,10,200);//linea vertical
         //lineas para los cuadros de nit/cc,fecha,firma        
      
             
@@ -166,8 +159,9 @@ class PDF extends FPDF {
         $contacto = \app\models\ClientesContactos::find()->where(['=','id_cliente', $model->id_cliente])->andWhere(['=','predeterminado', 1])->one();
         $pdf->SetX(10);
         $pdf->SetFont('Arial', '', 8);
-        $cant = 0;
+        $cant = 0; $contador = 0;
         foreach ($detalles as $detalle) { 
+            $contador +=1;
             $pdf->SetFont('Arial', '', 7);
             $pdf->Cell(15, 4, ('R-'.$detalle->codigo), 0, 0, 'L');
             $pdf->Cell(31, 4, utf8_decode(substr($detalle->referencia, 0, 19)), 'L');
@@ -176,8 +170,16 @@ class PDF extends FPDF {
             $pdf->Cell(24, 4, '$ '.number_format($detalle->total_linea, 0), 0, 0, 'R');   
             $pdf->MultiCell (90, 4, utf8_decode(substr($detalle->nota,0, 200)), 0, 'J');
             $pdf->Ln();
-            $pdf->SetAutoPageBreak(true, 20);
             $cant += $detalle->cantidad_referencia;
+           
+            if ($contador % 8 == 0) {
+                $pdf->AddPage();
+                $this->Line(10,240,10,200);
+            }
+           // $pdf->SetAutoPageBreak(true, 20);
+        }
+        if (!$contador % 8 == 0) {
+             $this->Line(10,240,10,200);
         }
         $this->SetFillColor(200, 200, 200);
         $pdf->SetXY(10, 200);
@@ -220,7 +222,6 @@ class PDF extends FPDF {
         $pdf->SetXY(177, 232);
         $this->SetFont('Arial', '', 9); 
         $pdf->MultiCell(25, 8, '$ '.number_format($model->total_cotizacion, 0, '.', ','),1,'R',1);
-        
         //conacto
        if($contacto){
             $pdf->SetXY(10, 244);

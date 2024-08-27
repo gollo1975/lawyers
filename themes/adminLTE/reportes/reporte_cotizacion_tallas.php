@@ -160,7 +160,7 @@ class PDF extends FPDF {
             foreach ($tallas as $talla){
                 $pdf->SetFont('Arial', '', 7);
                 $pdf->Cell(15, 4, $talla->detalleCotizacion->codigo, 0, 0, 'L');
-                $pdf->Cell(40, 4, utf8_decode(substr($talla->detalleCotizacion->referencia, 0, 27)) , 0, 0, 'L');
+                $pdf->Cell(40, 4, utf8_decode(substr($talla->detalleCotizacion->referencia, 0, 23)) , 0, 0, 'L');
                 $pdf->Cell(12, 4, $talla->talla->nombre_talla, 0, 0, 'L');
                 $pdf->Cell(13, 4, $talla->cantidad, 0, 0, 'R');
                 $pdf->MultiCell (112, 4, utf8_decode(substr($detalle->detalleCotizacion->nota_comercial, 0, 200)) , 'L');
@@ -169,7 +169,7 @@ class PDF extends FPDF {
                 $cant += $detalle->cantidad;
             }
               
-             if ($totalLinea == $total){
+            if ($totalLinea == $total){
               $this->Ln();  
             }else{
                $this->Ln(3);
@@ -192,8 +192,9 @@ class PDF extends FPDF {
                 $this->SetFillColor(224, 235, 255);
                 $this->SetTextColor(0);
                 $this->SetFont('');
-                $this->Ln(5); 
+                $this->Ln(4); 
             }
+             
         }
         
         $pdf->SetXY(10, 265);//firma trabajador

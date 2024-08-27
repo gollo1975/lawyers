@@ -46,7 +46,7 @@ class Cotizaciones extends \yii\db\ActiveRecord
                  'tipo_cotizacion','proceso_cerrado'], 'integer'],
             [['fecha_cotizacion', 'fecha_entrega', 'fecha_registro'], 'safe'],
             [['user_name'], 'string', 'max' => 15],
-            [['observacion'], 'string', 'max' => 200],
+            [['observacion'], 'string', 'max' => 250],
             [['id_cliente'], 'exist', 'skipOnError' => true, 'targetClass' => Cliente::className(), 'targetAttribute' => ['id_cliente' => 'idcliente']],
         ];
     }
