@@ -65,7 +65,6 @@ class Cliente extends \yii\db\ActiveRecord
 	$this->razonsocial = strtoupper($this->razonsocial);
 	$this->nombrecorto = strtoupper($this->nombrecorto);
 	$this->direccioncliente = strtoupper($this->direccioncliente);
-	$this->contacto = strtoupper($this->contacto);
         $this->emailcliente = strtolower($this->emailcliente);
 	$this->observacion = strtoupper($this->observacion);	
         return true;
