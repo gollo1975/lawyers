@@ -133,7 +133,7 @@ class ClientesController extends Controller {
                     $model->razonsocial = null;
                 }
 
-                if ($table->insert()) {
+                if ($table->update()) {
                     $this->redirect(["clientes/index"]);
                 } 
             } else {
@@ -176,7 +176,7 @@ class ClientesController extends Controller {
                         $table->nombrecorto = strtoupper($model->nombrecliente . " " . $model->apellidocliente);
                         $model->razonsocial = null;
                     } 
-                    if ($table->update()) {
+                    if ($table->save()) {
                         Yii::$app->getSession()->setFlash('success', 'Registro actualizado con exito.');
                         return $this->redirect(["clientes/index"]);
                     } else {
