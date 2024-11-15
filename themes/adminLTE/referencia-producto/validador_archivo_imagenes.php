@@ -21,11 +21,13 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\AccessControl;
+use kartik\select2\Select2;
 //Modelos...
 $this->title = 'CARGAR IMAGEN';
 $this->params['breadcrumbs'][] = $this->title;
 $validador_imagen = 'referencia-producto';
 
+$grupoReferencia = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo', 'concepto')
 ?>
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <div class="panel panel-primary">
@@ -42,7 +44,7 @@ $validador_imagen = 'referencia-producto';
             "enableClientValidation" => true,
             'options' => ['class' => 'form-horizontal'],
             'fieldConfig' => [
-                            'template' => '{label}<div class="col-sm-3 form-group">{input}{error}</div>',
+                            'template' => '{label}<div class="col-sm-4 form-group">{input}{error}</div>',
                             'labelOptions' => ['class' => 'col-sm-2 control-label'],
                             'options' => []
                         ],
@@ -56,6 +58,15 @@ $validador_imagen = 'referencia-producto';
                 <div class="row" >
                     <?= $formulario->field($form, "codigo")->input("search") ?>
                     <?= $formulario->field($form, "referencia")->input("search") ?>
+             
+                    <?= $formulario->field($form, 'grupo')->widget(Select2::classname(), [
+                        'data' => $grupoReferencia,
+                        'options' => ['prompt' => 'Seleccione...'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]); ?>
+                    <?= $formulario->field($form, "homologado")->input("search") ?>
                 </div>
 
                 <div class="panel-footer text-right">

@@ -57,41 +57,41 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
         <div class="panel-body">
             <table class="table table-bordered table-striped table-hover">
                 <tr style="font-size: 85%;">
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'Id') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'Id') ?></th>
                     <td><?= Html::encode($model->id_cotizacion) ?></td>
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'numero_cotizacion') ?></th>
                     <td><?= Html::encode($model->numero_cotizacion) ?></td>
                       <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'id_cliente') ?></th>
                     <td><?= Html::encode($model->cliente->nombrecorto) ?></td>
-                      <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'subtotal') ?>:</th>
+                      <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'subtotal') ?></th>
                     <td align="right"><?= Html::encode(''.number_format($model->subtotal,0)) ?></td>
                    
                 </tr>
                 <tr style="font-size: 85%;">
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_cotizacion') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_cotizacion') ?></th>
                     <td><?= Html::encode($model->fecha_cotizacion) ?></td>
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_entrega') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_entrega') ?></th>
                     <td><?= Html::encode($model->fecha_entrega) ?></td>
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_registro') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'fecha_registro') ?></th>
                     <td ><?= Html::encode($model->fecha_registro) ?>%</td>
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'impuesto') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'impuesto') ?></th>
                     <td align="right"><?= Html::encode(''.number_format($model->impuesto,0)) ?></td>
                   
                 </tr>
                 <tr style="font-size: 85%;">
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'total_prendas') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'total_prendas') ?></th>
                     <td style="text-align: right"><?= Html::encode(''.number_format($model->total_prendas,0)) ?></td>
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'user_name') ?>:</th>
                     <td><?= Html::encode($model->user_name) ?></td>
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'proceso_cerrado') ?>:</th>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'proceso_cerrado') ?></th>
                     <td align="right"><?= Html::encode($model->procesoCerrado) ?></td>
-                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'total_cotizacion') ?>:</th>
+                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'total_cotizacion') ?></th>
                     <td align="right"><?= Html::encode(''.number_format($model->total_cotizacion,0)) ?></td>
                 </tr>
                 <tr style="font-size: 85%;">
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'tipo_cotizacion') ?>:</th>
-                    <td align="right"><?= Html::encode($model->tipoCotizacion) ?></td>
-                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'observacion') ?>:</th>
+                    <th style='background-color:#edf2f4; width: 8%'><?= Html::activeLabel($model, 'tipo_cotizacion') ?></th>
+                    <td style="width: 8%;"><?= Html::encode($model->tipoCotizacion) ?></td>
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'observacion') ?></th>
                     <td colspan="7"><?= Html::encode($model->observacion) ?></td>
                 </tr>
               
@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                         <div class="panel-body">
                             <table class="table table-bordered table-hover">
                                 <thead>
-                                    <tr style="font-size: 90%;">
+                                    <tr style="font-size: 85%;">
                                         <th scope="col" style='background-color:#caf0f8;'>CODIGO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>REFERENCIA</th>
                                         <th scope="col" style='background-color:#caf0f8;'>IMAGEN</th>
@@ -147,7 +147,7 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                         $conLista = app\models\ReferenciaListaPrecio::find()->where(['=','codigo', $val->codigo])->all();
                                         $conLista = ArrayHelper::map($conLista, 'id_detalle', 'verLista');
                                         ?>
-                                       <tr style="font-size: 90%;">
+                                       <tr style="font-size: 85%;">
                                             <td>R-<?= $val->codigo ?></td>
                                             <td><?= $val->referencia ?></td>
                                             <?php if($valor){

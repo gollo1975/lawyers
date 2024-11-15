@@ -47,7 +47,9 @@ $form = ActiveForm::begin([
                  </div>   
                 <div class="row">
                      <?= $form->field($model, 'tipo_cotizacion')->dropDownList(['0' => 'SIN TALLAS', '1' => 'CON TALLAS'],['prompt' => 'Seleccione ...']) ?>
-                     <?= $form->field($model, 'observacion', ['template' => '{label}<div class="col-sm-4 form-group">{input}{error}</div>'])->textarea(['rows' => 4, 'maxlength' => true, 'size' => 250]) ?>
+                </div>
+                <div class="row">
+                     <?= $form->field($model, 'observacion', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 4, 'maxlength' => true, 'size' => 250]) ?>
                 </div>
                 <div class="panel-footer text-right">			
                     <a href="<?= Url::toRoute("cotizaciones/index") ?>" class="btn btn-primary btn-sm"><span class='glyphicon glyphicon-circle-arrow-left'></span> Regresar</a>

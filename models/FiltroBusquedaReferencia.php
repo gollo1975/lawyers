@@ -13,13 +13,14 @@ class FiltroBusquedaReferencia extends Model
     public $codigo;
     public $referencia;
     public $grupo;
+    public $homologado;
 
 
     public function rules()
     {
         return [            
             [['codigo','grupo'], 'integer'],
-            [['referencia'], 'string'],
+            [['referencia','homologado'], 'string'],
         ];
     }
 
@@ -29,6 +30,7 @@ class FiltroBusquedaReferencia extends Model
             'codigo' => 'Código referencia:',                      
             'referencia' => 'Referencia:',
             'grupo' => 'Grupo:',
+            'homologado' => 'Codigo homologado:',
         ];
     }
 }

@@ -59,19 +59,19 @@ class Cotizaciones extends \yii\db\ActiveRecord
         return [
             'id_cotizacion' => 'Id:',
             'id_cliente' => 'Cliente:',
-            'numero_cotizacion' => 'Numero cotizacion:',
-            'fecha_cotizacion' => 'Fecha cotizacion:',
-            'fecha_entrega' => 'Fecha entrega:',
-            'fecha_registro' => 'Fecha registro:',
-            'total_prendas' => 'Total prendas:',
+            'numero_cotizacion' => 'Numero:',
+            'fecha_cotizacion' => 'F. cotizacion:',
+            'fecha_entrega' => 'F. entrega:',
+            'fecha_registro' => 'F. registro:',
+            'total_prendas' => 'No prendas:',
             'subtotal' => 'Subtotal:',
             'impuesto' => 'Impuesto:',
             'total_cotizacion' => 'Total cotizacion:',
             'autorizado' => 'Autorizado:',
-            'proceso_cerrado' => 'Proceso cerrado:',
+            'proceso_cerrado' => 'Cerrado:',
             'user_name' => 'User Name',
             'observacion' => 'Observacion:',
-            'tipo_cotizacion' => 'Tipo cotización:',
+            'tipo_cotizacion' => 'T. cotización:',
         ];
     }
 

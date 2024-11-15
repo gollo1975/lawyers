@@ -63,6 +63,7 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                     'allowClear' => true
                 ],
             ]); ?>
+             <?= $formulario->field($form, "homologado")->input("search") ?>
         </div>
         <div class="panel-footer text-right">
             <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary btn-sm",]) ?>
@@ -97,7 +98,7 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                     <td><?= $val->descripcion_referencia ?></td>
                     <td><?= $val->grupo->concepto ?></td>
                     <td align="right"><?= '$'.number_format($val->costo_producto,0) ?></td>
-                    <td align="right"><?= $val->codigo_homologado ?></td>
+                    <td><?= $val->codigo_homologado ?></td>
                     <!-- Inicio Nuevo Detalle proceso -->
                     <td style= 'width: 25px;'>				
                        <a href="<?= Url::toRoute(["referencia-producto/view", "id" => $val->codigo]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>                

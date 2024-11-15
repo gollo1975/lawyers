@@ -46,15 +46,15 @@ $tipoPrenda = ArrayHelper::map(GrupoReferencia::find()->orderBy('concepto ASC')-
              <?= $form->field($model, 'codigo_homologado')->textInput(['maxlength' => true]) ?> 
         </div>
          <div class = "row">
-               <?= $form->field($model, 'nota_comercial', ['template' => '{label}<div class="col-sm-4 form-group">{input}{error}</div>'])->textarea(['rows' => 5, 'maxlength' => true, 'size' => 200]) ?>
+               <?= $form->field($model, 'nota_comercial', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 3, 'maxlength' => true, 'size' => 200]) ?>
         </div>
         <div class = "row">
-               <?= $form->field($model, 'descripcion', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 15, 'maxlength' => true]) ?>
+               <?= $form->field($model, 'descripcion', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 17, 'maxlength' => true]) ?>
         </div>
         
         <div class="panel-footer text-right">            
-            <a href="<?= Url::toRoute("referencia-producto/index") ?>" class="btn btn-primary"><span class='glyphicon glyphicon-circle-arrow-left'></span> Regresar</a>
-            <?= Html::submitButton("<span class='glyphicon glyphicon-floppy-disk'></span> Guardar", ["class" => "btn btn-success",]) ?>		
+            <a href="<?= Url::toRoute("referencia-producto/index") ?>" class="btn btn-primary btn-sm"><span class='glyphicon glyphicon-circle-arrow-left '></span> Regresar</a>
+            <?= Html::submitButton("<span class='glyphicon glyphicon-floppy-disk'></span> Guardar", ["class" => "btn btn-success btn-sm",]) ?>		
         </div>
     </div>
 </div>

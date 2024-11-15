@@ -54,14 +54,17 @@ class ReferenciaProductoController extends Controller
                 $codigo = null;
                 $referencia = null;
                 $grupo = null;
+                $homologado = null;
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {                        
                         $codigo = Html::encode($form->codigo);
                         $referencia = Html::encode($form->referencia);
                         $grupo = Html::encode($form->grupo);
+                        $homologado = Html::encode($form->homologado);
                         $table = ReferenciaProducto::find()
                                 ->andFilterWhere(['=', 'codigo', $codigo])                                                                                              
                                 ->andFilterWhere(['like', 'descripcion_referencia', $referencia])
+                                ->andFilterWhere(['like', 'codigo_homologado', $homologado])
                                 ->andFilterWhere(['=','id_grupo', $grupo]);
  
                         $table = $table->orderBy('codigo DESC');
@@ -370,12 +373,18 @@ class ReferenciaProductoController extends Controller
                 $form = new \app\models\ModeloBuscar();
                 $codigo = null;
                 $referencia = null;
+                $grupo = null;
+                $homologado = null;
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {
                         $codigo = Html::encode($form->codigo);
                         $referencia = Html::encode($form->referencia);
+                        $grupo = Html::encode($form->grupo);
+                        $homologado = Html::encode($form->homologado);
                         $table = ReferenciaProducto::find()
                                 ->andFilterWhere(['like','descripcion_referencia', $referencia])
+                                ->andFilterWhere(['=','id_grupo', $grupo])
+                                ->andFilterWhere(['like','codigo_homologado', $homologado])
                                 ->andFilterWhere(['=','codigo', $codigo]);
                         $table = $table->orderBy('codigo ASC');  
                         $tableexcel = $table->all();
