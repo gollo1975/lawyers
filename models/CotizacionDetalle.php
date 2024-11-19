@@ -39,10 +39,11 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cotizacion', 'codigo', 'id_detalle', 'cantidad_referencia', 'valor_unidad','subtotal','impuesto', 'total_linea','id_grupo'], 'integer'],
+            [['id_cotizacion', 'codigo', 'id_detalle', 'cantidad_referencia', 'valor_unidad','subtotal','impuesto', 'total_linea','id_grupo','nuevo_precio'], 'integer'],
             [['referencia'], 'string', 'max' => 40],
             [['user_name'], 'string', 'max' => 15],
             [['nota','nota_comercial'], 'string', 'max' => 200],
+            [['nota_interna'], 'string', 'max' => 255],
             [['fecha_cotizacion','date', 'format' => 'yyyy-MM-dd']],
             [['id_cotizacion'], 'exist', 'skipOnError' => true, 'targetClass' => Cotizaciones::className(), 'targetAttribute' => ['id_cotizacion' => 'id_cotizacion']],
             [['codigo'], 'exist', 'skipOnError' => true, 'targetClass' => ReferenciaProducto::className(), 'targetAttribute' => ['codigo' => 'codigo']],
@@ -72,6 +73,8 @@ class CotizacionDetalle extends \yii\db\ActiveRecord
             'id_grupo' => 'Grupo:',
             'fecha_cotizacion' => 'Fecha cotizacion:',
             'nota_comercial' => 'nota_comercial',
+            'nota_interna' => 'nota_interna',
+            'nuevo_precio' => 'nuevo_precio',
         ];
     }
 

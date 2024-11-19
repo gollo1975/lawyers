@@ -260,13 +260,19 @@ class CotizacionesController extends Controller
         if (Yii::$app->request->post()) {
             if (isset($_POST["actualizar_linea_referencia"])) {
                 $intIndice = 0;
-                $variable = 0; $unidades = 0;
+                $variable = 0; $unidades = 0; $nuevo_precio = 0;
                 foreach ($_POST["listado_referencia"] as $intCodigo) {
+                    $nuevo_precio = $_POST["nuevo_precio"][$intIndice];
                     $variable = $_POST["tipo_lista"][$intIndice];
                     $BuscarLista = \app\models\ReferenciaListaPrecio::findOne($variable);
                     $table = \app\models\CotizacionDetalle::findOne($intCodigo);
                     $table->id_detalle = $_POST["tipo_lista"][$intIndice];
-                    $table->valor_unidad = $BuscarLista->valor_venta;
+                    if($nuevo_precio > 0){
+                        $table->valor_unidad = $nuevo_precio;
+                        $table->nuevo_precio = $nuevo_precio;
+                    }else{
+                        $table->valor_unidad = $BuscarLista->valor_venta;
+                    }
                     $table->save(false);
                     if($table->cantidad_referencia > 0){
                         $id_referencia = $intCodigo;
@@ -581,8 +587,8 @@ class CotizacionesController extends Controller
                     $intIndice = 0;
                     foreach ($_POST["codigo_referencia"] as $intCodigo) {
                         ///VALIDA QUE NO HAYA REGISTRO DUPLICADOS
-                        $registro = \app\models\CotizacionDetalle::find()->where(['=','codigo', $intCodigo])->andWhere(['=','id_cotizacion', $id])->one();
-                        if(!$registro){
+                       // $registro = \app\models\CotizacionDetalle::find()->where(['=','codigo', $intCodigo])->andWhere(['=','id_cotizacion', $id])->one();
+                        //if(!$registro){
                             $item = \app\models\ReferenciaProducto::findOne($intCodigo);
                             $table = new \app\models\CotizacionDetalle();
                             $table->id_cotizacion = $id;
@@ -593,7 +599,7 @@ class CotizacionesController extends Controller
                             $table->nota_comercial = $item->nota_comercial;
                             $table->fecha_cotizacion = date('Y-m-d');
                             $table->save(false);
-                        }    
+                        //}    
                     }
                     return $this->redirect(['view','id' => $id, 'token' => $token]);
                 }
@@ -689,6 +695,29 @@ class CotizacionesController extends Controller
         ]);
     }
     
+    //subir nota interna
+      public function actionSubir_nota_interna($id, $id_referencia, $token) {
+        $model = new \app\models\ModeloBuscar();
+        $table = \app\models\CotizacionDetalle::findOne($id_referencia);
+        $cotizacion = Cotizaciones::findOne($id);
+        if ($model->load(Yii::$app->request->post())) {
+            if (isset($_POST["grabar_nota"])) { 
+                $table->nota_interna = $model->nota;
+                $table->save(false);
+               return $this->redirect(["cotizaciones/view", 'id' => $id, 'token' => $token]);
+            }    
+        }
+         if (Yii::$app->request->get()) {
+            $model->nota = $table->nota_interna; 
+         }
+        return $this->renderAjax('nota_interna', [
+            'model' => $model,
+            'id_referencia' => $id_referencia,
+            'id' => $id,
+          
+        ]);
+    }
+    
     //PERMITE IMPRIMIR
     public function actionImprimir_cotizacion($id)
     {
@@ -698,7 +727,11 @@ class CotizacionesController extends Controller
                 'model' => $this->findModel($id),
             ]);
         }else{
-            return $this->render('../reportes/reporte_cotizacion_cliente_detalle', [
+           /* return $this->render('../reportes/reporte_cotizacion_cliente_detalle', [
+               'model' => $this->findModel($id),
+          
+            ]); */
+             return $this->render('../reportes/cotizacion_cliente_final', [
                'model' => $this->findModel($id),
           
             ]); 

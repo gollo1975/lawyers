@@ -125,12 +125,14 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                         <th scope="col" style='background-color:#caf0f8;'>IMAGEN</th>
                                         <th scope="col" style='background-color:#caf0f8;'>COSTO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>LISTA</th>
-                                        <th scope="col" style='background-color:#caf0f8;'>VR. VENTA</th>
+                                        <th scope="col" style='background-color:#caf0f8;'>VR. UNIDAD</th>
+                                        <th scope="col" style='background-color:#caf0f8;'>NUEVO PRECIO</th>
                                         <th scope="col" style='background-color:#caf0f8;'>CANT.</th>
                                         <th scope="col" style='background-color:#caf0f8;'>SUBTOTAL</th>
                                         <th scope="col" style='background-color:#caf0f8;'>IVA</th>
                                         <th scope="col" style='background-color:#caf0f8;'>TOTAL</th>
                                          <th scope="col" style='background-color:#caf0f8;'></th>
+                                          <th scope="col" style='background-color:#caf0f8;'></th>
                                          <th scope="col" style='background-color:#caf0f8;'></th>
                                          <th scope="col" style='background-color:#caf0f8;'></th>
                                         <th scope="col" style='background-color:#caf0f8;'><input type="checkbox" onclick="marcar(this);"/></th>
@@ -161,8 +163,13 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                   <td></td>
                                             <?php }?>      
                                             <td style="text-align: right" ><?= ''. number_format($val->codigoReferencia->costo_producto,0) ?></td>
-                                            <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('tipo_lista[]', $val->id_detalle, $conLista, ['class' => 'col-sm-8', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
-                                            <td style="text-align: right"><?= '$'. number_format($val->valor_unidad,0)?></td>
+                                            <td style="padding-left: 1;padding-right: 0;"><?= Html::dropDownList('tipo_lista[]', $val->id_detalle, $conLista, ['class' => 'col-sm-10', 'prompt' => 'Seleccione', 'required' => true]) ?></td>
+                                            <td style="text-align: right"><?= ''. number_format($val->valor_unidad,0)?></td>
+                                            <?php if($val->valor_unidad > 0){?>
+                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="nuevo_precio[]" value="<?= $val->nuevo_precio ?>" style="text-align: right" size="7" required="true"> </td> 
+                                            <?php }else{?>
+                                                <td style="padding-right: 1;padding-right: 0; text-align: right"> <input type="text" name="nuevo_precio[]" value="<?= $val->nuevo_precio ?>" style="text-align: right" size="7" required="true" readonly="true"> </td> 
+                                            <?php }?>    
                                             <td style="text-align: right"><?= ''. number_format($val->cantidad_referencia,0)?></td>
                                             <td style="text-align: right"><?= '$'. number_format($val->subtotal,0)?></td>
                                             <td style="text-align: right"><?= '$'. number_format($val->impuesto,0)?></td>
@@ -170,7 +177,8 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                             <?php if ($model->autorizado == 0){
                                                 if($val->valor_unidad > 0){
                                                     $conTalla = \app\models\CotizacionDetalleTalla::find()->where(['=','id', $val->id])->one(); 
-                                                    if(!$conTalla){ ?>
+                                                    if(!$conTalla){ 
+                                                        ?>
                                                         <td style= 'width: 25px; height: 25px;'>
                                                             <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
                                                         </td>
@@ -185,18 +193,34 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                                   ])    
                                                              ?>
                                                             <div class="modal remote fade" id="modalsubirnota<?= $val->id ?>">
+                                                              <div class="modal-dialog modal-lg" style ="width: 550px;">
+                                                                  <div class="modal-content"></div>
+                                                              </div>
+                                                            </div>
+                                                        </td>
+                                                        <td style="width: 25px; height: 25px;">
+                                                            <!-- PROCESO DE NOTA INTERNA -->
+                                                              <?= Html::a('<span class="glyphicon glyphicon-folder-close"></span> ',
+                                                                  ['/cotizaciones/subir_nota_interna', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token],
+                                                                  [
+                                                                      'title' => 'Permite crear una nota interna a la cotizacion.',
+                                                                      'data-toggle'=>'modal',
+                                                                      'data-target'=>'#modalsubirnotainterna'.$val->id,
+                                                                  ])    
+                                                             ?>
+                                                            <div class="modal remote fade" id="modalsubirnotainterna<?= $val->id ?>">
                                                               <div class="modal-dialog modal-lg" style ="width: 550px;">
                                                                   <div class="modal-content"></div>
                                                               </div>
                                                             </div>
                                                         </td>
                                                         <td style= 'width: 25px; height: 25px;'></td>
-                                                    <?php }else{?>
+                                                    <?php }else{ ?>
                                                         <td style= 'width: 25px; height: 25px;'>
                                                             <a href="<?= Url::toRoute(["cotizaciones/crear_tallas_referencia", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-import" title="Permite crear las talla a cada referencia"></span></a>
                                                         </td>
                                                         <td style="width: 25px; height: 25px;">
-                                                            <!-- Inicio Nuevo Detalle proceso -->
+                                                            <!-- Inicio Nuevo Detalle p -->
                                                               <?= Html::a('<span class="glyphicon glyphicon-list"></span> ',
                                                                   ['/cotizaciones/subir_nota', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token],
                                                                   [
@@ -211,6 +235,21 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                                               </div>
                                                             </div>
                                                         </td>
+                                                         <td style="width: 25px; height: 25px;">
+                                                            <!-- Inicio Nuevo Detalle proceso -->
+                                                              <?= Html::a('<span class="glyphicon glyphicon-folder-close"></span> ',
+                                                                  ['/cotizaciones/subir_nota_interna', 'id' => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token],
+                                                                  [
+                                                                      'title' => 'Permite crear una nota interna a la cotizacion.',
+                                                                      'data-toggle'=>'modal',
+                                                                      'data-target'=>'#modalsubirnotainterna'.$val->id,
+                                                                  ])    
+                                                             ?>
+                                                            <div class="modal remote fade" id="modalsubirnotainterna<?= $val->id ?>">
+                                                              <div class="modal-dialog modal-lg" style ="width: 550px;">
+                                                                  <div class="modal-content"></div>
+                                                              </div>
+                                                            </div>
                                                         <td style= 'width: 25px; height: 25px;'>
                                                             <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
                                                         </td>
@@ -224,9 +263,10 @@ $this->params['breadcrumbs'][] = $model->id_cotizacion;
                                             }else{?>
                                                     <td style= 'width: 25px; height: 25px;'></td>
                                                     <td style= 'width: 25px; height: 25px;'></td>
-                                                     <td style= 'width: 25px; height: 25px;'>
-                                                                 <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
-                                                        </td>
+                                                    <td style= 'width: 25px; height: 25px;'></td>
+                                                    <td style= 'width: 25px; height: 25px;'>
+                                                        <a href="<?= Url::toRoute(["cotizaciones/ver_tallas", "id" => $model->id_cotizacion, 'id_referencia' => $val->id, 'token' => $token]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>
+                                                    </td>
                                                     
                                             <?php }?>        
                                             <input type="hidden" name="listado_referencia[]" value="<?= $val->id ?>">
