@@ -274,10 +274,12 @@ class CotizacionesController extends Controller
                         $table->valor_unidad = $BuscarLista->valor_venta;
                     }
                     $table->save(false);
-                    if($table->cantidad_referencia > 0){
-                        $id_referencia = $intCodigo;
-                        $this->ContarCantidadTalla($id_referencia);
-                    }
+                    if($model->tipo_cotizacion == 1){
+                        if($table->cantidad_referencia > 0){
+                            $id_referencia = $intCodigo;
+                            $this->ContarCantidadTalla($id_referencia);
+                        }
+                    }    
                     $intIndice++;
                 } 
                  return $this->redirect(['cotizaciones/view', 'id' => $id, 'token' => $token]);
@@ -547,13 +549,19 @@ class CotizacionesController extends Controller
         $form = new \app\models\ModeloBuscar();
         $referencia = null;
         $clasificacion = null;
+        $nota= null;
+        $ficha = null;
         if ($form->load(Yii::$app->request->get())) {
                 if ($form->validate()) {
                     $referencia = Html::encode($form->referencia);  
                     $clasificacion = Html::encode($form->clasificacion); 
+                    $nota = Html::encode($form->nota);
+                    $ficha = Html::encode($form->ficha);
                     $operacion = \app\models\ReferenciaProducto::find()
                             ->andFilterWhere(['like','descripcion_referencia', $referencia])
-                            ->andFilterWhere(['=','id_grupo', $clasificacion]);
+                            ->andFilterWhere(['=','id_grupo', $clasificacion])
+                            ->andFilterWhere(['like','nota_comercial', $nota])
+                            ->andFilterWhere(['like','descripcion', $ficha]);
                     $operacion = $operacion->orderBy('descripcion_referencia ASC');                    
                     $count = clone $operacion;
                     $to = $count->count();

@@ -50,6 +50,8 @@ $Buscar = ArrayHelper::map(app\models\GrupoReferencia::find()->all(), 'id_grupo'
                             'allowClear' => true
                         ],
                     ]); ?>
+                     <?= $formulario->field($form, "nota")->input("search") ?>
+                     <?= $formulario->field($form, "ficha")->input("search") ?>
                 </div>
                 <div class="panel-footer text-right">
                     <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary btn-sm",]) ?>

@@ -19,13 +19,14 @@ class ModeloBuscar extends Model
     public $cantidad; 
     public $grupo;
     public $homologado;
+    public $ficha;
 
 
     public function rules()
     {
         return [            
             [['clasificacion','cantidad','grupo'], 'integer'],
-            [['referencia','q','nota','codigo','homologado'], 'string'],
+            [['referencia','q','nota','codigo','homologado','ficha'], 'string'],
         ];
     }
 
@@ -35,11 +36,12 @@ class ModeloBuscar extends Model
             'clasificacion' => 'Clasificacion:',   
             'referencia' => 'Referencia:',
             'q' => 'Talla:',
-            'nota' => 'Nota(200):',
+            'nota' => 'Nota:',
             'codigo' => 'Codigo referencia:',
             'cantidad' => 'Cantidades:',
             'grupo' => 'Grupo:',
             'homologado' => 'Codigo homologado:',
+            'ficha' => 'Ficha tecnica:',
         ];
     }
 }
