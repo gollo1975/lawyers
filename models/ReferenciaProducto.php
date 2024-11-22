@@ -51,7 +51,7 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
             [['descripcion_referencia'], 'string', 'max' => 40],
             [['user_name','codigo_homologado'], 'string', 'max' => 15],
             [['codigo'], 'unique'],
-            [['nota_comercial'],'string', 'max' => 255],
+            [['nota_comercial'],'string', 'max' => 230],
             [['id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => GrupoReferencia::className(), 'targetAttribute' => ['id_grupo' => 'id_grupo']],
         ];
     }

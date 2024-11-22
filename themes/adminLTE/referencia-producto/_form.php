@@ -46,7 +46,7 @@ $tipoPrenda = ArrayHelper::map(GrupoReferencia::find()->orderBy('concepto ASC')-
              <?= $form->field($model, 'codigo_homologado')->textInput(['maxlength' => true]) ?> 
         </div>
          <div class = "row">
-               <?= $form->field($model, 'nota_comercial', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 3, 'maxlength' => true, 'size' => 200]) ?>
+               <?= $form->field($model, 'nota_comercial', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 3, 'maxlength' => true, 'size' => 230]) ?>
         </div>
         <div class = "row">
                <?= $form->field($model, 'descripcion', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 17, 'maxlength' => true]) ?>
