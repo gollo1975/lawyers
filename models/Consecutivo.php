@@ -38,6 +38,7 @@ class Consecutivo extends \yii\db\ActiveRecord
             [['nombre', 'consecutivo'], 'required'],
             [['consecutivo'], 'integer'],
             [['nombre'], 'string', 'max' => 100],
+             [['abreviatura'], 'string', 'max' => 10],
         ];
     }
 
@@ -50,6 +51,7 @@ class Consecutivo extends \yii\db\ActiveRecord
             'consecutivo_pk' => 'Consecutivo Pk',
             'nombre' => 'Nombre',
             'consecutivo' => 'Consecutivo',
+            'abreviatura' => 'abreviatura',
         ];
     }
 }

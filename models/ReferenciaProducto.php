@@ -45,13 +45,14 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
     {
         return [
             [['descripcion_referencia', 'id_grupo'], 'required'],
-            [['codigo', 'id_grupo', 'costo_producto'], 'integer'],
+            [['codigo', 'id_grupo', 'costo_producto','generar_codigo'], 'integer'],
             [['fecha_registro'], 'safe'],
             [['descripcion'], 'string'],
             [['descripcion_referencia'], 'string', 'max' => 40],
             [['user_name','codigo_homologado'], 'string', 'max' => 15],
             [['codigo'], 'unique'],
             [['nota_comercial'],'string', 'max' => 230],
+            [['nota_interna'],'string', 'max' => 100],
             [['id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => GrupoReferencia::className(), 'targetAttribute' => ['id_grupo' => 'id_grupo']],
         ];
     }
@@ -71,6 +72,9 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
             'descripcion' => 'Ficha tecnica',
             'codigo_homologado' => 'Codigo homologado:',
             'nota_comercial' => 'Nota comercial:',
+            'nota_interna' => 'Nota interna:',
+            'generar_codigo' => 'Generar codigo:',
+            'estado_registro' => 'Activo:',
         ];
     }
 
@@ -80,5 +84,15 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
     public function getGrupo()
     {
         return $this->hasOne(GrupoReferencia::className(), ['id_grupo' => 'id_grupo']);
+    }
+    
+    //estado
+    public function getEstadoRegistro() {
+        if($this->estado_registro == 0){
+            $estadoregistro = 'NO';
+        }else{
+            $estadoregistro = 'SI';
+        }
+        return $estadoregistro;
     }
 }

@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 ?>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
 <script language="JavaScript">
     function mostrarfiltro() {
         divC = document.getElementById("filtro");
@@ -51,7 +51,6 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
     <div class="panel-heading" onclick="mostrarfiltro()">
         Filtros de busqueda <i class="glyphicon glyphicon-filter"></i>
     </div>
-	
     <div class="panel-body" id="filtro" style="display:block">
         <div class="row" >
             <?= $formulario->field($form, "codigo")->input("search") ?>
@@ -64,6 +63,8 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                 ],
             ]); ?>
              <?= $formulario->field($form, "homologado")->input("search") ?>
+             <?= $formulario->field($form, 'estado')->dropDownList(['0' => 'NO', '1' => 'SI'],['prompt' => 'Seleccione ...']) ?>
+           
         </div>
         <div class="panel-footer text-right">
             <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span> Buscar", ["class" => "btn btn-primary btn-sm",]) ?>
@@ -87,6 +88,7 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                 <th scope="col" style='background-color:#caf0f8;'>GRUPO</th>
                 <th scope="col" style='background-color:#caf0f8;'>COSTO PRODUCTO</th>
                 <th scope="col" style='background-color:#caf0f8;'>CODIGO HOMOLOGADO</th>
+                <th scope="col" style='background-color:#caf0f8;'>ACTIVO</th>
                 <th scope="col" style='background-color:#caf0f8;'></th> 
                 <th scope="col" style='background-color:#caf0f8;'></th> 
             </tr>
@@ -99,6 +101,7 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                     <td><?= $val->grupo->concepto ?></td>
                     <td align="right"><?= '$'.number_format($val->costo_producto,0) ?></td>
                     <td><?= $val->codigo_homologado ?></td>
+                    <td><?= $val->estadoRegistro ?></td>
                     <!-- Inicio Nuevo Detalle proceso -->
                     <td style= 'width: 25px;'>				
                        <a href="<?= Url::toRoute(["referencia-producto/view", "id" => $val->codigo]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>                

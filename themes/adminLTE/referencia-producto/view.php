@@ -50,7 +50,11 @@ $listaPrecio = ArrayHelper::map(\app\models\ListaPrecios::find()->orderBy('id_li
                  <tr style="font-size: 90%;">
                     <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'descripcion') ?></th>
                     <td colspan="6"><?= Html::encode($model->descripcion) ?></td>                    
-                </tr>          
+                </tr> 
+                <tr style="font-size: 90%;">
+                    <th style='background-color:#edf2f4;'><?= Html::activeLabel($model, 'nota_interna') ?></th>
+                    <td colspan="6"><?= Html::encode($model->nota_interna) ?></td>                    
+                </tr> 
             </table>
         </div>
     </div>

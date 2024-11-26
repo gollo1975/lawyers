@@ -55,16 +55,19 @@ class ReferenciaProductoController extends Controller
                 $referencia = null;
                 $grupo = null;
                 $homologado = null;
+                $estado = null;
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {                        
                         $codigo = Html::encode($form->codigo);
                         $referencia = Html::encode($form->referencia);
                         $grupo = Html::encode($form->grupo);
+                        $estado = Html::encode($form->estado);
                         $homologado = Html::encode($form->homologado);
                         $table = ReferenciaProducto::find()
                                 ->andFilterWhere(['=', 'codigo', $codigo])                                                                                              
                                 ->andFilterWhere(['like', 'descripcion_referencia', $referencia])
                                 ->andFilterWhere(['like', 'codigo_homologado', $homologado])
+                                ->andFilterWhere(['=', 'estado_registro', $estado])
                                 ->andFilterWhere(['=','id_grupo', $grupo]);
  
                         $table = $table->orderBy('codigo DESC');
@@ -199,6 +202,20 @@ class ReferenciaProductoController extends Controller
             $model->id_grupo = $model->id_grupo;
             $model->user_name = Yii::$app->user->identity->username;
             $model->descripcion= $model->descripcion;
+            $model->nota_interna = $model->nota_interna;
+            if($model->nota_interna !== ''){
+                $model->estado_registro = 1;
+            }
+            if($model->generar_codigo == 1){
+                $model->generar_codigo = 1;
+                $consecutivo = \app\models\Consecutivo::findOne(7);
+                $dato = $consecutivo->consecutivo + 1;
+                $model->codigo_homologado = $consecutivo->abreviatura.$dato;
+                $consecutivo->consecutivo = $dato;
+                $consecutivo->save();
+            }else{
+               $model->codigo_homologado = $model->codigo_homologado;
+            }    
             if($model->save()){
                 Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
                 return $this->redirect(['index']);
@@ -254,6 +271,13 @@ class ReferenciaProductoController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if($model->nota_interna !== ''){
+                $model->estado_registro = 1;
+                $model->save();
+            }else{
+                $model->estado_registro = 0;
+                $model->save();
+            }
             return $this->redirect(['index']);
         }
 
@@ -468,6 +492,7 @@ class ReferenciaProductoController extends Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
           
         $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('A1', 'CODIGO')
@@ -478,7 +503,8 @@ class ReferenciaProductoController extends Controller
                     ->setCellValue('F1', 'FICHA TECNICA')
                     ->setCellValue('G1', 'COSTO PRODUCTO')
                     ->setCellValue('H1', 'FECHA REGISTRO')
-                    ->setCellValue('I1', 'USUARIO');
+                    ->setCellValue('I1', 'USUARIO')
+                    ->setCellValue('J1', 'NOTA INTERNA');
                                     
         $i = 2;
         
@@ -493,12 +519,13 @@ class ReferenciaProductoController extends Controller
                     ->setCellValue('F' . $i, $val->descripcion)
                     ->setCellValue('G' . $i, $val->costo_producto)
                     ->setCellValue('H' . $i, $val->fecha_registro)
-                    ->setCellValue('I' . $i, $val->user_name);
+                    ->setCellValue('I' . $i, $val->user_name)
+                    ->setCellValue('J' . $i, $val->nota_interna);
                   
             $i++;
         }
 
-        $objPHPExcel->getActiveSheet()->setTitle('cliente');
+        $objPHPExcel->getActiveSheet()->setTitle('Referencias');
         $objPHPExcel->setActiveSheetIndex(0);
 
         // Redirect output to a client’s web browser (Excel2007)
