@@ -63,6 +63,8 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                 ],
             ]); ?>
              <?= $formulario->field($form, "homologado")->input("search") ?>
+            <?= $formulario->field($form, "nota_comercial")->input("search") ?>
+            <?= $formulario->field($form, "nota_ficha")->input("search") ?>
              <?= $formulario->field($form, 'estado')->dropDownList(['0' => 'NO', '1' => 'SI'],['prompt' => 'Seleccione ...']) ?>
            
         </div>

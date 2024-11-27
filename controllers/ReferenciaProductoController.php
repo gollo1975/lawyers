@@ -55,7 +55,8 @@ class ReferenciaProductoController extends Controller
                 $referencia = null;
                 $grupo = null;
                 $homologado = null;
-                $estado = null;
+                $estado = null; $nota_comercial = null;
+                $nota_ficha= null;
                 if ($form->load(Yii::$app->request->get())) {
                     if ($form->validate()) {                        
                         $codigo = Html::encode($form->codigo);
@@ -63,10 +64,14 @@ class ReferenciaProductoController extends Controller
                         $grupo = Html::encode($form->grupo);
                         $estado = Html::encode($form->estado);
                         $homologado = Html::encode($form->homologado);
+                        $nota_comercial = Html::encode($form->nota_comercial);
+                        $nota_ficha = Html::encode($form->nota_ficha);
                         $table = ReferenciaProducto::find()
                                 ->andFilterWhere(['=', 'codigo', $codigo])                                                                                              
                                 ->andFilterWhere(['like', 'descripcion_referencia', $referencia])
                                 ->andFilterWhere(['like', 'codigo_homologado', $homologado])
+                                ->andFilterWhere(['like', 'descripcion', $nota_ficha])
+                                ->andFilterWhere(['like', 'nota_comercial', $nota_comercial])
                                 ->andFilterWhere(['=', 'estado_registro', $estado])
                                 ->andFilterWhere(['=','id_grupo', $grupo]);
  

@@ -1075,6 +1075,9 @@ class CotizacionesController extends Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
         $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+         $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
 
         $objPHPExcel->setActiveSheetIndex(0)
                     
@@ -1087,8 +1090,11 @@ class CotizacionesController extends Controller
                     ->setCellValue('G1', 'CODIGO HOMOLOGADO')
                     ->setCellValue('H1', 'COSTO')
                     ->setCellValue('I1', 'LISTA PRECIO')
-                    ->setCellValue('J1', 'NOTA PRECIO')
-                    ->setCellValue('K1', 'NOTA COMERCIAL');
+                    ->setCellValue('J1', 'VR. UNIDAD')
+                    ->setCellValue('K1', 'NUEVO PRECIO')
+                    ->setCellValue('L1', 'NOTA PRECIO')
+                    ->setCellValue('M1', 'NOTA COMERCIAL')
+                    ->setCellValue('N1', 'NOTA INTERNA');
         $i = 2;
         
         foreach ($referencias as $val){
@@ -1103,8 +1109,12 @@ class CotizacionesController extends Controller
                     ->setCellValue('G' . $i, $val->codigoReferencia->codigo_homologado)
                     ->setCellValue('H' . $i, $val->codigoReferencia->costo_producto)
                     ->setCellValue('I' . $i, $val->detalle->valor_venta)
-                    ->setCellValue('J' . $i, $val->detalle->nota)
-                    ->setCellValue('K' . $i, $val->codigoReferencia->nota_comercial);
+                    ->setCellValue('J' . $i, $val->valor_unidad)
+                    ->setCellValue('K' . $i, $val->nuevo_precio)
+                    ->setCellValue('L' . $i, $val->nota)
+                    ->setCellValue('M' . $i, $val->nota_comercial)
+                    ->setCellValue('N' . $i, $val->nota_interna);
+            
                    
             $i++;
         }

@@ -15,13 +15,15 @@ class FiltroBusquedaReferencia extends Model
     public $grupo;
     public $homologado;
     public $estado;
+    public $nota_comercial;
+    public $nota_ficha;
 
 
     public function rules()
     {
         return [            
             [['codigo','grupo','estado'], 'integer'],
-            [['referencia','homologado'], 'string'],
+            [['referencia','homologado','nota_comercial','nota_ficha'], 'string'],
         ];
     }
 
@@ -33,6 +35,8 @@ class FiltroBusquedaReferencia extends Model
             'grupo' => 'Grupo:',
             'homologado' => 'Codigo homologado:',
             'estado' => 'Registro activo:',
+            'nota_ficha' => 'Ficha tecnica:',
+            'nota_comercial' => 'Nota comercial:',
         ];
     }
 }
