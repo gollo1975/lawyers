@@ -213,7 +213,7 @@ class ReferenciaProductoController extends Controller
                     $model->descripcion= $model->descripcion;
                     $model->nota_comercial = $model->nota_comercial;
                     $model->generar_codigo = 1;
-                    $model->estado_registro = 1;
+                    $model->estado_registro = 0;
                     $consecutivo = \app\models\Consecutivo::findOne(7);
                     $dato = $consecutivo->consecutivo + 1;
                     $model->codigo_homologado = $consecutivo->abreviatura.$dato;
@@ -242,7 +242,7 @@ class ReferenciaProductoController extends Controller
                         $model->descripcion= $model->descripcion;
                         $model->nota_interna = $model->nota_interna;
                         $model->nota_comercial = $model->nota_comercial;
-                        $model->estado_registro = 0;
+                        $model->estado_registro = 1;
                         if($model->save()){
                             Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
                             return $this->redirect(['index']);
