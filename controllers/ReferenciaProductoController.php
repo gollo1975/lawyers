@@ -202,41 +202,57 @@ class ReferenciaProductoController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $empresa = \app\models\Matriculaempresa::findOne(1);
             if($model->codigo_homologado == '' &&  $model->generar_codigo == 1){
-                $codigo = $this->CrearCodigoReferencia();
-                $model->codigo = $codigo;
-                $model->descripcion_referencia = $model->descripcion_referencia;
-                $model->id_grupo = $model->id_grupo;
-                $model->user_name = Yii::$app->user->identity->username;
-                $model->descripcion= $model->descripcion;
-                $model->nota_interna = $model->nota_interna;
-                 $model->nota_comercial = $model->nota_comercial;
-                $model->generar_codigo = 1;
-                $model->estado_registro = 1;
-                $consecutivo = \app\models\Consecutivo::findOne(7);
-                $dato = $consecutivo->consecutivo + 1;
-                $model->codigo_homologado = $consecutivo->abreviatura.$dato;
-                $consecutivo->consecutivo = $dato;
-                $consecutivo->save();
-                if($model->save()){
-                        Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
-                        return $this->redirect(['index']);
-                }
-            }else{
-                if($model->codigo_homologado != '' &&  $model->generar_codigo <> 1){
+                $cantidad = 0;
+                $cantidad = strlen($model->nota_comercial);
+                if($cantidad > 100){    
                     $codigo = $this->CrearCodigoReferencia();
                     $model->codigo = $codigo;
                     $model->descripcion_referencia = $model->descripcion_referencia;
                     $model->id_grupo = $model->id_grupo;
-                    $model->codigo_homologado = $model->codigo_homologado;
                     $model->user_name = Yii::$app->user->identity->username;
                     $model->descripcion= $model->descripcion;
-                    $model->nota_interna = $model->nota_interna;
                     $model->nota_comercial = $model->nota_comercial;
-                    $model->estado_registro = 0;
+                    $model->generar_codigo = 1;
+                    $model->estado_registro = 1;
+                    $consecutivo = \app\models\Consecutivo::findOne(7);
+                    $dato = $consecutivo->consecutivo + 1;
+                    $model->codigo_homologado = $consecutivo->abreviatura.$dato;
+                    $consecutivo->consecutivo = $dato;
+                    $consecutivo->save();
                     if($model->save()){
-                        Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
-                        return $this->redirect(['index']);
+                            Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
+                            return $this->redirect(['index']);
                     }
+                }else{
+                    Yii::$app->getSession()->setFlash('warning', 'La nota comercial no puede ser inferior a 100 carateres.');
+                     return $this->render('create', [
+                        'model' => $model]);
+                }    
+            }else{
+                if($model->codigo_homologado != '' &&  $model->generar_codigo <> 1){
+                    $cantidad = 0;
+                    $cantidad = strlen($model->nota_comercial);
+                    if($cantidad > 100){    
+                        $codigo = $this->CrearCodigoReferencia();
+                        $model->codigo = $codigo;
+                        $model->descripcion_referencia = $model->descripcion_referencia;
+                        $model->id_grupo = $model->id_grupo;
+                        $model->codigo_homologado = $model->codigo_homologado;
+                        $model->user_name = Yii::$app->user->identity->username;
+                        $model->descripcion= $model->descripcion;
+                        $model->nota_interna = $model->nota_interna;
+                        $model->nota_comercial = $model->nota_comercial;
+                        $model->estado_registro = 0;
+                        if($model->save()){
+                            Yii::$app->getSession()->setFlash('success', 'Se creo el registro en la base de datos con Exito.');
+                            return $this->redirect(['index']);
+                        }
+                   }else{
+                        Yii::$app->getSession()->setFlash('warning', 'La nota comercial no puede ser inferior a 100 carateres.');
+                        return $this->render('create', [
+                        'model' => $model]);
+                       
+                   }    
                 }else{
                     Yii::$app->getSession()->setFlash('error', 'Si selecciona un codigo de homologacion no puede chequer la caja de envio y/o Si no selecciona nada debe de chequear la caja de envio.');
                      return $this->render('create', [
@@ -295,14 +311,28 @@ class ReferenciaProductoController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if($model->nota_interna !== ''){
-                $model->estado_registro = 1;
-                $model->save();
+        if ($model->load(Yii::$app->request->post())) {
+            $cantidad = 0;
+            $cantidad = strlen($model->nota_comercial);
+            if($cantidad > 100){        
+                if($model->nota_interna !== ''){
+                    $model->estado_registro = 1;
+                    $model->save();
+                }else{
+                    $model->estado_registro = 0;
+                    $model->save();
+                }
+                if($model->save()){
+                    Yii::$app->getSession()->setFlash('success', 'Se edito el registro en la base de datos con Exito.');
+                    return $this->redirect(['index']);
+                }
             }else{
-                $model->estado_registro = 0;
-                $model->save();
-            }
+                Yii::$app->getSession()->setFlash('warning', 'La nota comercial no puede ser inferior a 100 carateres.');
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+      
+            }    
             return $this->redirect(['index']);
         }
 
