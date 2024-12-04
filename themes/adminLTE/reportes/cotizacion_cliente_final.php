@@ -119,7 +119,7 @@ class PDF extends FPDF
         $this->Line(53,62,53,205);
         $this->Line(64,62,64,205);
         $this->Line(76,62,76,205);
-        $this->Line(134,62,134,205);
+        $this->Line(144,62,144,205);
         $this->Line(202,62,202,213);
               
         //Cuadro de la nota
@@ -147,7 +147,7 @@ class PDF extends FPDF
 
         //creamos la cabecera de la tabla.
         
-        $w = array(10, 25, 8, 11, 12, 58, 68);
+        $w = array(10, 25, 8, 11, 12, 68, 58);
         for ($i = 0; $i < count($header); $i++)
         
             if ($i == 0 || $i == 1)
@@ -179,11 +179,11 @@ class PDF extends FPDF
             $pdf->Cell(12, 3, '$'.number_format($detalle->total_linea, 0), 0, 0, 'R'); 
             //primer
             $startX = $pdf->GetX();
-            $pdf->MultiCell(58, 3, utf8_decode(substr($detalle->nota_comercial, 0, 310)), 0, 'J');
-            //segundo
-            $estimatedHeight = 3 * ceil(strlen($detalle->nota_comercial) / 58);
-            $pdf->SetXY($startX + 58, $pdf->GetY() - $estimatedHeight);
             $pdf->MultiCell(68, 3, utf8_decode(substr($detalle->nota, 0, 310)), 0, 'J');
+            //segundo
+            $estimatedHeight = 3 * ceil(strlen($detalle->nota) / 68);
+            $pdf->SetXY($startX + 68, $pdf->GetY() - $estimatedHeight);
+            $pdf->MultiCell(58, 3, utf8_decode(substr($detalle->nota_comercial, 0, 310)), 0, 'J');
             $this->Ln();
              $pdf->SetAutoPageBreak(true, 20);
             if ($contador % 11 == 0) {
