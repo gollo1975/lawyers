@@ -103,7 +103,11 @@ $tipoPrenda = ArrayHelper::map(app\models\GrupoReferencia::find()->orderBy('conc
                     <td><?= $val->grupo->concepto ?></td>
                     <td align="right"><?= '$'.number_format($val->costo_producto,0) ?></td>
                     <td><?= $val->codigo_homologado ?></td>
-                    <td><?= $val->estadoRegistro ?></td>
+                    <?php if($val->estado_registro == 0){?>
+                    <td style="background-color: #3c8dbc"><?= $val->estadoRegistro ?></td>
+                    <?php }else{?>
+                        <td><?= $val->estadoRegistro ?></td>
+                    <?php }?>    
                     <!-- Inicio Nuevo Detalle proceso -->
                     <td style= 'width: 25px;'>				
                        <a href="<?= Url::toRoute(["referencia-producto/view", "id" => $val->codigo]) ?>" ><span class="glyphicon glyphicon-eye-open"></span></a>                
