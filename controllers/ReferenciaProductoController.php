@@ -250,7 +250,9 @@ class ReferenciaProductoController extends Controller
                    }else{
                         Yii::$app->getSession()->setFlash('warning', 'La nota comercial no puede ser inferior a 100 carateres.');
                         return $this->render('create', [
-                        'model' => $model]);
+                        'model' => $model,
+                        'sw' => 0 ]);
+                        
                        
                    }    
                 }else{
@@ -264,6 +266,7 @@ class ReferenciaProductoController extends Controller
         }
         return $this->render('create', [
             'model' => $model,
+            'sw' => 0,
             
         ]);
     }
@@ -310,26 +313,20 @@ class ReferenciaProductoController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+       
         if ($model->load(Yii::$app->request->post())) {
             $cantidad = 0;
             $cantidad = strlen($model->nota_comercial);
             if($cantidad > 100){        
-                if($model->nota_interna !== ''){
-                    $model->estado_registro = 1;
-                    $model->save();
-                }else{
-                    $model->estado_registro = 0;
-                    $model->save();
-                }
-                if($model->save()){
-                    Yii::$app->getSession()->setFlash('success', 'Se edito el registro en la base de datos con Exito.');
-                    return $this->redirect(['index']);
-                }
+               $table = ReferenciaProducto::findOne($id);
+                $table->estado_registro = $model->estado_registro;
+                $model->save(false);
+                 return $this->redirect(['index']);
             }else{
                 Yii::$app->getSession()->setFlash('warning', 'La nota comercial no puede ser inferior a 100 carateres.');
                 return $this->render('update', [
                     'model' => $model,
+                    'sw' => 1,
                 ]);
       
             }    
@@ -338,6 +335,7 @@ class ReferenciaProductoController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'sw' => 1,
         ]);
     }
 

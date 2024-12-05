@@ -45,7 +45,7 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
     {
         return [
             [['descripcion_referencia', 'id_grupo'], 'required'],
-            [['codigo', 'id_grupo', 'costo_producto','generar_codigo'], 'integer'],
+            [['codigo', 'id_grupo', 'costo_producto','generar_codigo','estado_registro'], 'integer'],
             [['fecha_registro'], 'safe'],
             [['descripcion'], 'string'],
             [['descripcion_referencia'], 'string', 'max' => 40],
@@ -74,7 +74,7 @@ class ReferenciaProducto extends \yii\db\ActiveRecord
             'nota_comercial' => 'Nota comercial:',
             'nota_interna' => 'Nota interna:',
             'generar_codigo' => 'Generar codigo:',
-            'estado_registro' => 'Activo:',
+            'estado_registro' => 'Registro activo:',
         ];
     }
 

@@ -62,6 +62,11 @@ $Referencia = ArrayHelper::map(\app\models\ReferenciaProducto::find()->orderBy('
         <div class = "row">
                <?= $form->field($model, 'descripcion', ['template' => '{label}<div class="col-sm-10 form-group">{input}{error}</div>'])->textarea(['rows' => 17, 'maxlength' => true]) ?>
         </div>
+        <?php if($sw == 1){?>
+            <div class="row">
+                <?= $form->field($model, 'estado_registro')->dropDownList(['0' => 'NO', '1' => 'SI'],['prompt' => 'Seleccione ...']) ?>
+            </div>
+        <?php }?>
         <div class="checkbox checkbox-success" align ="right">
                  <?= $form->field($model, 'generar_codigo')->checkBox(['label' => 'Generar codigo interno al guardar',''=>'small', 'class'=>'bs_switch','style'=>'margin-bottom:5px;', 'id'=>'generar_codigo']) ?>
              </div>  
