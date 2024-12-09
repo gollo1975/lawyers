@@ -64,7 +64,11 @@ class PDF extends FPDF
         $this->SetXY(145, 15);
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(30, 7, utf8_decode("COTIZACION"), 0, 0, 'l', 0);
-        $this->Cell(30, 7, utf8_decode('N°. '.str_pad($cotizacion->numero_cotizacion, 5, "0", STR_PAD_LEFT)), 0, 0, 'l', 0); 
+        if($cotizacion->numero_cotizacion > 0){
+            $this->Cell(30, 7, utf8_decode('N°. '.str_pad($cotizacion->numero_cotizacion, 5, "0", STR_PAD_LEFT)), 0, 0, 'l', 0);
+        }else{
+            $this->Cell(30, 7, utf8_decode('N°. '.str_pad($cotizacion->id_cotizacion, 5, "0", STR_PAD_LEFT)), 0, 0, 'l', 0);
+        }    
         //FIN LINEA
         $this->SetFillColor(200, 200, 200);
         //FIN
@@ -104,9 +108,9 @@ class PDF extends FPDF
         $this->SetFont('Arial', '', 8);
         $this->Cell(75, 5, utf8_decode($cotizacion->fecha_registro), 0, 0, 'l', 0);
         $this->SetFont('Arial', 'B', 8);
-        $this->Cell(20, 5, utf8_decode("User name:"), 0, 0, 'J', 0);
+        $this->Cell(20, 5, utf8_decode("Email:"), 0, 0, 'J', 0);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(71, 5, utf8_decode($cotizacion->user_name), 0, 0, 'L', 0);
+        $this->Cell(71, 5, utf8_decode($cotizacion->cliente->emailcliente), 0, 0, 'L', 0);
         //FIN
         $this->SetXY(10, 53);
         $this->SetDrawColor(0, 0, 255);
