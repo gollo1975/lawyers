@@ -835,8 +835,15 @@ class CotizacionesController extends Controller
             foreach ($referencias as $referencia){
                                   
                 $objPHPExcel->setActiveSheetIndex(0)
-                        ->setCellValue('A' . $i, $val->id_cotizacion)
-                        ->setCellValue('B' . $i, $val->numero_cotizacion)
+                        ->setCellValue('A' . $i, $val->id_cotizacion);
+                        if($val->tipo_cotizacion == 0){
+                                $objPHPExcel->setActiveSheetIndex(0)
+                                ->setCellValue('B' . $i, $val->id_cotizacion); 
+                        }else{
+                                 $objPHPExcel->setActiveSheetIndex(0)
+                                ->setCellValue('B' . $i, $val->numero_cotizacion);
+                        }
+                        $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('C' . $i, $val->cliente->cedulanit)
                         ->setCellValue('D' . $i, $val->cliente->nombrecorto)
                         ->setCellValue('E' . $i, $val->fecha_cotizacion)
